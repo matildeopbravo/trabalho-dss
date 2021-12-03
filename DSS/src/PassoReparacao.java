@@ -5,5 +5,5 @@ public class PassoReparacao {
   float duraçao;
   float custo;
   // a ser reparado ou está pausado
-  boolean estado;
+  boolean pausado;
 }

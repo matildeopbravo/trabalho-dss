@@ -1,46 +1,70 @@
+import ClassesUtilizador.Funcionario;
+import ClassesUtilizador.Tecnico;
 import ClassesUtilizador.Utilizador;
+import Estatisticas.EstatisticasFuncionario;
+import Estatisticas.EstatisticasTecnico;
+import exceptions.*;
 
 import java.util.List;
+import java.util.Map;
 
 public interface SGRInterface {
-    //Devolve verdadeiro se o utilizador é autenticado, falso otherwise
-    boolean autenticaUtilizador (String id, String senha);
+    // Devolve o utilizador se a autenticação for bem sucedida, se não devolve null
+    Utilizador autenticaUtilizador (String id, String senha) throws UtilizadorNaoExisteException;
 
     //Devolve boolean de sucesso
-    boolean adicionaFichaDeCliente (FichaCliente fichaCliente);
+    void adicionaFichaDeCliente (FichaCliente fichaCliente) throws UtilizadorJaExisteException;
 
-    //Tem de gerar para o equipamento um código
-    void adicionaEquipamento(Equipamento equipamento);
+    //Tem de gerar um código para o equipamento, que será devolvido
+    String adicionaEquipamento(Equipamento equipamento) throws EquipamentoJaExisteException;
 
-    //Devolve boolean de sucesso
-    boolean adicionaServicoExpresso(FichaReparacaoExpresso servicoExpresso);
+    void adicionaServicoExpresso(FichaReparacaoExpresso servicoExpresso) throws ServicoJaExisteException;
 
-    //Devolve boolean de sucesso
     //O serviço expresso terá de ter um indicador de fase, sendo a fase inicial a de
     //reliazação do orçamento/plano de reparação
-    boolean adicionaServicoProgramado(FichaReparacaoProgramada servicoProgramado);
+    void adicionaServicoProgramado(FichaReparacaoProgramada servicoProgramado) throws ServicoJaExisteException;
 
     //Devolve a lista das estatísticas de reparações de cada técnico
-    List estatisticasTecnicos();
+    Map<String, EstatisticasTecnico> estatisticasTecnicos();
 
     //Devolve a lista das estatísticas de atendimentos de cada funcionário
     //de balcão
-    List estatisticasFuncionarios();
+    Map<String, EstatisticasFuncionario> estatisticasFuncionarios();
 
     //Devolve a lista de total de intervenções realizadas por cada técnico
-    List totalIntervencoesPorTecnico();
+    Map<String, Integer> totalIntervencoesPorTecnico();
 
-    void alteraFaseServico(Fase fase, String idFicha);
+    void alteraFaseServico(Fase fase, String idFicha) throws ServicoNaoExisteException;
 
-    //Devolve boolean de sucesso
-    boolean registaUtilizador (Utilizador utilizador);
+    void registaUtilizador (Utilizador utilizador) throws UtilizadorJaExisteException;
+    void removeUtilizador (String idUtilizador) throws UtilizadorNaoExisteException;
 
-    //Devolve boolean de sucesso
-    boolean removeUtilizador (String idUtilizador);
+    // Se o componente já existir, soma a quantidade ao stock
+    void adicionaComponente (Componente componente);
+    void removeComponente (String codComponente) throws ComponenteNaoExisteException;
 
-    //Devolve boolean de sucesso
-    boolean adicionaComponente (Componente componente);
+    // Getters
+    List<Utilizador> getUtilizadores();
+    List<Tecnico> getTecnicos();
+    List<Funcionario> getFuncionarios();
+    List<FichaCliente> getClientes();
 
-    //Devolve boolean de sucesso
-    boolean removeComponente (String codComponente);
+    Utilizador getUtilizador(String id); // devolve null se não existir
+    FichaCliente getCliente(String id); // devolve null se não existir
+
+    List<Equipamento> getEquipamentos();
+    List<Equipamento> getEquipamentosAbandonados();
+    Equipamento getEquipamento(String codigo); // devolve null se não existir
+
+    List<FichaReparacao> getReparacoes();
+    List<FichaReparacao> getReparacoesCompletadas();
+    List<FichaReparacao> getReparacoesEmCurso();
+    List<FichaReparacaoProgramada> getReparacoesSemOrcamento();
+    FichaReparacao getServico(String id); // devolve null se não existir
+
+    List<FichaReparacaoExpresso> getReparacoesExpresso();
+    List<FichaReparacaoProgramada> getReparacoesProgramadas();
+
+    List<Componente> getComponentes();
+    Componente getComponente(String id); // devolve null se não existir
 }
