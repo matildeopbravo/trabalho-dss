@@ -1,13 +1,14 @@
 package dss;
 
 public class Equipamento {
-    private final String idEquipamento;
+    private static int lastId = -1;
+
+    private final int idEquipamento;
     private final String idCliente;
     private boolean abandonado;
 
     public Equipamento(String idCliente) {
-        // TODO gerar id unico
-        this.idEquipamento = "";
+        this.idEquipamento = ++lastId;
         this.idCliente = idCliente;
         this.abandonado = false;
     }
