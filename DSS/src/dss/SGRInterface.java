@@ -1,9 +1,11 @@
-import ClassesUtilizador.Funcionario;
-import ClassesUtilizador.Tecnico;
-import ClassesUtilizador.Utilizador;
-import Estatisticas.EstatisticasFuncionario;
-import Estatisticas.EstatisticasTecnico;
-import exceptions.*;
+package dss;
+
+import dss.utilizador.Funcionario;
+import dss.utilizador.Tecnico;
+import dss.utilizador.Utilizador;
+import dss.estatisticas.EstatisticasFuncionario;
+import dss.estatisticas.EstatisticasTecnico;
+import dss.exceptions.*;
 
 import java.util.List;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package Estatisticas;
+package dss.estatisticas;
 
 public class EstatisticasTecnico {
 }

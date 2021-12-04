@@ -1,4 +1,7 @@
+package dss;
+
 public enum Fase {
+    
     AEsperaOrcamento,
     AEsperaResposta,
     Recusada,

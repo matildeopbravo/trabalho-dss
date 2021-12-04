@@ -1,3 +1,5 @@
+package dss;
+
 import java.util.List;
 
 public class PassoReparacao {

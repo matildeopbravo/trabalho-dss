@@ -1,6 +1,9 @@
+package dss;
+
 import java.util.List;
 
 public class Componente {
-    String id;
+    int id;
+    String descricao;
     List<String> categorias;
 }

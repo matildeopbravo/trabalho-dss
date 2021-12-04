@@ -1,4 +1,6 @@
-import ClassesUtilizador.Utilizador;
+package dss;
+
+import dss.utilizador.Utilizador;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
