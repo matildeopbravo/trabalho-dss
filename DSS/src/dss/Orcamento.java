@@ -6,13 +6,10 @@ import java.util.List;
 public class Orcamento {
     // vai ser dado pela soma dos custos
     private float total;
-    private List<Componente> componentesDisponiveis;
-    // lista de descricoes porque o Componente nao existe e nao tem id
-    private List<String> componentesAEncomendar;
+    private List<Componente> componentesNecessarios;
     LocalDate prazoMaximo;
 
-    public Orcamento(PlanoReparacao p, LocalDate prazoMaximo) {
+    public Orcamento(PlanoReparacao p) {
         // TODO
-        this.prazoMaximo = prazoMaximo;
     }
 }

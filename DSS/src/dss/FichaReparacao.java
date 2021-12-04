@@ -44,4 +44,6 @@ public abstract class FichaReparacao {
         return new ArrayList<>(tecnicosQueRepararam);
     }
 
+    public abstract void efetuaReparacao(String id);
+
 }
