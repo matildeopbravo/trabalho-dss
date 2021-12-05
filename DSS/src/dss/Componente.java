@@ -18,4 +18,16 @@ public class Componente {
         this.descricao = descricao;
         this.categorias = new ArrayList<>(categorias);
     }
+
+    public Componente(Componente componente) {
+        this.id = componente.id;
+        this.descricao = componente.descricao;
+        this.quantidade = componente.quantidade;
+        this.preco = componente.preco;
+        this.categorias = new ArrayList<>(componente.categorias);
+    }
+
+    public Componente clone () {
+        return new Componente(this);
+    }
 }

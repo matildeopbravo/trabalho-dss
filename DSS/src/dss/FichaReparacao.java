@@ -4,14 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class FichaReparacao {
+    private static int lastId = -1;
     int id;
     String idCliente;
     String funcionarioCriador;
     List<String> tecnicosQueRepararam = new ArrayList<>();
+    // descricao deles
+    List<String> componentesAEncomendar;
 
     public FichaReparacao(String idCliente, String funcionarioCriador) {
-        // TODO gerar id unico
-        this.id = 0;
+        this.id = ++lastId;
         this.idCliente = idCliente;
         this.funcionarioCriador = funcionarioCriador;
     }
