@@ -8,13 +8,11 @@ public class Componente {
 
     private int id;
     private String descricao;
-    private int quantidade;
     private float preco;
     private List<String> categorias;
 
-    public Componente(int quantidade, String descricao, List<String> categorias) {
+    public Componente(String descricao, List<String> categorias) {
         this.id = ++lastId;
-        this.quantidade = quantidade;
         this.descricao = descricao;
         this.categorias = new ArrayList<>(categorias);
     }
@@ -22,9 +20,32 @@ public class Componente {
     public Componente(Componente componente) {
         this.id = componente.id;
         this.descricao = componente.descricao;
-        this.quantidade = componente.quantidade;
         this.preco = componente.preco;
         this.categorias = new ArrayList<>(componente.categorias);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public float getPreco() {
+        return preco;
+    }
+
+    public void setPreco(float preco) {
+        this.preco = preco;
     }
 
     public Componente clone () {

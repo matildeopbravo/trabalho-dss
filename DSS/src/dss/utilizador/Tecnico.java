@@ -9,8 +9,11 @@ public class Tecnico extends Utilizador {
         ficha.realizaOrcamento(this.getId());
     }
 
-    public void executaReparacao(FichaReparacao ficha) {
-        // TODO
-        // EXpresso ou programada
+    // executa Passo ou subpasso se programada ; executa a reparacao toda se for expresso
+    public boolean efetuaReparacao(FichaReparacao ficha) {
+        return ficha.efetuaReparacao(this.getId());
+    }
+    public void pausaReparacao(FichaReparacaoProgramada ficha) {
+        ficha.pausarReparacao();
     }
 }

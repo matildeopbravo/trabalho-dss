@@ -10,7 +10,6 @@ public abstract class FichaReparacao {
     String funcionarioCriador;
     List<String> tecnicosQueRepararam = new ArrayList<>();
     // descricao deles
-    List<String> componentesAEncomendar;
 
     public FichaReparacao(String idCliente, String funcionarioCriador) {
         this.id = ++lastId;
@@ -46,6 +45,6 @@ public abstract class FichaReparacao {
         return new ArrayList<>(tecnicosQueRepararam);
     }
 
-    public abstract void efetuaReparacao(String id);
+    public abstract boolean efetuaReparacao(String id);
 
 }

@@ -6,6 +6,7 @@ public class FichaReparacaoProgramada extends FichaReparacao {
     Equipamento equipamentoAReparar;
     PlanoReparacao planoReparacao;
     Orcamento orcamento;
+    // pausado indica se esta a ser reparado neste preciso momento ou nao
     boolean pausado ;
     Fase fase;
 
@@ -18,15 +19,23 @@ public class FichaReparacaoProgramada extends FichaReparacao {
     }
 
     @Override
-    public void efetuaReparacao(String id) {
+    public boolean efetuaReparacao(String id) {
         if(!tecnicosQueRepararam.contains(id)) {
             tecnicosQueRepararam.add(id);
         }
-        // TODO
+        return this.planoReparacao.repara();
     }
 
     public void realizaOrcamento(String id) {
         this.tecnicosQueRepararam.add(id);
         this.orcamento = new Orcamento(planoReparacao);
+    }
+
+    public void togglePausarReparacao() {
+        pausado = !pausado;
+    }
+
+    public boolean podeSerReparadaAgora() {
+        return fase.equals(Fase.EmReparacao) && pausado;
     }
 }
