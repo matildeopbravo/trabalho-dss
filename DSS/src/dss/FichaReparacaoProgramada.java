@@ -30,6 +30,30 @@ public class FichaReparacaoProgramada extends FichaReparacao {
         this.orcamento = new Orcamento(planoReparacao);
     }
 
+    public void notificaOrcamento() {
+        //enviarEmailAoCliente();
+        this.fase = Fase.AEsperaResposta;
+    }
+
+    public void aprovaOrcamento() {
+        this.fase = Fase.EmReparacao;
+    }
+
+    public void rejeitaOrcamento() {
+        this.fase = Fase.Recusada;
+    }
+
+    public boolean ultrapassaOrcamento() {
+        boolean ultrapassa = false;
+        if (this.orcamento != null) {
+            Orcamento orcamentoReal = new Orcamento(planoReparacao);
+            //Não pode exceder orçamento aprovado por 120%
+            if (orcamentoReal.getPreco() > this.orcamento.getPreco()*1.2)
+                ultrapassa = true;
+        }
+        return ultrapassa;
+    }
+
     public void togglePausarReparacao() {
         pausado = !pausado;
     }
