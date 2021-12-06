@@ -8,17 +8,24 @@ public class PlanoReparacao {
   List<PassoReparacao> passosReparacaoConcluidos = new ArrayList<>();
   List<PassoReparacao> passosReparacaoAExecutar = new ArrayList<>();
 
-  // devolve para o caso de se quereradicionar subpassos
+  /**
+   * Método que adiciona um passo ao plano
+   * @return O objeto de passo criado
+   */
   public PassoReparacao addPasso(String descricao, float duracao, float custo)  {
     PassoReparacao p = new PassoReparacao(descricao,duracao,custo);
     passosReparacaoAExecutar.add(p);
     return p;
   }
 
-  public boolean repara() {
+  /**
+    * Método que executa o próximo passo/subpasso de reparação neste plano
+    * @return boleano que indica se o plano foi concluído na sua totalidade
+    */
+  public boolean repara(int custoReal, int duracaoReal) {
     // nunca pode dar erro porque se nao tivesse passos nao estaria na lista a reparar
     PassoReparacao p = this.passosReparacaoAExecutar.get(0);
-    boolean executouPassoCompleto = p.executaPassoOuSubpasso();;
+    boolean executouPassoCompleto = p.executaPassoOuSubpasso(custoReal, duracaoReal);;
     if (executouPassoCompleto) {
       this.passosReparacaoAExecutar.remove(p);
       passosReparacaoConcluidos.add(p);
@@ -26,18 +33,23 @@ public class PlanoReparacao {
     return this.passosReparacaoAExecutar.size() == 0;
   }
 
+  /**
+   * Método que calcula o somatório do custo e tempo previsto de todos os
+   * passos, tanto os concluídos como os por realizar
+   * @return Par (custo, tempo).
+   */
   public Pair<Float,Float> getCustoEDuracaoPrevista(){
     float custo = 0;
     float duracao = 0;
 
     for (PassoReparacao elem: passosReparacaoConcluidos) {
-      custo += elem.custo;
-      duracao += elem.duracao;
+      custo += elem.getCusto();
+      duracao += elem.getDuracao();
     }
 
     for (PassoReparacao elem: passosReparacaoAExecutar) {
-      custo += elem.custo;
-      duracao += elem.duracao;
+      custo += elem.getCusto();
+      duracao += elem.getDuracao();
     }
     return new Pair<>(custo,duracao);
   }
@@ -47,13 +59,13 @@ public class PlanoReparacao {
     float duracao = 0;
 
     for (PassoReparacao elem: passosReparacaoConcluidos) {
-      custo += elem.custoReal;
-      duracao += elem.duracaoReal;
+      custo += elem.getCustoReal();
+      duracao += elem.getDuracaoReal();
     }
 
     for (PassoReparacao elem: passosReparacaoAExecutar) {
-      custo += elem.custoReal;
-      duracao += elem.duracaoReal;
+      custo += elem.getCustoReal();
+      duracao += elem.getDuracaoReal();
     }
     return new Pair<>(custo,duracao);
   }

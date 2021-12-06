@@ -10,7 +10,7 @@ public class Orcamento {
     private final LocalDate prazoMaximo;
 
     public Orcamento(PlanoReparacao p) {
-        this.componentesNecessarios = p.getComponentes();
+        this.componentesNecessarios = p.getComponentes().values().stream().map(Pair::getFirst).toList();
 
         Pair<Float,Float> custoEDuracao = p.getCustoEDuracaoPrevista();
         this.total = custoEDuracao.getFirst();

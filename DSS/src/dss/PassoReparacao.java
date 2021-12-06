@@ -5,15 +5,15 @@ import java.util.List;
 
 public class PassoReparacao {
   // Pode ser null
-  List<PassoReparacao> subPassosPorExecutar;
-  List<PassoReparacao> subpassosExecutados;
+  private List<PassoReparacao> subPassosPorExecutar;
+  private List<PassoReparacao> subpassosExecutados;
 
-  String descricao;
-  float duracao;  // duracao prevista
-  float custo;    // custo previsto
+  private String descricao;
+  private float duracao;  // duracao prevista
+  private float custo;    // custo previsto
 
-  float duracaoReal;  // duracao real
-  float custoReal;    // custo real
+  private float duracaoReal;  // duracao real
+  private float custoReal;    // custo real
 
   private List<Componente> componentesNecessarios = null;
 
@@ -49,7 +49,7 @@ public class PassoReparacao {
    * Método que adiciona um sub-passo ao passo de reparação
    * @param p Sub-passo a ser adicionado
    */
-  public void addSubpaco(PassoReparacao p)  {
+  public void addSubpasso(PassoReparacao p)  {
     if(this.subPassosPorExecutar == null) {
       this.subPassosPorExecutar = new ArrayList<>();
       this.subpassosExecutados = new ArrayList<>();
@@ -64,14 +64,56 @@ public class PassoReparacao {
    * Método que realiza um subpasso (caso exista) ou o passo.
    * @return True se o passo (incluindo os seus subpassos) se encontrarem completos.
    */
-  // TODO Adicionar o tempo real que foi necxessario e o custo real
-  public boolean executaPassoOuSubpasso() {
+  // TODO Adicionar o tempo real que foi necessario e o custo real
+  public boolean executaPassoOuSubpasso(int custoReal, int duracaoReal) {
     if (subPassosPorExecutar.size() > 0){
-      this.subpassosExecutados.add(this.subPassosPorExecutar.remove(0));
-      return subPassosPorExecutar.size() == 0;
+      PassoReparacao subPasso = this.subPassosPorExecutar.remove(0);
+      subPasso.setCustoReal(custoReal);
+      subPasso.setDuracaoReal(duracaoReal);
+      this.subpassosExecutados.add(subPasso);
+
+      if (subPassosPorExecutar.size() == 0) {
+        this.custoReal = custoReal;
+        this.duracaoReal = duracaoReal;
+        return true;
+      }
+      return false;
     }
-      // nao tinha subpassos e executou o passo em si
-      return true;
+    // nao tinha subpassos e executou o passo em si
+    this.custoReal = custoReal;
+    this.duracaoReal = duracaoReal;
+    return true;
   }
 
+  public float getDuracao() {
+    return duracao;
+  }
+
+  public void setDuracao(float duracao) {
+    this.duracao = duracao;
+  }
+
+  public float getCusto() {
+    return custo;
+  }
+
+  public void setCusto(float custo) {
+    this.custo = custo;
+  }
+
+  public float getDuracaoReal() {
+    return duracaoReal;
+  }
+
+  public void setDuracaoReal(float duracaoReal) {
+    this.duracaoReal = duracaoReal;
+  }
+
+  public float getCustoReal() {
+    return custoReal;
+  }
+
+  public void setCustoReal(float custoReal) {
+    this.custoReal = custoReal;
+  }
 }

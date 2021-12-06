@@ -45,6 +45,6 @@ public abstract class FichaReparacao {
         return new ArrayList<>(tecnicosQueRepararam);
     }
 
-    public abstract boolean efetuaReparacao(String id);
+    public abstract boolean efetuaReparacao(String id, int custo, int tempo);
 
 }

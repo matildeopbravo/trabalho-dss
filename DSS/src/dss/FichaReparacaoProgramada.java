@@ -19,11 +19,10 @@ public class FichaReparacaoProgramada extends FichaReparacao {
     }
 
     @Override
-    public boolean efetuaReparacao(String id) {
-        if(!tecnicosQueRepararam.contains(id)) {
+    public boolean efetuaReparacao(String id, int custoReal, int tempoReal) {
+        if(!tecnicosQueRepararam.contains(id))
             tecnicosQueRepararam.add(id);
-        }
-        return this.planoReparacao.repara();
+        return this.planoReparacao.repara(custoReal, tempoReal);
     }
 
     public void realizaOrcamento(String id) {

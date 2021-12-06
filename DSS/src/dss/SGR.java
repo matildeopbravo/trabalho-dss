@@ -204,22 +204,24 @@ public class SGR implements  SGRInterface{
         fichasReparacaoConcluidas.put(f.getId(),f);
     }
 
-    public void efetuaReparacaoProgramada(Tecnico t) throws SemReparacoesAEfetuarException {
+
+    public FichaReparacaoProgramada obtemReparacaoProgramadaDisponivel(Tecnico t) {
         // ir buscar ficha de reparacao que esteja em fase propicia a ser reparada
         // e que esteja pausada
-        FichaReparacaoProgramada ficha = null;
-        boolean completa = false;
         for(FichaReparacaoProgramada f : fichasReparacaoAtuais.values() ) {
-            if(f.podeSerReparadaAgora()) {
-                ficha = f;
-                break;
-            }
+            if(f.podeSerReparadaAgora())
+                return f;
         }
+        return null;
+    }
+    public void efetuaReparacaoProgramada(Tecnico t, FichaReparacaoProgramada ficha, int custoReal, int duracaoReal)
+            throws SemReparacoesAEfetuarException {
+        boolean completa = false;
         if (ficha == null) {
             throw new SemReparacoesAEfetuarException();
         }
         else {
-            completa = t.efetuaReparacao(ficha);
+            completa = t.efetuaReparacao(ficha, custoReal, duracaoReal);
             if(completa) {
                 this.marcaReparacaoCompleta(ficha);
             }
