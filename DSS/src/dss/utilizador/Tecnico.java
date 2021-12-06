@@ -14,6 +14,7 @@ public class Tecnico extends Utilizador {
         return ficha.efetuaReparacao(this.getId());
     }
     public void pausaReparacao(FichaReparacaoProgramada ficha) {
-        ficha.pausarReparacao();
+        //ficha.pausarReparacao();
+        ficha.togglePausarReparacao();
     }
 }

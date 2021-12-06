@@ -14,8 +14,11 @@ public class SGR implements  SGRInterface{
     private Map<String, Utilizador> utilizadoresById;
     // equipamentos deixados pelos clientes
     private Map<String,Equipamento> equipamentoById;
+
     // componentes em stock na loja idComponente -> <Componente,Quantidade>
     private Map<Integer,Pair<Componente,Integer>> componenteById;
+    // componentes reservado na loja descricao -> <Componente,Quantidade>
+    private Map<String,Pair<Componente,Integer>> componenteReservadoById;
 
     // componentes em falta na loja descricao -> <Componente,Quantidade>
     private Map<String,Pair<Componente,Integer>> componentesEmFaltaById;
@@ -33,11 +36,16 @@ public class SGR implements  SGRInterface{
 
     @Override
     public void adicionaFichaDeCliente(FichaCliente fichaCliente) throws UtilizadorJaExisteException {
-
+        if(fichaClienteById.containsKey(fichaCliente.getNIF()))
+            //throw new UtilizadorJaExisteException("Utilizador ja existente:  "+ fichaCliente.getNome() + " NIF -> "+ fichaCliente.getNIF());
+            throw new UtilizadorJaExisteException();
+        fichaClienteById.put(fichaCliente.getNIF(), fichaCliente);
     }
 
     @Override
     public String adicionaEquipamento(Equipamento equipamento) throws EquipamentoJaExisteException {
+        //if(equipamentoById.containsKey(equipamento.getIdEquipamento()))
+        //    throw new EquipamentoJaExisteException();
         return null;
     }
 
@@ -48,15 +56,14 @@ public class SGR implements  SGRInterface{
 
     @Override
     public void adicionaServicoProgramado(FichaReparacaoProgramada servicoProgramado) throws ServicoJaExisteException {
+        // TODO Falta verificar se o servico ja existe
+
         HashMap<String, Pair<Componente,Integer>> componentes =
                 servicoProgramado.planoReparacao.getComponentes();
-
         for( var entry :componentes.entrySet() ){
-            int quantidadeEmStock = getQuantidadeComponeteByDescricao(entry.getKey());
-            //int quantidadeNecessaria
+            Pair<Componente,Integer> c = entry.getValue();
+            reservarEEmFaltaComponete(c.getFirst(),c.getSecond());
         }
-        //TODO
-
     }
 
     @Override
@@ -243,5 +250,64 @@ public class SGR implements  SGRInterface{
         if (componenteIntegerPair.isPresent())
             quantidade = componenteIntegerPair.get().getSecond();
         return quantidade;
+    }
+
+    public Pair<Componente,Integer> getComponeteByDescricao(String descricao){
+        Optional<Pair<Componente,Integer>> componenteIntegerPair =
+            componenteById
+                .values()
+                .stream()
+                .filter(e-> e.getFirst().getDescricao().equals(descricao))
+                .findFirst()
+            ;
+        return componenteIntegerPair.orElse(null);
+    }
+
+    public void reservarEEmFaltaComponete(Componente c, int quantidade){
+        // vamos ao stock diminuir a quantidade
+        Optional<Pair<Componente,Integer>> componenteIntegerPair =
+            componenteById
+                .values()
+                .stream()
+                .filter(e-> e.getFirst().getDescricao().equals(c.getDescricao()))
+                .findFirst()
+            ;
+        Pair<Componente, Integer> p = componenteIntegerPair.orElse(null);
+        int emFalta = 0;
+        if (p==null) {
+            // nao existe nada em stock
+            emFalta = quantidade;
+        } else {
+            int emStock = p.getSecond();
+            emFalta = quantidade - emStock;
+            if(emFalta <= 0){
+                // existe em stock a quantidade toda
+                p.setY( p.getSecond()- quantidade );
+                emFalta = 0;
+            } else {
+                // nao existe a quantidade toda necessaria
+                emFalta = Math.abs(emFalta);
+                p.setY( 0 );
+            }
+        }
+
+        // vamos reservar
+        if (emFalta > 0){
+            Optional<Pair<Componente,Integer>> componenteReservarPair =
+                componenteReservadoById
+                    .values()
+                    .stream()
+                    .filter(e-> e.getFirst().getDescricao().equals(c.getDescricao()))
+                    .findFirst()
+                ;
+            var p2 = componenteReservarPair.orElse(null) ;
+            if (p2 == null){
+                // caso nenhum do mesmo tipo já esteja reservado
+                componenteReservadoById.put(c.getDescricao(), new Pair<>(c,emFalta));
+            } else {
+                // senao aumenta-se apenas a quantidade
+                p2.setY( p2.getSecond() + emFalta);
+            }
+        }
     }
 }

@@ -12,4 +12,16 @@ public class Equipamento {
         this.idCliente = idCliente;
         this.abandonado = false;
     }
+
+    public int getIdEquipamento() {
+        return idEquipamento;
+    }
+
+    public String getIdCliente() {
+        return idCliente;
+    }
+
+    public boolean isAbandonado() {
+        return abandonado;
+    }
 }
