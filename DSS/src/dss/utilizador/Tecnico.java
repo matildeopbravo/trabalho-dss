@@ -1,6 +1,7 @@
 package dss.utilizador;
 
-import dss.*;
+import dss.fichas.FichaReparacao;
+import dss.fichas.FichaReparacaoProgramada;
 
 public class Tecnico extends Utilizador {
     private boolean ocupado;

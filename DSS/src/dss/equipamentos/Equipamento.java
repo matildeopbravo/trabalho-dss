@@ -1,4 +1,4 @@
-package dss;
+package dss.equipamentos;
 
 public class Equipamento {
     private static int lastId = -1;

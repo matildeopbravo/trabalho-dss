@@ -1,4 +1,4 @@
-package dss;
+package dss.equipamentos;
 
 public enum Fase {
     AEsperaOrcamento,

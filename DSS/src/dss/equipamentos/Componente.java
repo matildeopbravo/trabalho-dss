@@ -1,4 +1,4 @@
-package dss;
+package dss.equipamentos;
 
 import java.util.ArrayList;
 import java.util.List;

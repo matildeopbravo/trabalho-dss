@@ -1,4 +1,4 @@
-package dss;
+package dss.fichas;
 
 public class FichaReparacaoExpresso extends FichaReparacao{
     private final int idServicoExpresso; // agregacao

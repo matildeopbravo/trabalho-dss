@@ -1,8 +1,15 @@
 package dss;
 
+import dss.equipamentos.Componente;
+import dss.equipamentos.Equipamento;
+import dss.equipamentos.Fase;
 import dss.estatisticas.EstatisticasFuncionario;
 import dss.estatisticas.EstatisticasTecnico;
 import dss.exceptions.*;
+import dss.fichas.FichaCliente;
+import dss.fichas.FichaReparacao;
+import dss.fichas.FichaReparacaoExpresso;
+import dss.fichas.FichaReparacaoProgramada;
 import dss.utilizador.Funcionario;
 import dss.utilizador.Tecnico;
 import dss.utilizador.Utilizador;
@@ -13,9 +20,9 @@ import java.util.stream.Collectors;
 public class SGR implements  SGRInterface{
     private Map<String, Utilizador> utilizadoresById;
     // equipamentos deixados pelos clientes
-    private Map<String,Equipamento> equipamentoById;
+    private Map<String, Equipamento> equipamentoById;
 
-    private Map<Integer,Componente> componenteById;
+    private Map<Integer, Componente> componenteById;
 
 
     // servicos expressos
@@ -28,10 +35,11 @@ public class SGR implements  SGRInterface{
     //// componentes em falta na loja descricao -> <Componente,Quantidade>
     //private Map<String,Pair<Componente,Integer>> componentesEmFaltaById;
     private Map<String,FichaCliente> fichaClienteById;
+
     // fichas de reparacao programadas apenas (expresso nao chegam a ser colocadas em espera)
-    private LinkedHashMap<Integer,FichaReparacaoProgramada> fichasReparacaoAtuais;
+    private LinkedHashMap<Integer, FichaReparacaoProgramada> fichasReparacaoAtuais;
     // fichas de reparacao programadas ou expresso
-    private Map<Integer,FichaReparacao> fichasReparacaoConcluidas;
+    private Map<Integer, FichaReparacao> fichasReparacaoConcluidas;
 
     @Override
     public Utilizador autenticaUtilizador(String id, String senha) throws UtilizadorNaoExisteException {
@@ -56,18 +64,18 @@ public class SGR implements  SGRInterface{
     @Override
     public void adicionaServicoExpresso(FichaReparacaoExpresso servicoExpresso) throws ServicoJaExisteException {
         // presuminos que ao adicionr fica concluida
-        if(fichasReparacaoConcluidas.containsKey(servicoExpresso.id))
+        if(fichasReparacaoConcluidas.containsKey(servicoExpresso.getId()))
             throw new ServicoJaExisteException();
 
-        fichasReparacaoConcluidas.put(servicoExpresso.id,servicoExpresso);
+        fichasReparacaoConcluidas.put(servicoExpresso.getId(),servicoExpresso);
     }
 
     @Override
     public void adicionaServicoProgramado(FichaReparacaoProgramada servicoProgramado) throws ServicoJaExisteException {
-        if (fichasReparacaoAtuais.containsKey(servicoProgramado.id))
+        if (fichasReparacaoAtuais.containsKey(servicoProgramado.getId()))
             throw new ServicoJaExisteException();
 
-        fichasReparacaoAtuais.put(servicoProgramado.id,servicoProgramado);
+        fichasReparacaoAtuais.put(servicoProgramado.getId(),servicoProgramado);
     }
 
     @Override
@@ -129,7 +137,7 @@ public class SGR implements  SGRInterface{
     @Override
     //TODO nao tem clone
     public List<FichaCliente> getClientes() {
-        return fichaClienteById.values().stream().toList();
+        return new ArrayList<>(fichaClienteById.values());
     }
 
     @Override
@@ -237,18 +245,16 @@ public class SGR implements  SGRInterface{
     }
     public void efetuaReparacaoExpresso(Funcionario funcionario , String idCliente, int idReparacaoEfetuar) {
         FichaReparacaoExpresso ficha = funcionario.criaFichaReparacaoExpresso(idCliente,idReparacaoEfetuar);
-
-        fichaClienteById.get(idCliente).addFichaReparacaoConcluida(ficha.getId());
+        getCliente(idCliente).addFichaReparacaoConcluida(ficha.getId());
     }
 
-    // devolve todos os componentes que contêm stringPesquisa na descrição
-    // TODO alterar para todas as palavras da string estarem presentes mas nao necessariamente
-    //  substring
+    // devolve todos os componentes que contêm todas as palavras da stringPesquisa na descrição
     public List<Componente> pesquisaComponentes(String stringPesquisa ) {
+        List<String> splitted = Arrays.asList(stringPesquisa.split(" "));
         return componenteById
                 .values()
                 .stream()
-                .filter(elem -> elem.getDescricao().contains(stringPesquisa))
+                .filter(componente -> List.of(componente.getDescricao()).containsAll(splitted))
                 .collect(Collectors.toList());
     }
 

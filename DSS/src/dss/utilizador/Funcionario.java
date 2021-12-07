@@ -1,9 +1,8 @@
 package dss.utilizador;
 
-import dss.FichaCliente;
-import dss.FichaReparacao;
-import dss.FichaReparacaoExpresso;
-import dss.FichaReparacaoProgramada;
+import dss.fichas.FichaCliente;
+import dss.fichas.FichaReparacaoExpresso;
+import dss.fichas.FichaReparacaoProgramada;
 
 public class Funcionario extends Utilizador {
     public FichaCliente criaFichaCliente(String NIF, String nome, String email, String numeroTelemovel) {

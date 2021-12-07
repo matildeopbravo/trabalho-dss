@@ -1,5 +1,8 @@
 package dss;
 
+import dss.auxiliar.Pair;
+import dss.equipamentos.Componente;
+
 import java.time.LocalDate;
 import java.util.List;
 

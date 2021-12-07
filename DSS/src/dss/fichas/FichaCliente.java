@@ -1,4 +1,4 @@
-package dss;
+package dss.fichas;
 
 import java.util.ArrayList;
 import java.util.List;

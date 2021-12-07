@@ -1,5 +1,12 @@
 package dss;
 
+import dss.equipamentos.Componente;
+import dss.equipamentos.Equipamento;
+import dss.equipamentos.Fase;
+import dss.fichas.FichaCliente;
+import dss.fichas.FichaReparacao;
+import dss.fichas.FichaReparacaoExpresso;
+import dss.fichas.FichaReparacaoProgramada;
 import dss.utilizador.Funcionario;
 import dss.utilizador.Tecnico;
 import dss.utilizador.Utilizador;

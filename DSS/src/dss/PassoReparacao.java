@@ -1,5 +1,7 @@
 package dss;
 
+import dss.equipamentos.Componente;
+
 import java.util.ArrayList;
 import java.util.List;
 

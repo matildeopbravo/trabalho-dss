@@ -1,6 +1,9 @@
-package dss;
+package dss.fichas;
 
-import java.util.List;
+import dss.equipamentos.Equipamento;
+import dss.equipamentos.Fase;
+import dss.Orcamento;
+import dss.PlanoReparacao;
 
 public class FichaReparacaoProgramada extends FichaReparacao {
     Equipamento equipamentoAReparar;
