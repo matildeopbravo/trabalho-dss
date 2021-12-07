@@ -15,13 +15,15 @@ public class SGR implements  SGRInterface{
     // equipamentos deixados pelos clientes
     private Map<String,Equipamento> equipamentoById;
 
-    // componentes em stock na loja idComponente -> <Componente,Quantidade>
-    private Map<Integer,Pair<Componente,Integer>> componenteById;
-    // componentes reservado na loja descricao -> <Componente,Quantidade>
-    private Map<String,Pair<Componente,Integer>> componenteReservadoById;
+    private Map<Integer,Componente> componenteById;
 
-    // componentes em falta na loja descricao -> <Componente,Quantidade>
-    private Map<String,Pair<Componente,Integer>> componentesEmFaltaById;
+    //// componentes em stock na loja idComponente -> <Componente,Quantidade>
+    //private Map<Integer,Pair<Componente,Integer>> componenteById;
+    //// componentes reservado na loja descricao -> <Componente,Quantidade>
+    //private Map<String,Pair<Componente,Integer>> componenteReservadoById;
+
+    //// componentes em falta na loja descricao -> <Componente,Quantidade>
+    //private Map<String,Pair<Componente,Integer>> componentesEmFaltaById;
 
     private Map<String,FichaCliente> fichaClienteById;
     // fichas de reparacao programadas apenas (expresso nao chegam a ser colocadas em espera)
@@ -51,19 +53,19 @@ public class SGR implements  SGRInterface{
 
     @Override
     public void adicionaServicoExpresso(FichaReparacaoExpresso servicoExpresso) throws ServicoJaExisteException {
+        // presuminos que ao adicionr fica concluida
+        if(fichasReparacaoConcluidas.containsKey(servicoExpresso.id))
+            throw new ServicoJaExisteException();
 
+        fichasReparacaoConcluidas.put(servicoExpresso.id,servicoExpresso);
     }
 
     @Override
     public void adicionaServicoProgramado(FichaReparacaoProgramada servicoProgramado) throws ServicoJaExisteException {
-        // TODO Falta verificar se o servico ja existe
+        if (fichasReparacaoAtuais.containsKey(servicoProgramado.id))
+            throw new ServicoJaExisteException();
 
-        HashMap<String, Pair<Componente,Integer>> componentes =
-                servicoProgramado.planoReparacao.getComponentes();
-        for( var entry :componentes.entrySet() ){
-            Pair<Componente,Integer> c = entry.getValue();
-            reservarEEmFaltaComponete(c.getFirst(),c.getSecond());
-        }
+        fichasReparacaoAtuais.put(servicoProgramado.id,servicoProgramado);
     }
 
     @Override
@@ -88,12 +90,17 @@ public class SGR implements  SGRInterface{
 
     @Override
     public void registaUtilizador(Utilizador utilizador) throws UtilizadorJaExisteException {
-
+        if(utilizadoresById.containsKey(utilizador.getId()))
+            throw new UtilizadorJaExisteException();
+        // Clone???
+        utilizadoresById.put(utilizador.getId(),utilizador);
     }
 
     @Override
     public void removeUtilizador(String idUtilizador) throws UtilizadorNaoExisteException {
-
+        if(!utilizadoresById.containsKey(idUtilizador))
+            throw new UtilizadorNaoExisteException();
+        utilizadoresById.remove(idUtilizador);
     }
 
     @Override
@@ -103,17 +110,23 @@ public class SGR implements  SGRInterface{
 
     @Override
     public void removeComponente(String codComponente) throws ComponenteNaoExisteException {
-
+        //if(!componenteById.containsKey(codComponente))
+        //    throw new ComponenteNaoExisteException();
+        //componenteById.remove(codComponente);
     }
 
     @Override
     public List<Utilizador> getUtilizadores() {
-        return null;
+            //return utilizadoresById.values().forEach(clone());
+        // CLONE ???
+        return new ArrayList<>(utilizadoresById.values());
     }
 
     @Override
     public List<Tecnico> getTecnicos() {
-        return null;
+        List<Tecnico> l = new LinkedList<>();
+        utilizadoresById.values().stream().filter(e-> e instanceof Tecnico).map(e -> l.add((Tecnico) e));
+        return l;
     }
 
     @Override
@@ -231,85 +244,85 @@ public class SGR implements  SGRInterface{
     // devolve todos os componentes que contêm stringPesquisa na descrição
     // TODO alterar para todas as palavras da string estarem presentes mas nao necessariamente
     //  substring
-    public List<Pair<Componente,Integer>> pesquisaComponentes(String stringPesquisa ) {
+    public List<Componente> pesquisaComponentes(String stringPesquisa ) {
         return componenteById
                 .values()
                 .stream()
-                .filter(par -> par.getFirst().getDescricao().contains(stringPesquisa))
+                .filter(elem -> elem.getDescricao().contains(stringPesquisa))
                 .collect(Collectors.toList());
     }
 
     // devolve a quantidade existente de um dado componete por descricao
-    public int getQuantidadeComponeteByDescricao(String descricao){
-        Optional<Pair<Componente,Integer>> componenteIntegerPair =
-                componenteById
-                        .values()
-                        .stream()
-                        .filter(e-> e.getFirst().getDescricao().equals(descricao))
-                        .findFirst()
-                ;
-        int quantidade = 0;
-        if (componenteIntegerPair.isPresent())
-            quantidade = componenteIntegerPair.get().getSecond();
-        return quantidade;
-    }
+    //public int getQuantidadeComponeteByDescricao(String descricao){
+    //    Optional<Pair<Componente,Integer>> componenteIntegerPair =
+    //            componenteById
+    //                    .values()
+    //                    .stream()
+    //                    .filter(e-> e.getFirst().getDescricao().equals(descricao))
+    //                    .findFirst()
+    //            ;
+    //    int quantidade = 0;
+    //    if (componenteIntegerPair.isPresent())
+    //        quantidade = componenteIntegerPair.get().getSecond();
+    //    return quantidade;
+    //}
 
-    public Pair<Componente,Integer> getComponeteByDescricao(String descricao){
-        Optional<Pair<Componente,Integer>> componenteIntegerPair =
+    public Optional<Componente> getComponeteByDescricao(String descricao){
+        Optional<Componente> componente =
             componenteById
                 .values()
                 .stream()
-                .filter(e-> e.getFirst().getDescricao().equals(descricao))
+                .filter(e-> e.getDescricao().equals(descricao))
                 .findFirst()
             ;
-        return componenteIntegerPair.orElse(null);
+        return componente;
     }
 
-    public void reservarEEmFaltaComponete(Componente c, int quantidade){
-        // vamos ao stock diminuir a quantidade
-        Optional<Pair<Componente,Integer>> componenteIntegerPair =
-            componenteById
-                .values()
-                .stream()
-                .filter(e-> e.getFirst().getDescricao().equals(c.getDescricao()))
-                .findFirst()
-            ;
-        Pair<Componente, Integer> p = componenteIntegerPair.orElse(null);
-        int emFalta = 0;
-        if (p==null) {
-            // nao existe nada em stock
-            emFalta = quantidade;
-        } else {
-            int emStock = p.getSecond();
-            emFalta = quantidade - emStock;
-            if(emFalta <= 0){
-                // existe em stock a quantidade toda
-                p.setY( p.getSecond()- quantidade );
-                emFalta = 0;
-            } else {
-                // nao existe a quantidade toda necessaria
-                emFalta = Math.abs(emFalta);
-                p.setY( 0 );
-            }
-        }
+    //public void reservarEEmFaltaComponete(Componente c, int quantidade){
+    //    // vamos ao stock diminuir a quantidade
+    //    Optional<Pair<Componente,Integer>> componenteIntegerPair =
+    //        componenteById
+    //            .values()
+    //            .stream()
+    //            .filter(e-> e.getFirst().getDescricao().equals(c.getDescricao()))
+    //            .findFirst()
+    //        ;
+    //    Pair<Componente, Integer> p = componenteIntegerPair.orElse(null);
+    //    int emFalta = 0;
+    //    if (p==null) {
+    //        // nao existe nada em stock
+    //        emFalta = quantidade;
+    //    } else {
+    //        int emStock = p.getSecond();
+    //        emFalta = quantidade - emStock;
+    //        if(emFalta <= 0){
+    //            // existe em stock a quantidade toda
+    //            p.setY( p.getSecond()- quantidade );
+    //            emFalta = 0;
+    //        } else {
+    //            // nao existe a quantidade toda necessaria
+    //            emFalta = Math.abs(emFalta);
+    //            p.setY( 0 );
+    //        }
+    //    }
 
-        // vamos reservar
-        if (emFalta > 0){
-            Optional<Pair<Componente,Integer>> componenteReservarPair =
-                componenteReservadoById
-                    .values()
-                    .stream()
-                    .filter(e-> e.getFirst().getDescricao().equals(c.getDescricao()))
-                    .findFirst()
-                ;
-            var p2 = componenteReservarPair.orElse(null) ;
-            if (p2 == null){
-                // caso nenhum do mesmo tipo já esteja reservado
-                componenteReservadoById.put(c.getDescricao(), new Pair<>(c,emFalta));
-            } else {
-                // senao aumenta-se apenas a quantidade
-                p2.setY( p2.getSecond() + emFalta);
-            }
-        }
-    }
+    //    // vamos reservar
+    //    if (emFalta > 0){
+    //        Optional<Pair<Componente,Integer>> componenteReservarPair =
+    //            componenteReservadoById
+    //                .values()
+    //                .stream()
+    //                .filter(e-> e.getFirst().getDescricao().equals(c.getDescricao()))
+    //                .findFirst()
+    //            ;
+    //        var p2 = componenteReservarPair.orElse(null) ;
+    //        if (p2 == null){
+    //            // caso nenhum do mesmo tipo já esteja reservado
+    //            componenteReservadoById.put(c.getDescricao(), new Pair<>(c,emFalta));
+    //        } else {
+    //            // senao aumenta-se apenas a quantidade
+    //            p2.setY( p2.getSecond() + emFalta);
+    //        }
+    //    }
+    //}
 }
