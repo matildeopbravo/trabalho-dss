@@ -17,6 +17,9 @@ public class SGR implements  SGRInterface{
 
     private Map<Integer,Componente> componenteById;
 
+
+    // servicos expressos
+    private Map<Integer,ServicoExpresso> servicoExpresso;
     //// componentes em stock na loja idComponente -> <Componente,Quantidade>
     //private Map<Integer,Pair<Componente,Integer>> componenteById;
     //// componentes reservado na loja descricao -> <Componente,Quantidade>
@@ -24,7 +27,6 @@ public class SGR implements  SGRInterface{
 
     //// componentes em falta na loja descricao -> <Componente,Quantidade>
     //private Map<String,Pair<Componente,Integer>> componentesEmFaltaById;
-
     private Map<String,FichaCliente> fichaClienteById;
     // fichas de reparacao programadas apenas (expresso nao chegam a ser colocadas em espera)
     private LinkedHashMap<Integer,FichaReparacaoProgramada> fichasReparacaoAtuais;
@@ -101,18 +103,6 @@ public class SGR implements  SGRInterface{
         if(!utilizadoresById.containsKey(idUtilizador))
             throw new UtilizadorNaoExisteException();
         utilizadoresById.remove(idUtilizador);
-    }
-
-    @Override
-    public void adicionaComponente(Componente componente) {
-
-    }
-
-    @Override
-    public void removeComponente(String codComponente) throws ComponenteNaoExisteException {
-        //if(!componenteById.containsKey(codComponente))
-        //    throw new ComponenteNaoExisteException();
-        //componenteById.remove(codComponente);
     }
 
     @Override
@@ -239,6 +229,13 @@ public class SGR implements  SGRInterface{
                 this.marcaReparacaoCompleta(ficha);
             }
         }
+    }
+
+    //TODO
+    public void efetuaReparacaoExpresso(Tecnico t, String idCliente) {
+            FichaReparacaoExpresso ficha = new FichaReparacaoExpresso(idCliente,t.getId(),);
+
+
     }
 
     // devolve todos os componentes que contêm stringPesquisa na descrição

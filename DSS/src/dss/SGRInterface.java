@@ -42,8 +42,8 @@ public interface SGRInterface {
     void removeUtilizador (String idUtilizador) throws UtilizadorNaoExisteException;
 
     // Se o componente já existir, soma a quantidade ao stock
-    void adicionaComponente (Componente componente);
-    void removeComponente (String codComponente) throws ComponenteNaoExisteException;
+    //void adicionaComponente (Componente componente);
+    //void removeComponente (String codComponente) throws ComponenteNaoExisteException;
 
     // Getters
     List<Utilizador> getUtilizadores();
