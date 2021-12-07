@@ -127,16 +127,18 @@ public class SGR implements  SGRInterface{
 
     @Override
     public List<Tecnico> getTecnicos() {
-        List<Tecnico> l = new LinkedList<>();
-        utilizadoresById.values().stream().filter(e-> e instanceof Tecnico).map(e -> l.add((Tecnico) e));
-        return l;
+        return utilizadoresById.values().stream()
+                .filter(e-> e instanceof Tecnico)
+                .map(Tecnico.class::cast)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Funcionario> getFuncionarios() {
-        List<Funcionario> l = new LinkedList<>();
-        utilizadoresById.values().stream().filter(e-> e instanceof Funcionario).map(e -> l.add((Funcionario) e));
-        return l;
+        return utilizadoresById.values().stream()
+                .filter(e-> e instanceof Funcionario)
+                .map(Funcionario.class::cast)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -242,7 +244,7 @@ public class SGR implements  SGRInterface{
             throw new SemReparacoesAEfetuarException();
         }
         else {
-            completa = t.efetuaReparacao(ficha, custoReal, duracaoReal);
+            completa = t.efetuaReparacaoProgramada(ficha, custoReal, duracaoReal);
             if(completa) {
                 this.marcaReparacaoCompleta(ficha);
             }

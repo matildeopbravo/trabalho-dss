@@ -11,7 +11,7 @@ public class Tecnico extends Utilizador {
     }
 
     // executa Passo ou subpasso se programada ; executa a reparacao toda se for expresso
-    public boolean efetuaReparacao(FichaReparacao ficha, int custo, int tempo) {
+    public boolean efetuaReparacaoProgramada(FichaReparacaoProgramada ficha, int custo, int tempo) {
         return ficha.efetuaReparacao(this.getId(), custo, tempo);
     }
     public void pausaReparacao(FichaReparacaoProgramada ficha) {
