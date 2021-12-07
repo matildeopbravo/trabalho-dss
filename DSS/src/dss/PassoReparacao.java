@@ -14,8 +14,8 @@ public class PassoReparacao {
   private float duracao;  // duracao prevista
   private float custo;    // custo previsto
 
-  private float duracaoReal;  // duracao real
-  private float custoReal;    // custo real
+  private float duracaoReal = -1;  // duracao real
+  private float custoReal = -1;    // custo real
 
   private List<Componente> componentesNecessarios = null;
 
@@ -25,8 +25,6 @@ public class PassoReparacao {
     this.descricao = descricao;
     this.duracao = duracao; // prevista
     this.custo = custo;     // prevista
-    float duracaoReal = -1;  // duracao real
-    float custoReal = -1;    // custo real
   }
 
   public List<Componente> getComponentesNecessarios(){
@@ -57,7 +55,6 @@ public class PassoReparacao {
       this.subpassosExecutados = new ArrayList<>();
     }
     this.subPassosPorExecutar.add(p);
-
     this.custo += p.custo;
     this.duracao += p.duracao;
   }

@@ -9,7 +9,6 @@ public abstract class FichaReparacao {
     String idCliente;
     String funcionarioCriador;
     List<String> tecnicosQueRepararam = new ArrayList<>();
-    // descricao deles
 
     public FichaReparacao(String idCliente, String funcionarioCriador) {
         this.id = ++lastId;
@@ -17,6 +16,10 @@ public abstract class FichaReparacao {
         this.funcionarioCriador = funcionarioCriador;
     }
 
+    public FichaReparacao(String idCliente, String funcionarioCriador, String idTecnico) {
+        this(idCliente,funcionarioCriador);
+        this.tecnicosQueRepararam.add(idTecnico);
+    }
     public int getId() {
         return id;
     }
@@ -45,6 +48,7 @@ public abstract class FichaReparacao {
         return new ArrayList<>(tecnicosQueRepararam);
     }
 
-    public abstract boolean efetuaReparacao(String id, int custo, int tempo);
+    // marca como realizado um passo ou subpasso, indicando o custo e o tempo que gastou na realidade
+    //public abstract boolean efetuaReparacao(String id, int custo, int tempo);
 
 }

@@ -28,4 +28,5 @@ public abstract class Utilizador {
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
     }
+
 }

@@ -21,7 +21,7 @@ public class FichaReparacaoProgramada extends FichaReparacao {
         fase = Fase.AEsperaOrcamento;
     }
 
-    @Override
+    // marca como realizado um passo ou subpasso, indicando o custo e o tempo que gastou na realidade
     public boolean efetuaReparacao(String id, int custoReal, int tempoReal) {
         if(!tecnicosQueRepararam.contains(id))
             tecnicosQueRepararam.add(id);

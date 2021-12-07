@@ -18,4 +18,16 @@ public class Tecnico extends Utilizador {
         //ficha.pausarReparacao();
         ficha.togglePausarReparacao();
     }
+
+    public boolean estaOcupado(){
+        return ocupado;
+    }
+
+    public void ocupaTecnico() {
+        ocupado = true;
+    }
+
+    public  void libertaTecnico() {
+        ocupado = false;
+    }
 }

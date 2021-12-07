@@ -38,8 +38,13 @@ public class SGR implements  SGRInterface{
 
     // fichas de reparacao programadas apenas (expresso nao chegam a ser colocadas em espera)
     private LinkedHashMap<Integer, FichaReparacaoProgramada> fichasReparacaoAtuais;
+
+    private List<FichaReparacaoExpresso> fichasExpressoAtuais;
     // fichas de reparacao programadas ou expresso
     private Map<Integer, FichaReparacao> fichasReparacaoConcluidas;
+
+    private Map<Integer, FichaReparacao> fichasReparacaoExpressoConcluidas;
+
 
     @Override
     public Utilizador autenticaUtilizador(String id, String senha) throws UtilizadorNaoExisteException {
@@ -243,8 +248,31 @@ public class SGR implements  SGRInterface{
             }
         }
     }
-    public void efetuaReparacaoExpresso(Funcionario funcionario , String idCliente, int idReparacaoEfetuar) {
-        FichaReparacaoExpresso ficha = funcionario.criaFichaReparacaoExpresso(idCliente,idReparacaoEfetuar);
+    public Tecnico encontraTecnicoDisponivel() throws NaoHaTecnicosDisponiveisException {
+        return utilizadoresById.values()
+                .stream()
+                .filter(user -> user instanceof Tecnico t && !t.estaOcupado())
+                .map(Tecnico.class::cast)
+                .findFirst()
+                .orElseThrow(NaoHaTecnicosDisponiveisException::new);
+    }
+
+    // uma reparacao expresso ativa nao podera estar associado ao mesmo tecnico mais que uma vez
+    public void concluiReparacaoExpresso(Tecnico t) {
+        t.libertaTecnico();
+        for (FichaReparacaoExpresso f : fichasExpressoAtuais) {
+            if (f.getIdTecnicoReparou().equals(t.getId())) {
+                int id = f.getId();
+                fichasReparacaoExpressoConcluidas.put(id,f);
+                fichasExpressoAtuais.remove(id);
+            }
+        }
+    }
+    public void iniciaReparacaoExpresso(Funcionario funcionario , String idCliente, int idReparacaoEfetuar) throws NaoHaTecnicosDisponiveisException {
+        Tecnico t = encontraTecnicoDisponivel();
+        t.ocupaTecnico();
+        FichaReparacaoExpresso ficha = funcionario.criaFichaReparacaoExpresso(t.getId(),idCliente,idReparacaoEfetuar);
+        this.fichasExpressoAtuais.add(ficha);
         getCliente(idCliente).addFichaReparacaoConcluida(ficha.getId());
     }
 
@@ -254,7 +282,7 @@ public class SGR implements  SGRInterface{
         return componenteById
                 .values()
                 .stream()
-                .filter(componente -> List.of(componente.getDescricao()).containsAll(splitted))
+                .filter(comp -> List.of(comp.getDescricao()).containsAll(splitted))
                 .collect(Collectors.toList());
     }
 
@@ -274,14 +302,11 @@ public class SGR implements  SGRInterface{
     //}
 
     public Optional<Componente> getComponeteByDescricao(String descricao){
-        Optional<Componente> componente =
-            componenteById
-                .values()
-                .stream()
-                .filter(e-> e.getDescricao().equals(descricao))
-                .findFirst()
-            ;
-        return componente;
+        return componenteById
+            .values()
+            .stream()
+            .filter(e-> e.getDescricao().equals(descricao))
+            .findFirst();
     }
 
     //public void reservarEEmFaltaComponete(Componente c, int quantidade){

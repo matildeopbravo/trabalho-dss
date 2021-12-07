@@ -11,8 +11,8 @@ public class Funcionario extends Utilizador {
     public FichaReparacaoProgramada criaFichaReparacaoProgramada(String NIFCliente) {
         return new FichaReparacaoProgramada(NIFCliente,this.getId());
     }
-    public FichaReparacaoExpresso criaFichaReparacaoExpresso(String NIFCliente, int idServicoExpresso) {
-        return new FichaReparacaoExpresso(NIFCliente, this.getId(),idServicoExpresso);
+    public FichaReparacaoExpresso criaFichaReparacaoExpresso(String idTecnico, String NIFCliente, int idServicoExpresso) {
+        return new FichaReparacaoExpresso(NIFCliente,idServicoExpresso,this.getId(),idTecnico);
 
     }
 }
