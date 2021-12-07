@@ -121,26 +121,30 @@ public class SGR implements  SGRInterface{
 
     @Override
     public List<Funcionario> getFuncionarios() {
-        return null;
+        List<Funcionario> l = new LinkedList<>();
+        utilizadoresById.values().stream().filter(e-> e instanceof Funcionario).map(e -> l.add((Funcionario) e));
+        return l;
     }
 
     @Override
+    //TODO nao tem clone
     public List<FichaCliente> getClientes() {
-        return null;
+        return fichaClienteById.values().stream().toList();
     }
 
     @Override
     public Utilizador getUtilizador(String id) {
-        return null;
+        return utilizadoresById.get(id);
     }
 
     @Override
     public FichaCliente getCliente(String id) {
-        return null;
+        return fichaClienteById.get(id);
     }
 
     @Override
     public List<Equipamento> getEquipamentos() {
+
         return null;
     }
 
@@ -150,8 +154,9 @@ public class SGR implements  SGRInterface{
     }
 
     @Override
+    //CLONE???
     public Equipamento getEquipamento(String codigo) {
-        return null;
+        return equipamentoById.get(codigo);
     }
 
     @Override
@@ -230,12 +235,10 @@ public class SGR implements  SGRInterface{
             }
         }
     }
+    public void efetuaReparacaoExpresso(Funcionario funcionario , String idCliente, int idReparacaoEfetuar) {
+        FichaReparacaoExpresso ficha = funcionario.criaFichaReparacaoExpresso(idCliente,idReparacaoEfetuar);
 
-    //TODO
-    public void efetuaReparacaoExpresso(Tecnico t, String idCliente) {
-            FichaReparacaoExpresso ficha = new FichaReparacaoExpresso(idCliente,t.getId(),);
-
-
+        fichaClienteById.get(idCliente).addFichaReparacaoConcluida(ficha.getId());
     }
 
     // devolve todos os componentes que contêm stringPesquisa na descrição

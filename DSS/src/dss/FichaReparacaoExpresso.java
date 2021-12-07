@@ -1,16 +1,16 @@
 package dss;
 
 public class FichaReparacaoExpresso extends FichaReparacao{
-    private final ServicoExpresso servicoExpresso; // agregacao
+    private final int idServicoExpresso; // agregacao
 
     /**
      * @param idCliente Id do cliente
      * @param funcionarioCriador 
-     * @param servicoExpresso Servico expresso associado à ficha de repar
+     * @param idServicoExpresso id  do Servico expresso realizado
      */
-    public FichaReparacaoExpresso(String idCliente, String funcionarioCriador, ServicoExpresso servicoExpresso) {
+    public FichaReparacaoExpresso(String idCliente, String funcionarioCriador, int idServicoExpresso) {
         super(idCliente, funcionarioCriador);
-        this.servicoExpresso = servicoExpresso;
+        this.idServicoExpresso = idServicoExpresso;
     }
 
     @Override
