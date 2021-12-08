@@ -58,7 +58,7 @@ public interface SGRInterface {
     List<Funcionario> getFuncionarios();
     List<FichaCliente> getClientes();
 
-    Utilizador getUtilizador(String id); // devolve null se não existir
+    Utilizador getUtilizador(String id) throws UtilizadorNaoExisteException; // devolve null se não existir
     FichaCliente getCliente(String id); // devolve null se não existir
 
     List<Equipamento> getEquipamentos();

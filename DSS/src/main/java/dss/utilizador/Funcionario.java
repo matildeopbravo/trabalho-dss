@@ -5,6 +5,10 @@ import dss.fichas.FichaReparacaoExpresso;
 import dss.fichas.FichaReparacaoProgramada;
 
 public class Funcionario extends Utilizador {
+    public Funcionario(String nome, String id, String password) {
+        super(nome, id, password);
+    }
+
     public FichaCliente criaFichaCliente(String NIF, String nome, String email, String numeroTelemovel) {
         return new FichaCliente(NIF,nome, email, numeroTelemovel, this.getId());
     }

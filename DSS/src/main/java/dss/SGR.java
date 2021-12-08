@@ -13,15 +13,19 @@ import dss.fichas.FichaReparacaoProgramada;
 import dss.utilizador.Funcionario;
 import dss.utilizador.Tecnico;
 import dss.utilizador.Utilizador;
+import dss.utilizador.UtilizadorDAO;
 
+import javax.swing.event.MouseInputListener;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class SGR implements  SGRInterface{
-    private Map<String, Utilizador> utilizadoresById;
+    //####ATRIBUTOS####
+    private UtilizadorDAO utilizadores;
+    private Utilizador utilizadorAutenticado;
+
     // equipamentos deixados pelos clientes
     private Map<String, Equipamento> equipamentoById;
-
     private Map<Integer, Componente> componenteById;
 
 
@@ -45,10 +49,31 @@ public class SGR implements  SGRInterface{
 
     private Map<Integer, FichaReparacao> fichasReparacaoExpressoConcluidas;
 
+    //####CONSTRUTOR####
 
+    public SGR() {
+        this.utilizadores = new UtilizadorDAO();
+        this.utilizadorAutenticado = null;
+
+        this.equipamentoById = new HashMap<>();
+        this.componenteById = new HashMap<>();
+
+        this.servicoExpresso = new HashMap<>();
+        this.fichaClienteById = new HashMap<>();
+        this.fichasReparacaoAtuais = new LinkedHashMap<>();
+        this.fichasExpressoAtuais = new ArrayList<>();
+        this.fichasReparacaoConcluidas = new HashMap<>();
+        this.fichasReparacaoExpressoConcluidas = new HashMap<>();
+    }
+
+    //####MÉTODOS####
     @Override
     public Utilizador autenticaUtilizador(String id, String senha) throws UtilizadorNaoExisteException {
-        return null;
+        Utilizador utilizador = this.utilizadores.validaCredenciais(id, senha);
+        if (utilizador == null)
+            throw new UtilizadorNaoExisteException();
+        this.utilizadorAutenticado = utilizador;
+        return utilizador;
     }
 
     @Override
@@ -105,29 +130,24 @@ public class SGR implements  SGRInterface{
 
     @Override
     public void registaUtilizador(Utilizador utilizador) throws UtilizadorJaExisteException {
-        if(utilizadoresById.containsKey(utilizador.getId()))
+        if(!this.utilizadores.adicionaUtilizador(utilizador))
             throw new UtilizadorJaExisteException();
-        // Clone???
-        utilizadoresById.put(utilizador.getId(),utilizador);
     }
 
     @Override
     public void removeUtilizador(String idUtilizador) throws UtilizadorNaoExisteException {
-        if(!utilizadoresById.containsKey(idUtilizador))
+        if(this.utilizadores.removeUtilizador(idUtilizador) == null)
             throw new UtilizadorNaoExisteException();
-        utilizadoresById.remove(idUtilizador);
     }
 
     @Override
     public List<Utilizador> getUtilizadores() {
-            //return utilizadoresById.values().forEach(clone());
-        // CLONE ???
-        return new ArrayList<>(utilizadoresById.values());
+        return this.utilizadores.getUtilizadores();
     }
 
     @Override
     public List<Tecnico> getTecnicos() {
-        return utilizadoresById.values().stream()
+        return this.utilizadores.getUtilizadores().stream()
                 .filter(e-> e instanceof Tecnico)
                 .map(Tecnico.class::cast)
                 .collect(Collectors.toList());
@@ -135,7 +155,7 @@ public class SGR implements  SGRInterface{
 
     @Override
     public List<Funcionario> getFuncionarios() {
-        return utilizadoresById.values().stream()
+        return this.utilizadores.getUtilizadores().stream()
                 .filter(e-> e instanceof Funcionario)
                 .map(Funcionario.class::cast)
                 .collect(Collectors.toList());
@@ -148,8 +168,11 @@ public class SGR implements  SGRInterface{
     }
 
     @Override
-    public Utilizador getUtilizador(String id) {
-        return utilizadoresById.get(id);
+    public Utilizador getUtilizador(String id) throws UtilizadorNaoExisteException {
+        Utilizador utilizador = this.utilizadores.getUtilizador(id);
+        if (utilizador == null)
+            throw new UtilizadorNaoExisteException();
+        return utilizador;
     }
 
     @Override
@@ -251,7 +274,7 @@ public class SGR implements  SGRInterface{
         }
     }
     public Tecnico encontraTecnicoDisponivel() throws NaoHaTecnicosDisponiveisException {
-        return utilizadoresById.values()
+        return this.utilizadores.getUtilizadores()
                 .stream()
                 .filter(user -> user instanceof Tecnico t && !t.estaOcupado())
                 .map(Tecnico.class::cast)
@@ -358,4 +381,9 @@ public class SGR implements  SGRInterface{
     //        }
     //    }
     //}
+
+    public static void main(String[] args) {
+        Mail.inicializarMail();
+        Mail.enviaMail("a9322@alunos.uminho.pt", "Test", "Olá Mundo.");
+    }
 }

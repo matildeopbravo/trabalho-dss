@@ -1,10 +1,16 @@
 package dss.utilizador;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import dss.fichas.FichaReparacao;
 import dss.fichas.FichaReparacaoProgramada;
 
 public class Tecnico extends Utilizador {
     private boolean ocupado;
+
+    public Tecnico(String nome, String id, String password) {
+        super(nome, id, password);
+        this.ocupado = false;
+    }
 
     public void realizaOrcamento(FichaReparacaoProgramada ficha) {
         ficha.realizaOrcamento(this.getId());

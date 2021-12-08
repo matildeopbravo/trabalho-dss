@@ -5,6 +5,12 @@ public abstract class Utilizador {
     private String id;
     private String passwordHash;
 
+    public Utilizador(String nome, String id, String password) {
+        this.nome = nome;
+        this.id = id;
+        this.passwordHash = UtilizadorDAO.encriptaPassword(password);
+    }
+
     public String getNome() {
         return nome;
     }
