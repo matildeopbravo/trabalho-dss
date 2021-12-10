@@ -5,10 +5,6 @@ import dss.equipamentos.Fase;
 import dss.Orcamento;
 import dss.PlanoReparacao;
 
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
 import java.util.Properties;
 
 public class FichaReparacaoProgramada extends FichaReparacao {

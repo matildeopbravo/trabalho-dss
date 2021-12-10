@@ -15,7 +15,7 @@ import dss.utilizador.Tecnico;
 import dss.utilizador.Utilizador;
 import dss.utilizador.UtilizadorDAO;
 
-import javax.swing.event.MouseInputListener;
+import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -382,8 +382,8 @@ public class SGR implements  SGRInterface{
     //    }
     //}
 
-    public static void main(String[] args) {
-        Mail.inicializarMail();
-        Mail.enviaMail("a9322@alunos.uminho.pt", "Test", "Olá Mundo.");
+    public static void main(String[] args) throws FileNotFoundException {
+        EMail e = new EMail();
+        e.enviaMail("pedroalves706@gmail.com", "Test", "Olá Mundo.");
     }
 }
