@@ -10,6 +10,7 @@ import dss.utilizador.*;
 import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SGR implements SGRInterface {
     //####ATRIBUTOS####
@@ -87,6 +88,7 @@ public class SGR implements SGRInterface {
 
     public void criaFichaReparacaoProgramada(String NIFCliente) {
         FichaReparacaoProgramada f = new FichaReparacaoProgramada(NIFCliente,utilizadorAutenticado.getId());
+        f.setFase(Fase.AEsperaOrcamento);
         fichasReparacaoAtuais.put(f.getId(),f);
     }
     public void criaFichaReparacaoExpresso(String idTecnico, String NIFCliente, int idServicoExpresso) {
@@ -96,6 +98,7 @@ public class SGR implements SGRInterface {
 
     public void realizaOrcamento(FichaReparacaoProgramada ficha) {
         ficha.realizaOrcamento(utilizadorAutenticado.getId());
+        // TODO enviar mail?
     }
 
     public void pausaReparacao(FichaReparacaoProgramada ficha) {
@@ -136,7 +139,33 @@ public class SGR implements SGRInterface {
 
     @Override
     public Map<String, EstatisticasFuncionario> estatisticasFuncionarios() {
-        return null;
+        return utilizadores.getUtilizadores()
+                .stream()
+                .filter(t-> t instanceof Funcionario)
+                .map(Funcionario.class::cast)
+                .collect(Collectors.toMap(Funcionario::getId, this::estatisticaFuncionario));
+    }
+
+    private EstatisticasFuncionario estatisticaFuncionario(Funcionario f) {
+        return new EstatisticasFuncionario(getNumRececoes(f), getNumEntregas(f));
+    }
+
+
+    private int getNumRececoes(Funcionario f) {
+        ArrayList<FichaReparacao> l = new ArrayList<>(fichasReparacaoAtuais.values());
+        l.addAll(fichasExpressoAtuais);
+        l.addAll(fichasReparacaoConcluidas.values());
+        return (int)
+                l.stream()
+                .filter(ficha -> ficha.getFuncionarioCriador().equals(f.getId()))
+                .count();
+    }
+    
+    private int getNumEntregas(Funcionario f) {
+        return (int) fichasReparacaoConcluidas.values()
+                .stream()
+                .filter(ficha -> ficha.getFuncionarioEntregou().equals(f.getId()))
+                .count();
     }
 
     @Override
@@ -269,7 +298,15 @@ public class SGR implements SGRInterface {
             fichasReparacaoAtuais.remove(f.getId());
         }
         fichasReparacaoConcluidas.put(f.getId(), f);
+        f.setFase(Fase.Reparado);
     }
+
+    public void marcaReparacaoEntregue(FichaReparacao f) {
+        f.setFase(Fase.Entregue);
+        // poderá nao ser funcionario?
+        f.setFuncionarioEntregou(utilizadorAutenticado.getId());
+    }
+
 
     public FichaReparacaoProgramada obtemReparacaoProgramadaDisponivel(Tecnico t) {
         // ir buscar ficha de reparacao que esteja em fase propicia a ser reparada

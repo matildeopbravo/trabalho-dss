@@ -13,7 +13,6 @@ public class FichaReparacaoProgramada extends FichaReparacao {
     Orcamento orcamento;
     // pausado indica se esta a ser reparado neste preciso momento ou nao
     boolean pausado ;
-    Fase fase;
 
     public FichaReparacaoProgramada(String idCliente, String utilizadorCriador) {
         super(idCliente, utilizadorCriador);

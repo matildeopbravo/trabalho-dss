@@ -1,5 +1,8 @@
 package dss.fichas;
 
+import dss.equipamentos.Fase;
+import dss.utilizador.Funcionario;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +11,9 @@ public abstract class FichaReparacao {
     int id;
     String idCliente;
     String funcionarioCriador;
+    String funcionarioEntregou;
     List<String> tecnicosQueRepararam = new ArrayList<>();
+    Fase fase;
 
     public FichaReparacao(String idCliente, String funcionarioCriador) {
         this.id = ++lastId;
@@ -46,6 +51,18 @@ public abstract class FichaReparacao {
 
     public List<String> getTecnicosQueRepararam() {
         return new ArrayList<>(tecnicosQueRepararam);
+    }
+
+    public void setFase(Fase fase) {
+        this.fase = fase;
+    }
+
+    public void setFuncionarioEntregou(String id) {
+        this.funcionarioEntregou = id;
+    }
+
+    public String getFuncionarioEntregou() {
+        return  funcionarioEntregou;
     }
 
     // marca como realizado um passo ou subpasso, indicando o custo e o tempo que gastou na realidade
