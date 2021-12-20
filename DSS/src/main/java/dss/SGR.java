@@ -1,37 +1,28 @@
 package dss;
 
 
-import dss.equipamentos.Componente;
-import dss.equipamentos.Equipamento;
-import dss.equipamentos.Fase;
-import dss.estatisticas.EstatisticasFuncionario;
-import dss.estatisticas.EstatisticasTecnico;
+import dss.equipamentos.*;
+import dss.estatisticas.*;
 import dss.exceptions.*;
-import dss.fichas.FichaCliente;
-import dss.fichas.FichaReparacao;
-import dss.fichas.FichaReparacaoExpresso;
-import dss.fichas.FichaReparacaoProgramada;
-import dss.utilizador.Funcionario;
-import dss.utilizador.Tecnico;
-import dss.utilizador.Utilizador;
-import dss.utilizador.UtilizadorDAO;
+import dss.fichas.*;
+import dss.utilizador.*;
 
 import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class SGR implements  SGRInterface{
+public class SGR implements SGRInterface {
     //####ATRIBUTOS####
-    private UtilizadorDAO utilizadores;
+    private final UtilizadorDAO utilizadores;
     private Utilizador utilizadorAutenticado;
 
     // equipamentos deixados pelos clientes
-    private Map<String, Equipamento> equipamentoById;
-    private Map<Integer, Componente> componenteById;
+    private final Map<String, Equipamento> equipamentoById;
+    private final Map<Integer, Componente> componenteById;
 
 
     // servicos expressos
-    private Map<Integer,ServicoExpresso> servicoExpresso;
+    private final Map<Integer, ServicoExpresso> servicoExpresso;
     //// componentes em stock na loja idComponente -> <Componente,Quantidade>
     //private Map<Integer,Pair<Componente,Integer>> componenteById;
     //// componentes reservado na loja descricao -> <Componente,Quantidade>
@@ -39,16 +30,16 @@ public class SGR implements  SGRInterface{
 
     //// componentes em falta na loja descricao -> <Componente,Quantidade>
     //private Map<String,Pair<Componente,Integer>> componentesEmFaltaById;
-    private Map<String,FichaCliente> fichaClienteById;
+    private final Map<String, FichaCliente> fichaClienteById;
 
     // fichas de reparacao programadas apenas (expresso nao chegam a ser colocadas em espera)
-    private LinkedHashMap<Integer, FichaReparacaoProgramada> fichasReparacaoAtuais;
+    private final LinkedHashMap<Integer, FichaReparacaoProgramada> fichasReparacaoAtuais;
 
-    private List<FichaReparacaoExpresso> fichasExpressoAtuais;
+    private final List<FichaReparacaoExpresso> fichasExpressoAtuais;
     // fichas de reparacao programadas ou expresso
-    private Map<Integer, FichaReparacao> fichasReparacaoConcluidas;
+    private final Map<Integer, FichaReparacao> fichasReparacaoConcluidas;
 
-    private Map<Integer, FichaReparacao> fichasReparacaoExpressoConcluidas;
+    private final Map<Integer, FichaReparacao> fichasReparacaoExpressoConcluidas;
 
     //####CONSTRUTOR####
 
@@ -67,28 +58,55 @@ public class SGR implements  SGRInterface{
         this.fichasReparacaoExpressoConcluidas = new HashMap<>();
     }
 
+    public static void main(String[] args) throws FileNotFoundException {
+        Email e = new Email();
+        e.enviaMail("pedroalves706@gmail.com", "Test", "Olá Mundo.");
+    }
+
     //####MÉTODOS####
-    public  void autenticaUtilizador(String id, String senha) {
+    public void autenticaUtilizador(String id, String senha) {
         Utilizador utilizador = null;
         try {
             utilizador = this.utilizadores.validaCredenciais(id, senha);
             this.utilizadorAutenticado = utilizador;
-            System.out.println("Utilizador autenticado com sucesso:" +  utilizadores.getUtilizador(id));
+            System.out.println("Utilizador autenticado com sucesso:" + utilizadores.getUtilizador(id));
         } catch (CredenciasInvalidasException e) {
             e.printStackTrace();
         }
     }
 
-    @Override
-    public void adicionaFichaDeCliente(FichaCliente fichaCliente) throws UtilizadorJaExisteException {
-        if(fichaClienteById.containsKey(fichaCliente.getNIF()))
-            //throw new UtilizadorJaExisteException("Utilizador ja existente:  "+ fichaCliente.getNome() + " NIF -> "+ fichaCliente.getNIF());
+    public void criaFichaCliente(String NIF, String nome, String email, String numeroTelemovel,
+                                 String funcionarioCriador) throws UtilizadorJaExisteException {
+
+        FichaCliente fichaCliente = new FichaCliente(NIF,nome,email,numeroTelemovel,funcionarioCriador);
+
+        if (fichaClienteById.containsKey(fichaCliente.getNIF()))
             throw new UtilizadorJaExisteException();
         fichaClienteById.put(fichaCliente.getNIF(), fichaCliente);
     }
 
+    public void criaFichaReparacaoProgramada(String NIFCliente) {
+        FichaReparacaoProgramada f = new FichaReparacaoProgramada(NIFCliente,utilizadorAutenticado.getId());
+        fichasReparacaoAtuais.put(f.getId(),f);
+    }
+    public void criaFichaReparacaoExpresso(String idTecnico, String NIFCliente, int idServicoExpresso) {
+        new FichaReparacaoExpresso(NIFCliente,idServicoExpresso,utilizadorAutenticado.getId(),idTecnico);
+
+    }
+
+    public void realizaOrcamento(FichaReparacaoProgramada ficha) {
+        ficha.realizaOrcamento(utilizadorAutenticado.getId());
+    }
+
+    public void pausaReparacao(FichaReparacaoProgramada ficha) {
+        //ficha.pausarReparacao();
+        ficha.togglePausarReparacao();
+    }
+
+
     @Override
     public String adicionaEquipamento(Equipamento equipamento) throws EquipamentoJaExisteException {
+        // TODO
         //if(equipamentoById.containsKey(equipamento.getIdEquipamento()))
         //    throw new EquipamentoJaExisteException();
         return null;
@@ -97,10 +115,10 @@ public class SGR implements  SGRInterface{
     @Override
     public void adicionaServicoExpresso(FichaReparacaoExpresso servicoExpresso) throws ServicoJaExisteException {
         // presuminos que ao adicionr fica concluida
-        if(fichasReparacaoConcluidas.containsKey(servicoExpresso.getId()))
+        if (fichasReparacaoConcluidas.containsKey(servicoExpresso.getId()))
             throw new ServicoJaExisteException();
 
-        fichasReparacaoConcluidas.put(servicoExpresso.getId(),servicoExpresso);
+        fichasReparacaoConcluidas.put(servicoExpresso.getId(), servicoExpresso);
     }
 
     @Override
@@ -108,7 +126,7 @@ public class SGR implements  SGRInterface{
         if (fichasReparacaoAtuais.containsKey(servicoProgramado.getId()))
             throw new ServicoJaExisteException();
 
-        fichasReparacaoAtuais.put(servicoProgramado.getId(),servicoProgramado);
+        fichasReparacaoAtuais.put(servicoProgramado.getId(), servicoProgramado);
     }
 
     @Override
@@ -133,13 +151,13 @@ public class SGR implements  SGRInterface{
 
     @Override
     public void registaUtilizador(Utilizador utilizador) throws UtilizadorJaExisteException {
-        if(!this.utilizadores.adicionaUtilizador(utilizador))
+        if (!this.utilizadores.adicionaUtilizador(utilizador))
             throw new UtilizadorJaExisteException();
     }
 
     @Override
     public void removeUtilizador(String idUtilizador) throws UtilizadorNaoExisteException {
-        if(this.utilizadores.removeUtilizador(idUtilizador) == null)
+        if (this.utilizadores.removeUtilizador(idUtilizador) == null)
             throw new UtilizadorNaoExisteException();
     }
 
@@ -151,7 +169,7 @@ public class SGR implements  SGRInterface{
     @Override
     public List<Tecnico> getTecnicos() {
         return this.utilizadores.getUtilizadores().stream()
-                .filter(e-> e instanceof Tecnico)
+                .filter(e -> e instanceof Tecnico)
                 .map(Tecnico.class::cast)
                 .collect(Collectors.toList());
     }
@@ -159,7 +177,7 @@ public class SGR implements  SGRInterface{
     @Override
     public List<Funcionario> getFuncionarios() {
         return this.utilizadores.getUtilizadores().stream()
-                .filter(e-> e instanceof Funcionario)
+                .filter(e -> e instanceof Funcionario)
                 .map(Funcionario.class::cast)
                 .collect(Collectors.toList());
     }
@@ -247,35 +265,36 @@ public class SGR implements  SGRInterface{
 
     @Override
     public void marcaReparacaoCompleta(FichaReparacao f) {
-        if(f instanceof FichaReparacaoProgramada) {
+        if (f instanceof FichaReparacaoProgramada) {
             fichasReparacaoAtuais.remove(f.getId());
         }
-        fichasReparacaoConcluidas.put(f.getId(),f);
+        fichasReparacaoConcluidas.put(f.getId(), f);
     }
-
 
     public FichaReparacaoProgramada obtemReparacaoProgramadaDisponivel(Tecnico t) {
         // ir buscar ficha de reparacao que esteja em fase propicia a ser reparada
         // e que esteja pausada
-        for(FichaReparacaoProgramada f : fichasReparacaoAtuais.values() ) {
-            if(f.podeSerReparadaAgora())
+        for (FichaReparacaoProgramada f : fichasReparacaoAtuais.values()) {
+            if (f.podeSerReparadaAgora())
                 return f;
         }
         return null;
     }
-    public void efetuaReparacaoProgramada(Tecnico t, FichaReparacaoProgramada ficha, int custoReal, int duracaoReal)
+
+    // executa Passo ou subpasso se programada ; executa a reparacao toda se for expresso
+    public void efetuaReparacaoProgramada(FichaReparacaoProgramada ficha, int custoReal, int duracaoReal)
             throws SemReparacoesAEfetuarException {
         boolean completa = false;
         if (ficha == null) {
             throw new SemReparacoesAEfetuarException();
-        }
-        else {
-            completa = t.efetuaReparacaoProgramada(ficha, custoReal, duracaoReal);
-            if(completa) {
+        } else {
+            completa = ficha.efetuaReparacao(utilizadorAutenticado.getId(), custoReal, duracaoReal);
+            if (completa) {
                 this.marcaReparacaoCompleta(ficha);
             }
         }
     }
+
     public Tecnico encontraTecnicoDisponivel() throws NaoHaTecnicosDisponiveisException {
         return this.utilizadores.getUtilizadores()
                 .stream()
@@ -291,27 +310,21 @@ public class SGR implements  SGRInterface{
         for (FichaReparacaoExpresso f : fichasExpressoAtuais) {
             if (f.getIdTecnicoReparou().equals(t.getId())) {
                 int id = f.getId();
-                fichasReparacaoExpressoConcluidas.put(id,f);
+                fichasReparacaoExpressoConcluidas.put(id, f);
                 fichasExpressoAtuais.remove(id);
+                return;
             }
         }
     }
-    public void iniciaReparacaoExpresso(Funcionario funcionario , String idCliente, int idReparacaoEfetuar) throws NaoHaTecnicosDisponiveisException {
-        Tecnico t = encontraTecnicoDisponivel();
+    public void iniciaReparacaoExpresso(Funcionario funcionario, String idCliente, int idReparacaoEfetuar) throws NaoHaTecnicosDisponiveisException {
+        Tecnico t;
+        if(utilizadorAutenticado instanceof Tecnico) {
+            t = (Tecnico)  utilizadorAutenticado;
+        }
+        t = encontraTecnicoDisponivel();
         t.ocupaTecnico();
-        FichaReparacaoExpresso ficha = funcionario.criaFichaReparacaoExpresso(t.getId(),idCliente,idReparacaoEfetuar);
+        FichaReparacaoExpresso ficha = new FichaReparacaoExpresso(idCliente,idReparacaoEfetuar, idCliente, t.getId());
         this.fichasExpressoAtuais.add(ficha);
-        getCliente(idCliente).addFichaReparacaoConcluida(ficha.getId());
-    }
-
-    // devolve todos os componentes que contêm todas as palavras da stringPesquisa na descrição
-    public List<Componente> pesquisaComponentes(String stringPesquisa ) {
-        List<String> splitted = Arrays.asList(stringPesquisa.split(" "));
-        return componenteById
-                .values()
-                .stream()
-                .filter(comp -> List.of(comp.getDescricao()).containsAll(splitted))
-                .collect(Collectors.toList());
     }
 
     // devolve a quantidade existente de um dado componete por descricao
@@ -329,12 +342,14 @@ public class SGR implements  SGRInterface{
     //    return quantidade;
     //}
 
-    public Optional<Componente> getComponeteByDescricao(String descricao){
+    // devolve todos os componentes que contêm todas as palavras da stringPesquisa na descrição
+    public List<Componente> pesquisaComponentes(String stringPesquisa) {
+        List<String> splitted = Arrays.asList(stringPesquisa.split(" "));
         return componenteById
-            .values()
-            .stream()
-            .filter(e-> e.getDescricao().equals(descricao))
-            .findFirst();
+                .values()
+                .stream()
+                .filter(comp -> List.of(comp.getDescricao()).containsAll(splitted))
+                .collect(Collectors.toList());
     }
 
     //public void reservarEEmFaltaComponete(Componente c, int quantidade){
@@ -369,7 +384,7 @@ public class SGR implements  SGRInterface{
     //    if (emFalta > 0){
     //        Optional<Pair<Componente,Integer>> componenteReservarPair =
     //            componenteReservadoById
-    //                .values()
+    //                 c
     //                .stream()
     //                .filter(e-> e.getFirst().getDescricao().equals(c.getDescricao()))
     //                .findFirst()
@@ -385,8 +400,19 @@ public class SGR implements  SGRInterface{
     //    }
     //}
 
-    public static void main(String[] args) throws FileNotFoundException {
-        Email e = new Email();
-        e.enviaMail("pedroalves706@gmail.com", "Test", "Olá Mundo.");
+    public Optional<Componente> getComponeteByDescricao(String descricao) {
+        return componenteById
+                .values()
+                .stream()
+                .filter(e -> e.getDescricao().equals(descricao))
+                .findFirst();
+    }
+
+    public List<FichaReparacaoProgramada> getFichasAguardarOrcamento() {
+        return this.fichasReparacaoAtuais
+                .values()
+                .stream()
+                .filter( f -> f.getFase().equals(Fase.AEsperaOrcamento))
+                .collect(Collectors.toList());
     }
 }

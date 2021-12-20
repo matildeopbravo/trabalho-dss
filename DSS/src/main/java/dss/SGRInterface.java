@@ -21,9 +21,6 @@ public interface SGRInterface {
     // Devolve o utilizador se a autenticação for bem sucedida, se não devolve null
     //static void autenticaUtilizador(String id, String senha) throws UtilizadorNaoExisteException;
 
-    //Devolve boolean de sucesso
-    void adicionaFichaDeCliente (FichaCliente fichaCliente) throws UtilizadorJaExisteException;
-
     //Tem de gerar um código para o equipamento, que será devolvido
     String adicionaEquipamento(Equipamento equipamento) throws EquipamentoJaExisteException;
 

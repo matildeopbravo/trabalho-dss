@@ -15,8 +15,8 @@ public class FichaReparacaoProgramada extends FichaReparacao {
     boolean pausado ;
     Fase fase;
 
-    public FichaReparacaoProgramada(String idCliente, String funcionarioCriador) {
-        super(idCliente, funcionarioCriador);
+    public FichaReparacaoProgramada(String idCliente, String utilizadorCriador) {
+        super(idCliente, utilizadorCriador);
         this.equipamentoAReparar = new Equipamento(idCliente);
         pausado = true;
         this.orcamento = null;
@@ -67,4 +67,9 @@ public class FichaReparacaoProgramada extends FichaReparacao {
     public boolean podeSerReparadaAgora() {
         return fase.equals(Fase.EmReparacao) && pausado;
     }
+
+    public Fase getFase() {
+        return fase;
+    }
+
 }
