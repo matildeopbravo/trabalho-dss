@@ -1,5 +1,6 @@
 package dss;
 
+
 import dss.equipamentos.Componente;
 import dss.equipamentos.Equipamento;
 import dss.equipamentos.Fase;
@@ -67,13 +68,15 @@ public class SGR implements  SGRInterface{
     }
 
     //####MÉTODOS####
-    @Override
-    public Utilizador autenticaUtilizador(String id, String senha) throws UtilizadorNaoExisteException {
-        Utilizador utilizador = this.utilizadores.validaCredenciais(id, senha);
-        if (utilizador == null)
-            throw new UtilizadorNaoExisteException();
-        this.utilizadorAutenticado = utilizador;
-        return utilizador;
+    public  void autenticaUtilizador(String id, String senha) {
+        Utilizador utilizador = null;
+        try {
+            utilizador = this.utilizadores.validaCredenciais(id, senha);
+            this.utilizadorAutenticado = utilizador;
+            System.out.println("Utilizador autenticado com sucesso:" +  utilizadores.getUtilizador(id));
+        } catch (CredenciasInvalidasException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -383,7 +386,7 @@ public class SGR implements  SGRInterface{
     //}
 
     public static void main(String[] args) throws FileNotFoundException {
-        EMail e = new EMail();
+        Email e = new Email();
         e.enviaMail("pedroalves706@gmail.com", "Test", "Olá Mundo.");
     }
 }

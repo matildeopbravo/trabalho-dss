@@ -1,8 +1,9 @@
 package dss.utilizador;
 
-import at.favre.lib.crypto.bcrypt.BCrypt;
-import jdk.jshell.execution.Util;
+import dss.BCrypt.BCrypt;
+import dss.exceptions.CredenciasInvalidasException;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -43,18 +44,19 @@ public class UtilizadorDAO {
      * @return Utilizador cujas credenciais foram fornecidas, null se forem
      * inválidas.
      */
-    public Utilizador validaCredenciais (String id, String password) {
+    public Utilizador validaCredenciais (String id, String password) throws CredenciasInvalidasException {
         Utilizador utilizador = this.utilizadoresPorID.get(id);
-        String passwordHash = encriptaPassword(password);
-        if (utilizador != null) {
-            if (utilizador.getPasswordHash().equals(passwordHash))
-                return utilizador;
+        if(utilizador != null && BCrypt.checkpw(password,utilizador.getPasswordHash())) {
+            return utilizador;
         }
-        return null;
+        else {
+            throw new CredenciasInvalidasException();
+
+        }
     }
 
     public static String encriptaPassword(String password) {
-        return BCrypt.withDefaults().hashToString(4, password.toCharArray());
+        return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
     public List<Utilizador> getUtilizadores() {

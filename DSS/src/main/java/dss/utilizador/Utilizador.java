@@ -35,4 +35,12 @@ public abstract class Utilizador {
         this.passwordHash = passwordHash;
     }
 
+    @Override
+    public String toString() {
+        return "Utilizador{" +
+                "nome='" + nome + '\'' +
+                ", id='" + id + '\'' +
+                ", passwordHash='" + passwordHash + '\'' +
+                '}';
+    }
 }

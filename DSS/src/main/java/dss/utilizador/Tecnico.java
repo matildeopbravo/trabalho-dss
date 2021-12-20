@@ -1,6 +1,5 @@
 package dss.utilizador;
 
-import at.favre.lib.crypto.bcrypt.BCrypt;
 import dss.fichas.FichaReparacao;
 import dss.fichas.FichaReparacaoProgramada;
 

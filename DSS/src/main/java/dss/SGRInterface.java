@@ -19,7 +19,7 @@ import java.util.Map;
 
 public interface SGRInterface {
     // Devolve o utilizador se a autenticação for bem sucedida, se não devolve null
-    Utilizador autenticaUtilizador (String id, String senha) throws UtilizadorNaoExisteException;
+    //static void autenticaUtilizador(String id, String senha) throws UtilizadorNaoExisteException;
 
     //Devolve boolean de sucesso
     void adicionaFichaDeCliente (FichaCliente fichaCliente) throws UtilizadorJaExisteException;

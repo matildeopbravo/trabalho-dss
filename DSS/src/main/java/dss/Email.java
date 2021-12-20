@@ -8,10 +8,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class EMail {
+public class Email {
     Configuration config;
 
-    public EMail() throws FileNotFoundException {
+    public Email() throws FileNotFoundException {
         Properties prop = new Properties();
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("config/config.properties");
 
