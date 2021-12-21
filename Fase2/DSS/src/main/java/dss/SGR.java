@@ -160,7 +160,7 @@ public class SGR implements SGRInterface {
                 .filter(ficha -> ficha.getFuncionarioCriador().equals(f.getId()))
                 .count();
     }
-    
+
     private int getNumEntregas(Funcionario f) {
         return (int) fichasReparacaoConcluidas.values()
                 .stream()
