@@ -25,6 +25,10 @@ public class ReparacaoProgramada extends Reparacao {
         fase = Fase.AEsperaOrcamento;
     }
 
+    public String getOrcamentoMail(String nome) {
+        return "Caro " + nome + ",\n" + orcamento.toString() + "\nAtenciosamente,\n Loja Reparações";
+    }
+
     @Override
     public List<Intervencao> getIntervencoesRealizadas() {
         return planoReparacao.getPassosReparacaoConcluidos().stream().map(Intervencao.class::cast).collect(Collectors.toList());

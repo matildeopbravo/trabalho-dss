@@ -39,6 +39,7 @@ public class SGR implements SGRInterface {
     private final List<ReparacaoExpresso> expressoAtuais;
     // fichas de reparacao programadas ou expresso
     private final Map<Integer, Reparacao> reparacoesConcluidas;
+    Email email ;
 
     //####CONSTRUTOR####
 
@@ -54,11 +55,16 @@ public class SGR implements SGRInterface {
         this.reparacoesProgramadasAtuais = new LinkedHashMap<>();
         this.expressoAtuais = new ArrayList<>();
         this.reparacoesConcluidas = new HashMap<>();
+        try {
+            this.email = new Email();
+        }
+        catch (FileNotFoundException e) {
+            this.email = null;
+
+        }
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
-        Email e = new Email();
-        e.enviaMail("pedroalves706@gmail.com", "Test", "Olá Mundo.");
+    public static void main(String[] args) {
     }
 
     //####MÉTODOS####
@@ -91,14 +97,14 @@ public class SGR implements SGRInterface {
 
     public void realizaOrcamento(ReparacaoProgramada ficha) {
         ficha.realizaOrcamento(utilizadorAutenticado.getId());
-        // TODO enviar mail?
+        Cliente c = clienteById.get(ficha.getIdCliente());
+        email.enviaMail("pedroalves706@gmail.com", "Orçamento",
+                ficha.getOrcamentoMail(c.getNome()));;
     }
 
-    public void pausaReparacao(ReparacaoProgramada ficha) {
-        //ficha.pausarReparacao();
+    public void togglePausaReparacao(ReparacaoProgramada ficha) {
         ficha.togglePausarReparacao();
     }
-
 
     @Override
     public String adicionaEquipamento(Equipamento equipamento) throws EquipamentoJaExisteException {
@@ -108,33 +114,16 @@ public class SGR implements SGRInterface {
         return null;
     }
 
-    @Override
-    public void adicionaServicoExpresso(ReparacaoExpresso servicoExpresso) throws ServicoJaExisteException {
-        // presuminos que ao adicionr fica concluida
-        if (reparacoesConcluidas.containsKey(servicoExpresso.getId()))
-            throw new ServicoJaExisteException();
-
-        reparacoesConcluidas.put(servicoExpresso.getId(), servicoExpresso);
-    }
-
-    @Override
-    public void adicionaServicoProgramado(ReparacaoProgramada servicoProgramado) throws ServicoJaExisteException {
-        if (reparacoesProgramadasAtuais.containsKey(servicoProgramado.getId()))
-            throw new ServicoJaExisteException();
-
-        reparacoesProgramadasAtuais.put(servicoProgramado.getId(), servicoProgramado);
-    }
-
     public Map<String, List<Intervencao>> intervencoesTecnicos() {
         return utilizadores
                 .getUtilizadores()
                 .stream()
                 .filter(t-> t instanceof Tecnico)
                 .map(Tecnico.class::cast)
-                .collect(Collectors.toMap(Tecnico::getId, this::getIntervencoesTecnico));
+                .collect(Collectors.toMap(Tecnico::getId, this::getIntervencoesByTecnico));
     }
 
-    private List<Intervencao> getIntervencoesTecnico(Tecnico t) {
+    private List<Intervencao> getIntervencoesByTecnico(Tecnico t) {
         List <Intervencao> l = reparacoesConcluidas
                 .values()
                 .stream()
@@ -184,16 +173,6 @@ public class SGR implements SGRInterface {
                 .stream()
                 .filter(ficha -> ficha.getFuncionarioEntregou().equals(f.getId()))
                 .count();
-    }
-
-    @Override
-    public Map<String, Integer> totalIntervencoesPorTecnico() {
-        return null;
-    }
-
-    @Override
-    public void alteraFaseServico(Fase fase, String idFicha) throws ServicoNaoExisteException {
-
     }
 
     @Override

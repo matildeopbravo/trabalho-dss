@@ -22,11 +22,6 @@ public interface SGRInterface {
     //Tem de gerar um código para o equipamento, que será devolvido
     String adicionaEquipamento(Equipamento equipamento) throws EquipamentoJaExisteException;
 
-    void adicionaServicoExpresso(ReparacaoExpresso servicoExpresso) throws ServicoJaExisteException;
-
-    //O serviço expresso terá de ter um indicador de fase, sendo a fase inicial a de
-    //reliazação do orçamento/plano de reparação
-    void adicionaServicoProgramado(ReparacaoProgramada servicoProgramado) throws ServicoJaExisteException;
 
     // TODO
     //Devolve a lista das estatísticas de atendimentos de cada funcionário
@@ -34,9 +29,7 @@ public interface SGRInterface {
     Map<String, EstatisticasFuncionario> estatisticasFuncionarios();
 
     //Devolve a lista de total de intervenções realizadas por cada técnico
-    Map<String, Integer> totalIntervencoesPorTecnico();
-
-    void alteraFaseServico(Fase fase, String idFicha) throws ServicoNaoExisteException;
+    Map<String, List<Intervencao>> intervencoesTecnicos();
 
     void registaUtilizador (Utilizador utilizador) throws UtilizadorJaExisteException;
     void removeUtilizador (String idUtilizador) throws UtilizadorNaoExisteException;

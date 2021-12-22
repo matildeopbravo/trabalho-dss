@@ -25,4 +25,13 @@ public class Orcamento {
     public float getPreco() {
         return custoTotal;
     }
+
+    @Override
+    public String toString() {
+        return "Orcamento{" +
+                "custoTotal=" + custoTotal +
+                ", componentesNecessarios=" + componentesNecessarios +
+                ", prazoMaximo=" + prazoMaximo +
+                '}';
+    }
 }
