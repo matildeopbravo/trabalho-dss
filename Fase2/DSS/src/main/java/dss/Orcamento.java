@@ -3,27 +3,26 @@ package dss;
 import dss.auxiliar.Pair;
 import dss.equipamentos.Componente;
 
-import java.time.LocalDate;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class Orcamento {
     // vai ser dado pela soma dos custos
-    private final float total;
+    private final float custoTotal;
     private final List<Componente> componentesNecessarios;
-    private final LocalDate prazoMaximo;
+    private final LocalDateTime prazoMaximo;
 
     public Orcamento(PlanoReparacao p) {
         this.componentesNecessarios = p.getComponentes().values().stream().map(Pair::getFirst).toList();
 
-        Pair<Float,Float> custoEDuracao = p.getCustoEDuracaoPrevista();
-        this.total = custoEDuracao.getFirst();
-        float duracao = custoEDuracao.getSecond();
-        float days = duracao / 60;
-        this.prazoMaximo = LocalDate.now();
-        prazoMaximo.plusDays( (long) days);
+        Pair<Float, Duration> custoEDuracao = p.getCustoEDuracaoPrevista();
+        this.custoTotal = custoEDuracao.getFirst();
+        Duration duracao = custoEDuracao.getSecond();
+        this.prazoMaximo = LocalDateTime.now().plusSeconds(duracao.getSeconds());
     }
 
     public float getPreco() {
-        return total;
+        return custoTotal;
     }
 }

@@ -3,6 +3,7 @@ package dss;
 import dss.auxiliar.Pair;
 import dss.equipamentos.Componente;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,11 +12,20 @@ public class PlanoReparacao {
   List<PassoReparacao> passosReparacaoConcluidos = new ArrayList<>();
   List<PassoReparacao> passosReparacaoAExecutar = new ArrayList<>();
 
+  public List<PassoReparacao> getPassosReparacaoConcluidos() {
+    return passosReparacaoConcluidos;
+  }
+
+  public boolean estaConcluido() {
+    return passosReparacaoAExecutar.isEmpty();
+  }
   /**
    * Método que adiciona um passo ao plano
    * @return O objeto de passo criado
    */
-  public PassoReparacao addPasso(String descricao, float duracao, float custo)  {
+
+
+  public PassoReparacao addPasso(String descricao, Duration duracao, float custo)  {
     PassoReparacao p = new PassoReparacao(descricao,duracao,custo);
     passosReparacaoAExecutar.add(p);
     return p;
@@ -25,7 +35,7 @@ public class PlanoReparacao {
     * Método que executa o próximo passo/subpasso de reparação neste plano
     * @return boleano que indica se o plano foi concluído na sua totalidade
     */
-  public boolean repara(int custoReal, int duracaoReal) {
+  public boolean repara(int custoReal, Duration duracaoReal) {
     // nunca pode dar erro porque se nao tivesse passos nao estaria na lista a reparar
     PassoReparacao p = this.passosReparacaoAExecutar.get(0);
     boolean executouPassoCompleto = p.executaPassoOuSubpasso(custoReal, duracaoReal);;
@@ -41,38 +51,32 @@ public class PlanoReparacao {
    * passos, tanto os concluídos como os por realizar
    * @return Par (custo, tempo).
    */
-  public Pair<Float,Float> getCustoEDuracaoPrevista(){
-    float custo = 0;
-    float duracao = 0;
+  public Pair<Float,Duration> getCustoEDuracaoPrevista(){
+    // se for pedida uma previsao durante o periodo de reparacao, vai ser dado quanto falta e nao ter
+    // em conta o que ja passou
 
-    for (PassoReparacao elem: passosReparacaoConcluidos) {
-      custo += elem.getCusto();
-      duracao += elem.getDuracao();
-    }
+    float custo = 0;
+    Duration duracao = Duration.ZERO;
 
     for (PassoReparacao elem: passosReparacaoAExecutar) {
-      custo += elem.getCusto();
-      duracao += elem.getDuracao();
+      custo += elem.getCustoPrevisto();
+      duracao = duracao.plus(elem.getDuracaoPrevista());
     }
     return new Pair<>(custo,duracao);
   }
 
-  public Pair<Float,Float> getCustoEDuracaoReal(){
+  public Pair<Float,Duration> getCustoEDuracaoReal(){
     float custo = 0;
-    float duracao = 0;
+    Duration duracao = Duration.ZERO;
 
     for (PassoReparacao elem: passosReparacaoConcluidos) {
       custo += elem.getCustoReal();
-      duracao += elem.getDuracaoReal();
-    }
-
-    for (PassoReparacao elem: passosReparacaoAExecutar) {
-      custo += elem.getCustoReal();
-      duracao += elem.getDuracaoReal();
+      duracao = duracao.plus(elem.getDuracaoReal());
     }
     return new Pair<>(custo,duracao);
   }
 
+  // TODO vamos considerar que os componentes previstos sao os efetivamente utilizados ou noa?
   public HashMap<String, Pair<Componente,Integer>> getComponentes(){
     HashMap<String, Pair<Componente,Integer>> map = new HashMap<>();
     for (PassoReparacao elem: passosReparacaoConcluidos){

@@ -3,15 +3,13 @@ package dss;
 import dss.equipamentos.Componente;
 import dss.equipamentos.Equipamento;
 import dss.equipamentos.Fase;
-import dss.fichas.FichaCliente;
-import dss.fichas.FichaReparacao;
-import dss.fichas.FichaReparacaoExpresso;
-import dss.fichas.FichaReparacaoProgramada;
+import dss.estatisticas.EstatisticasFuncionario;
+import dss.reparacoes.Reparacao;
+import dss.reparacoes.ReparacaoExpresso;
+import dss.reparacoes.ReparacaoProgramada;
 import dss.utilizador.Funcionario;
 import dss.utilizador.Tecnico;
 import dss.utilizador.Utilizador;
-import dss.estatisticas.EstatisticasFuncionario;
-import dss.estatisticas.EstatisticasTecnico;
 import dss.exceptions.*;
 
 import java.util.List;
@@ -24,15 +22,13 @@ public interface SGRInterface {
     //Tem de gerar um código para o equipamento, que será devolvido
     String adicionaEquipamento(Equipamento equipamento) throws EquipamentoJaExisteException;
 
-    void adicionaServicoExpresso(FichaReparacaoExpresso servicoExpresso) throws ServicoJaExisteException;
+    void adicionaServicoExpresso(ReparacaoExpresso servicoExpresso) throws ServicoJaExisteException;
 
     //O serviço expresso terá de ter um indicador de fase, sendo a fase inicial a de
     //reliazação do orçamento/plano de reparação
-    void adicionaServicoProgramado(FichaReparacaoProgramada servicoProgramado) throws ServicoJaExisteException;
+    void adicionaServicoProgramado(ReparacaoProgramada servicoProgramado) throws ServicoJaExisteException;
 
-    //Devolve a lista das estatísticas de reparações de cada técnico
-    Map<String, EstatisticasTecnico> estatisticasTecnicos();
-
+    // TODO
     //Devolve a lista das estatísticas de atendimentos de cada funcionário
     //de balcão
     Map<String, EstatisticasFuncionario> estatisticasFuncionarios();
@@ -53,26 +49,26 @@ public interface SGRInterface {
     List<Utilizador> getUtilizadores();
     List<Tecnico> getTecnicos();
     List<Funcionario> getFuncionarios();
-    List<FichaCliente> getClientes();
+    List<Cliente> getClientes();
 
     Utilizador getUtilizador(String id) throws UtilizadorNaoExisteException; // devolve null se não existir
-    FichaCliente getCliente(String id); // devolve null se não existir
+    Cliente getCliente(String id); // devolve null se não existir
 
     List<Equipamento> getEquipamentos();
     List<Equipamento> getEquipamentosAbandonados();
     Equipamento getEquipamento(String codigo); // devolve null se não existir
 
-    List<FichaReparacao> getReparacoes();
-    List<FichaReparacao> getReparacoesCompletadas();
-    List<FichaReparacao> getReparacoesEmCurso();
-    List<FichaReparacaoProgramada> getReparacoesSemOrcamento();
-    FichaReparacao getServico(String id); // devolve null se não existir
+    List<Reparacao> getReparacoes();
+    List<Reparacao> getReparacoesCompletadas();
+    List<Reparacao> getReparacoesEmCurso();
+    List<ReparacaoProgramada> getReparacoesSemOrcamento();
+    Reparacao getServico(String id); // devolve null se não existir
 
-    List<FichaReparacaoExpresso> getReparacoesExpresso();
-    List<FichaReparacaoProgramada> getReparacoesProgramadas();
+    List<ReparacaoExpresso> getReparacoesExpresso();
+    List<ReparacaoProgramada> getReparacoesProgramadas();
 
     List<Componente> getComponentes();
     Componente getComponente(String id); // devolve null se não existir
 
-    void marcaReparacaoCompleta(FichaReparacao f);
+    void marcaReparacaoCompleta(Reparacao f);
 }
