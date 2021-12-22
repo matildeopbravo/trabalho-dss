@@ -5,6 +5,8 @@ import dss.equipamentos.Equipamento;
 import dss.equipamentos.Fase;
 import dss.Orcamento;
 import dss.PlanoReparacao;
+import dss.exceptions.NaoPodeSerReparadoAgoraException;
+import dss.exceptions.OrcamentoUltrapassadoException;
 
 import java.time.Duration;
 import java.util.List;
@@ -15,7 +17,7 @@ public class ReparacaoProgramada extends Reparacao {
     PlanoReparacao planoReparacao;
     Orcamento orcamento;
     // pausado indica se esta a ser reparado neste preciso momento ou nao
-    boolean pausado ;
+    boolean pausado;
 
     public ReparacaoProgramada(String idCliente, String utilizadorCriador) {
         super(idCliente, utilizadorCriador);
@@ -31,17 +33,27 @@ public class ReparacaoProgramada extends Reparacao {
 
     @Override
     public List<Intervencao> getIntervencoesRealizadas() {
-        return planoReparacao.getPassosReparacaoConcluidos().stream().map(Intervencao.class::cast).collect(Collectors.toList());
+        return planoReparacao.getPassosReparacaoConcluidos().stream().map(Intervencao.class::cast)
+                .collect(Collectors.toList());
+    }
+
+    public boolean podeSerReparado() {
+        return fase.equals(Fase.EmReparacao) && pausado;
     }
 
     // marca como realizado um passo ou subpasso, indicando o custo e o tempo que gastou na realidade
-    public boolean efetuaReparacao(String id, int custoReal, Duration tempoReal) {
-        if(!tecnicosQueRepararam.contains(id))
+    public boolean efetuaReparacao(String id, int custoReal, Duration tempoReal) throws NaoPodeSerReparadoAgoraException {
+        if (!this.podeSerReparado()) {
+            throw new NaoPodeSerReparadoAgoraException();
+        }
+        if (!tecnicosQueRepararam.contains(id))
             tecnicosQueRepararam.add(id);
+
         return this.planoReparacao.repara(custoReal, tempoReal);
     }
 
     public void realizaOrcamento(String id) {
+        // TODO Verifica que nao pode ser reparado e notififca
         this.tecnicosQueRepararam.add(id);
         this.orcamento = new Orcamento(planoReparacao);
     }
@@ -60,15 +72,9 @@ public class ReparacaoProgramada extends Reparacao {
         this.fase = Fase.Recusada;
     }
 
-    public boolean ultrapassaOrcamento() {
-        boolean ultrapassa = false;
-        if (this.orcamento != null) {
-            Orcamento orcamentoReal = new Orcamento(planoReparacao);
-            //Não pode exceder orçamento aprovado por 120%
-            if (orcamentoReal.getPreco() > this.orcamento.getPreco()*1.2)
-                ultrapassa = true;
-        }
-        return ultrapassa;
+    public boolean ultrapassouOrcamento() {
+        //Não pode exceder orçamento aprovado por 120%
+        return planoReparacao.getCustoEDuracaoReal().getFirst() > orcamento.getPreco() * 1.2;
     }
 
     public void togglePausarReparacao() {

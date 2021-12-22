@@ -2,6 +2,7 @@ package dss;
 
 import dss.auxiliar.Pair;
 import dss.equipamentos.Componente;
+import dss.exceptions.OrcamentoUltrapassadoException;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -9,8 +10,10 @@ import java.util.HashMap;
 import java.util.List;
 
 public class PlanoReparacao {
-  List<PassoReparacao> passosReparacaoConcluidos = new ArrayList<>();
-  List<PassoReparacao> passosReparacaoAExecutar = new ArrayList<>();
+  // se for demasiado lente calcular o custo on demand, volta-se a meter isto
+  //private float custoAteAgora = 0;
+  private List<PassoReparacao> passosReparacaoConcluidos = new ArrayList<>();
+  private List<PassoReparacao> passosReparacaoAExecutar = new ArrayList<>();
 
   public List<PassoReparacao> getPassosReparacaoConcluidos() {
     return passosReparacaoConcluidos;
@@ -30,15 +33,14 @@ public class PlanoReparacao {
     passosReparacaoAExecutar.add(p);
     return p;
   }
-
   /**
     * Método que executa o próximo passo/subpasso de reparação neste plano
-    * @return boleano que indica se o plano foi concluído na sua totalidade
     */
   public boolean repara(int custoReal, Duration duracaoReal) {
     // nunca pode dar erro porque se nao tivesse passos nao estaria na lista a reparar
-    PassoReparacao p = this.passosReparacaoAExecutar.get(0);
-    boolean executouPassoCompleto = p.executaPassoOuSubpasso(custoReal, duracaoReal);;
+    PassoReparacao p = this.passosReparacaoAExecutar.get(passosReparacaoAExecutar.size() -  1);
+    boolean executouPassoCompleto = p.executaPassoOuSubpasso(custoReal, duracaoReal);
+    //this.custoAteAgora += custoReal;
     if (executouPassoCompleto) {
       this.passosReparacaoAExecutar.remove(p);
       passosReparacaoConcluidos.add(p);

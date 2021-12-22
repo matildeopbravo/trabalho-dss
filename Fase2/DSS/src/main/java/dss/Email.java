@@ -17,7 +17,7 @@ public class Email {
 
         try {
             prop.load(inputStream);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new FileNotFoundException("Ficheiro de configuração não existe");
         }
 

@@ -78,8 +78,4 @@ public abstract class Reparacao {
 
     public abstract  List<Intervencao>  getIntervencoesRealizadas();
 
-
-    // marca como realizado um passo ou subpasso, indicando o custo e o tempo que gastou na realidade
-    //public abstract boolean efetuaReparacao(String id, int custo, int tempo);
-
 }

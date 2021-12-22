@@ -43,7 +43,7 @@ public class SGR implements SGRInterface {
 
     //####CONSTRUTOR####
 
-    public SGR() {
+    public SGR() throws FileNotFoundException {
         this.utilizadores = new UtilizadorDAO();
         this.utilizadorAutenticado = null;
 
@@ -55,13 +55,7 @@ public class SGR implements SGRInterface {
         this.reparacoesProgramadasAtuais = new LinkedHashMap<>();
         this.expressoAtuais = new ArrayList<>();
         this.reparacoesConcluidas = new HashMap<>();
-        try {
-            this.email = new Email();
-        }
-        catch (FileNotFoundException e) {
-            this.email = null;
-
-        }
+        this.email = new Email();
     }
 
     public static void main(String[] args) {
@@ -98,7 +92,7 @@ public class SGR implements SGRInterface {
     public void realizaOrcamento(ReparacaoProgramada ficha) {
         ficha.realizaOrcamento(utilizadorAutenticado.getId());
         Cliente c = clienteById.get(ficha.getIdCliente());
-        email.enviaMail("pedroalves706@gmail.com", "Orçamento",
+        email.enviaMail(c.getEmail(), "Orçamento",
                 ficha.getOrcamentoMail(c.getNome()));;
     }
 
@@ -314,19 +308,29 @@ public class SGR implements SGRInterface {
         }
         return null;
     }
-
     // executa Passo ou subpasso se programada ; executa a reparacao toda se for expresso
-    public void efetuaReparacaoProgramada(ReparacaoProgramada ficha, int custoReal, Duration duracaoReal)
-            throws SemReparacoesAEfetuarException {
-        boolean completa = false;
-        if (ficha == null) {
-            throw new SemReparacoesAEfetuarException();
-        } else {
-            completa = ficha.efetuaReparacao(utilizadorAutenticado.getId(), custoReal, duracaoReal);
-            if (completa) {
-                this.marcaReparacaoCompleta(ficha);
+    public void efetuaReparacaoProgramada(ReparacaoProgramada ficha, int custoReal, Duration duracaoReal) {
+        try {
+            if(ficha.ultrapassouOrcamento()) {
+                Cliente c = clienteById.get(ficha.getIdCliente());
+                enviaMailOrcamentoUltrapassado(c);
+                ficha.setFase(Fase.AEsperaResposta);
+            }
+            else {
+                boolean completa = ficha.efetuaReparacao(utilizadorAutenticado.getId(), custoReal, duracaoReal);
+                if (completa) {
+                    this.marcaReparacaoCompleta(ficha);
+                }
             }
         }
+        catch (NaoPodeSerReparadoAgoraException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void enviaMailOrcamentoUltrapassado(Cliente c) {
+        email.enviaMail(c.getEmail(), "Orçamento Ultrapassado", "Caro " + c.getNome() +
+                ",\n O Orçamento Foi ultrapassado\n Atenciosamente, Centro de Reparações");
     }
 
     public Tecnico encontraTecnicoDisponivel() throws NaoHaTecnicosDisponiveisException {
