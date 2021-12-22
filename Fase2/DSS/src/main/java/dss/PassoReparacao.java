@@ -2,29 +2,24 @@ package dss;
 
 import dss.equipamentos.Componente;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PassoReparacao {
-  // Pode ser null
+public class PassoReparacao implements Intervencao {
+  String descricao;
+  private DuracaoCusto duracaoCusto;
+
   private List<PassoReparacao> subPassosPorExecutar;
   private List<PassoReparacao> subpassosExecutados;
 
-  private String descricao;
-  private float duracao;  // duracao prevista
-  private float custo;    // custo previsto
-
-  private float duracaoReal = -1;  // duracao real
-  private float custoReal = -1;    // custo real
-
   private List<Componente> componentesNecessarios = null;
 
-  public PassoReparacao(String descricao, float duracao, float custo) {
+  public PassoReparacao(String descricao, Duration duracao, float custo) {
     this.subpassosExecutados = null;
     this.subPassosPorExecutar = null;
     this.descricao = descricao;
-    this.duracao = duracao; // prevista
-    this.custo = custo;     // prevista
+    this.duracaoCusto = new DuracaoCusto(duracao,custo);
   }
 
   public List<Componente> getComponentesNecessarios(){
@@ -39,9 +34,20 @@ public class PassoReparacao {
     if(componentesNecessarios == null)  {
       this.componentesNecessarios = new ArrayList<>();
     }
+    // TODO clones averiguar
     this.componentesNecessarios.add(e.clone());
-    this.custo += e.getPreco();
+    duracaoCusto.aumentaCustoReal(e.getPreco());
   }
+  public void addComponentePrevisto(Componente e) {
+    if(componentesNecessarios == null)  {
+      this.componentesNecessarios = new ArrayList<>();
+    }
+    // TODO clones averiguar
+    this.componentesNecessarios.add(e.clone());
+    duracaoCusto.aumentaCustoPrevisto(e.getPreco());
+
+  }
+
 
   // clone ??
 
@@ -54,65 +60,58 @@ public class PassoReparacao {
       this.subPassosPorExecutar = new ArrayList<>();
       this.subpassosExecutados = new ArrayList<>();
     }
+    duracaoCusto.aumentaCustoPrevisto(p.getCustoPrevisto());
+    duracaoCusto.aumentaDuracaoPrevista(p.getDuracaoPrevista());
     this.subPassosPorExecutar.add(p);
-    this.custo += p.custo;
-    this.duracao += p.duracao;
+    this.componentesNecessarios.addAll(p.getComponentesNecessarios());
   }
+
 
   /**
    * Método que realiza um subpasso (caso exista) ou o passo.
    * @return True se o passo (incluindo os seus subpassos) se encontrarem completos.
    */
-  // TODO Adicionar o tempo real que foi necessario e o custo real
-  public boolean executaPassoOuSubpasso(int custoReal, int duracaoReal) {
+  public boolean executaPassoOuSubpasso(float custoReal, Duration duracaoReal) {
+    // TODO Acrescentar os componentes usados nos subpassoss
+    // quer seja passo ou subpasso, vamos aumentar o custo e duracao real
+    this.duracaoCusto.aumentaCustoReal(custoReal);
+    this.duracaoCusto.aumentaDuracaoReal(duracaoReal);
+
+    // Tem subpassos por executar
     if (subPassosPorExecutar.size() > 0){
-      PassoReparacao subPasso = this.subPassosPorExecutar.remove(0);
-      subPasso.setCustoReal(custoReal);
-      subPasso.setDuracaoReal(duracaoReal);
+      PassoReparacao subPasso = this.subPassosPorExecutar.remove(subPassosPorExecutar.size() - 1);
+      subPasso.duracaoCusto.setCustoReal(custoReal);
+      subPasso.duracaoCusto.setDuracaoReal(duracaoReal);
       this.subpassosExecutados.add(subPasso);
 
-      if (subPassosPorExecutar.size() == 0) {
-        this.custoReal = custoReal;
-        this.duracaoReal = duracaoReal;
-        return true;
-      }
-      return false;
+      // atualizar custo e duracao real com os reais dos subpassos
+      // se foi o ultimo subpasso, entao o passo inteiro esta completo
+      return subPassosPorExecutar.size() == 0 ;
     }
     // nao tinha subpassos e executou o passo em si
-    this.custoReal = custoReal;
-    this.duracaoReal = duracaoReal;
-    return true;
+      return true;
+    }
+  public Duration getDuracaoReal() {
+    return duracaoCusto.getDuracaoReal();
   }
 
-  public float getDuracao() {
-    return duracao;
+  @Override
+  public Duration getDuracaoPrevista() {
+    return duracaoCusto.getDuracaoPrevista();
   }
 
-  public void setDuracao(float duracao) {
-    this.duracao = duracao;
-  }
-
-  public float getCusto() {
-    return custo;
-  }
-
-  public void setCusto(float custo) {
-    this.custo = custo;
-  }
-
-  public float getDuracaoReal() {
-    return duracaoReal;
-  }
-
-  public void setDuracaoReal(float duracaoReal) {
-    this.duracaoReal = duracaoReal;
-  }
-
+  @Override
   public float getCustoReal() {
-    return custoReal;
+    return duracaoCusto.getCustoReal();
   }
 
-  public void setCustoReal(float custoReal) {
-    this.custoReal = custoReal;
+  @Override
+  public float getCustoPrevisto() {
+    return duracaoCusto.getCustoPrevisto();
+  }
+
+  @Override
+  public String getDescricao() {
+    return descricao;
   }
 }
