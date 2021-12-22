@@ -4,13 +4,13 @@ package dss;
 import dss.equipamentos.*;
 import dss.estatisticas.*;
 import dss.exceptions.*;
-import dss.fichas.*;
+import dss.reparacoes.*;
 import dss.utilizador.*;
 
 import java.io.FileNotFoundException;
+import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class SGR implements SGRInterface {
     //####ATRIBUTOS####
@@ -23,7 +23,7 @@ public class SGR implements SGRInterface {
 
 
     // servicos expressos
-    private final Map<Integer, ServicoExpresso> servicoExpresso;
+    private final Map<Integer, ServicoExpressoTabelado> servicoExpresso;
     //// componentes em stock na loja idComponente -> <Componente,Quantidade>
     //private Map<Integer,Pair<Componente,Integer>> componenteById;
     //// componentes reservado na loja descricao -> <Componente,Quantidade>
@@ -31,16 +31,14 @@ public class SGR implements SGRInterface {
 
     //// componentes em falta na loja descricao -> <Componente,Quantidade>
     //private Map<String,Pair<Componente,Integer>> componentesEmFaltaById;
-    private final Map<String, FichaCliente> fichaClienteById;
+    private final Map<String, Cliente> clienteById;
 
-    // fichas de reparacao programadas apenas (expresso nao chegam a ser colocadas em espera)
-    private final LinkedHashMap<Integer, FichaReparacaoProgramada> fichasReparacaoAtuais;
+    // reparacoes programadas apenas (expresso nao chegam a ser colocadas em espera)
+    private final LinkedHashMap<Integer, ReparacaoProgramada> reparacoesProgramadasAtuais;
 
-    private final List<FichaReparacaoExpresso> fichasExpressoAtuais;
+    private final List<ReparacaoExpresso> expressoAtuais;
     // fichas de reparacao programadas ou expresso
-    private final Map<Integer, FichaReparacao> fichasReparacaoConcluidas;
-
-    private final Map<Integer, FichaReparacao> fichasReparacaoExpressoConcluidas;
+    private final Map<Integer, Reparacao> reparacoesConcluidas;
 
     //####CONSTRUTOR####
 
@@ -52,11 +50,10 @@ public class SGR implements SGRInterface {
         this.componenteById = new HashMap<>();
 
         this.servicoExpresso = new HashMap<>();
-        this.fichaClienteById = new HashMap<>();
-        this.fichasReparacaoAtuais = new LinkedHashMap<>();
-        this.fichasExpressoAtuais = new ArrayList<>();
-        this.fichasReparacaoConcluidas = new HashMap<>();
-        this.fichasReparacaoExpressoConcluidas = new HashMap<>();
+        this.clienteById = new HashMap<>();
+        this.reparacoesProgramadasAtuais = new LinkedHashMap<>();
+        this.expressoAtuais = new ArrayList<>();
+        this.reparacoesConcluidas = new HashMap<>();
     }
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -76,32 +73,28 @@ public class SGR implements SGRInterface {
         }
     }
 
-    public void criaFichaCliente(String NIF, String nome, String email, String numeroTelemovel,
+    public void criaCliente(String NIF, String nome, String email, String numeroTelemovel,
                                  String funcionarioCriador) throws UtilizadorJaExisteException {
 
-        FichaCliente fichaCliente = new FichaCliente(NIF,nome,email,numeroTelemovel,funcionarioCriador);
+        Cliente cliente = new Cliente(NIF,nome,email,numeroTelemovel,funcionarioCriador);
 
-        if (fichaClienteById.containsKey(fichaCliente.getNIF()))
+        if (clienteById.containsKey(cliente.getNIF()))
             throw new UtilizadorJaExisteException();
-        fichaClienteById.put(fichaCliente.getNIF(), fichaCliente);
+        clienteById.put(cliente.getNIF(), cliente);
     }
 
     public void criaFichaReparacaoProgramada(String NIFCliente) {
-        FichaReparacaoProgramada f = new FichaReparacaoProgramada(NIFCliente,utilizadorAutenticado.getId());
+        ReparacaoProgramada f = new ReparacaoProgramada(NIFCliente,utilizadorAutenticado.getId());
         f.setFase(Fase.AEsperaOrcamento);
-        fichasReparacaoAtuais.put(f.getId(),f);
-    }
-    public void criaFichaReparacaoExpresso(String idTecnico, String NIFCliente, int idServicoExpresso) {
-        new FichaReparacaoExpresso(NIFCliente,idServicoExpresso,utilizadorAutenticado.getId(),idTecnico);
-
+        reparacoesProgramadasAtuais.put(f.getId(),f);
     }
 
-    public void realizaOrcamento(FichaReparacaoProgramada ficha) {
+    public void realizaOrcamento(ReparacaoProgramada ficha) {
         ficha.realizaOrcamento(utilizadorAutenticado.getId());
         // TODO enviar mail?
     }
 
-    public void pausaReparacao(FichaReparacaoProgramada ficha) {
+    public void pausaReparacao(ReparacaoProgramada ficha) {
         //ficha.pausarReparacao();
         ficha.togglePausarReparacao();
     }
@@ -116,30 +109,56 @@ public class SGR implements SGRInterface {
     }
 
     @Override
-    public void adicionaServicoExpresso(FichaReparacaoExpresso servicoExpresso) throws ServicoJaExisteException {
+    public void adicionaServicoExpresso(ReparacaoExpresso servicoExpresso) throws ServicoJaExisteException {
         // presuminos que ao adicionr fica concluida
-        if (fichasReparacaoConcluidas.containsKey(servicoExpresso.getId()))
+        if (reparacoesConcluidas.containsKey(servicoExpresso.getId()))
             throw new ServicoJaExisteException();
 
-        fichasReparacaoConcluidas.put(servicoExpresso.getId(), servicoExpresso);
+        reparacoesConcluidas.put(servicoExpresso.getId(), servicoExpresso);
     }
 
     @Override
-    public void adicionaServicoProgramado(FichaReparacaoProgramada servicoProgramado) throws ServicoJaExisteException {
-        if (fichasReparacaoAtuais.containsKey(servicoProgramado.getId()))
+    public void adicionaServicoProgramado(ReparacaoProgramada servicoProgramado) throws ServicoJaExisteException {
+        if (reparacoesProgramadasAtuais.containsKey(servicoProgramado.getId()))
             throw new ServicoJaExisteException();
 
-        fichasReparacaoAtuais.put(servicoProgramado.getId(), servicoProgramado);
+        reparacoesProgramadasAtuais.put(servicoProgramado.getId(), servicoProgramado);
     }
 
-    @Override
-    public Map<String, EstatisticasTecnico> estatisticasTecnicos() {
-        return null;
+    public Map<String, List<Intervencao>> intervencoesTecnicos() {
+        return utilizadores
+                .getUtilizadores()
+                .stream()
+                .filter(t-> t instanceof Tecnico)
+                .map(Tecnico.class::cast)
+                .collect(Collectors.toMap(Tecnico::getId, this::getIntervencoesTecnico));
+    }
+
+    private List<Intervencao> getIntervencoesTecnico(Tecnico t) {
+        List <Intervencao> l = reparacoesConcluidas
+                .values()
+                .stream()
+                .filter(r -> r.getTecnicosQueRepararam().contains(t.getId()))
+                .map(Reparacao::getIntervencoesRealizadas)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+
+        // Devolve apenas as intervenções já realizadas do plano de reparacao
+        List<Intervencao> programadasAtuais = reparacoesProgramadasAtuais
+                .values()
+                .stream()
+                .filter(r -> r.getTecnicosQueRepararam().contains(t.getId()))
+                .map(Reparacao::getIntervencoesRealizadas)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+        l.addAll(programadasAtuais);
+        return l;
     }
 
     @Override
     public Map<String, EstatisticasFuncionario> estatisticasFuncionarios() {
-        return utilizadores.getUtilizadores()
+        return utilizadores
+                .getUtilizadores()
                 .stream()
                 .filter(t-> t instanceof Funcionario)
                 .map(Funcionario.class::cast)
@@ -150,11 +169,10 @@ public class SGR implements SGRInterface {
         return new EstatisticasFuncionario(getNumRececoes(f), getNumEntregas(f));
     }
 
-
     private int getNumRececoes(Funcionario f) {
-        ArrayList<FichaReparacao> l = new ArrayList<>(fichasReparacaoAtuais.values());
-        l.addAll(fichasExpressoAtuais);
-        l.addAll(fichasReparacaoConcluidas.values());
+        ArrayList<Reparacao> l = new ArrayList<>(reparacoesProgramadasAtuais.values());
+        l.addAll(expressoAtuais);
+        l.addAll(reparacoesConcluidas.values());
         return (int)
                 l.stream()
                 .filter(ficha -> ficha.getFuncionarioCriador().equals(f.getId()))
@@ -162,7 +180,7 @@ public class SGR implements SGRInterface {
     }
 
     private int getNumEntregas(Funcionario f) {
-        return (int) fichasReparacaoConcluidas.values()
+        return (int) reparacoesConcluidas.values()
                 .stream()
                 .filter(ficha -> ficha.getFuncionarioEntregou().equals(f.getId()))
                 .count();
@@ -213,8 +231,8 @@ public class SGR implements SGRInterface {
 
     @Override
     //TODO nao tem clone
-    public List<FichaCliente> getClientes() {
-        return new ArrayList<>(fichaClienteById.values());
+    public List<Cliente> getClientes() {
+        return new ArrayList<>(clienteById.values());
     }
 
     @Override
@@ -226,8 +244,8 @@ public class SGR implements SGRInterface {
     }
 
     @Override
-    public FichaCliente getCliente(String id) {
-        return fichaClienteById.get(id);
+    public Cliente getCliente(String id) {
+        return clienteById.get(id);
     }
 
     @Override
@@ -248,37 +266,37 @@ public class SGR implements SGRInterface {
     }
 
     @Override
-    public List<FichaReparacao> getReparacoes() {
+    public List<Reparacao> getReparacoes() {
         return null;
     }
 
     @Override
-    public List<FichaReparacao> getReparacoesCompletadas() {
+    public List<Reparacao> getReparacoesCompletadas() {
         return null;
     }
 
     @Override
-    public List<FichaReparacao> getReparacoesEmCurso() {
+    public List<Reparacao> getReparacoesEmCurso() {
         return null;
     }
 
     @Override
-    public List<FichaReparacaoProgramada> getReparacoesSemOrcamento() {
+    public List<ReparacaoProgramada> getReparacoesSemOrcamento() {
         return null;
     }
 
     @Override
-    public FichaReparacao getServico(String id) {
+    public Reparacao getServico(String id) {
         return null;
     }
 
     @Override
-    public List<FichaReparacaoExpresso> getReparacoesExpresso() {
+    public List<ReparacaoExpresso> getReparacoesExpresso() {
         return null;
     }
 
     @Override
-    public List<FichaReparacaoProgramada> getReparacoesProgramadas() {
+    public List<ReparacaoProgramada> getReparacoesProgramadas() {
         return null;
     }
 
@@ -293,25 +311,25 @@ public class SGR implements SGRInterface {
     }
 
     @Override
-    public void marcaReparacaoCompleta(FichaReparacao f) {
-        if (f instanceof FichaReparacaoProgramada) {
-            fichasReparacaoAtuais.remove(f.getId());
+    public void marcaReparacaoCompleta(Reparacao f) {
+        if (f instanceof ReparacaoProgramada) {
+            reparacoesProgramadasAtuais.remove(f.getId());
         }
-        fichasReparacaoConcluidas.put(f.getId(), f);
+        reparacoesConcluidas.put(f.getId(), f);
         f.setFase(Fase.Reparado);
     }
 
-    public void marcaReparacaoEntregue(FichaReparacao f) {
+    public void marcaReparacaoEntregue(Reparacao f) {
         f.setFase(Fase.Entregue);
         // poderá nao ser funcionario?
         f.setFuncionarioEntregou(utilizadorAutenticado.getId());
     }
 
 
-    public FichaReparacaoProgramada obtemReparacaoProgramadaDisponivel(Tecnico t) {
+    public ReparacaoProgramada obtemReparacaoProgramadaDisponivel(Tecnico t) {
         // ir buscar ficha de reparacao que esteja em fase propicia a ser reparada
         // e que esteja pausada
-        for (FichaReparacaoProgramada f : fichasReparacaoAtuais.values()) {
+        for (ReparacaoProgramada f : reparacoesProgramadasAtuais.values()) {
             if (f.podeSerReparadaAgora())
                 return f;
         }
@@ -319,7 +337,7 @@ public class SGR implements SGRInterface {
     }
 
     // executa Passo ou subpasso se programada ; executa a reparacao toda se for expresso
-    public void efetuaReparacaoProgramada(FichaReparacaoProgramada ficha, int custoReal, int duracaoReal)
+    public void efetuaReparacaoProgramada(ReparacaoProgramada ficha, int custoReal, Duration duracaoReal)
             throws SemReparacoesAEfetuarException {
         boolean completa = false;
         if (ficha == null) {
@@ -344,11 +362,11 @@ public class SGR implements SGRInterface {
     // uma reparacao expresso ativa nao podera estar associado ao mesmo tecnico mais que uma vez
     public void concluiReparacaoExpresso(Tecnico t) {
         t.libertaTecnico();
-        for (FichaReparacaoExpresso f : fichasExpressoAtuais) {
+        for (ReparacaoExpresso f : expressoAtuais) {
             if (f.getIdTecnicoReparou().equals(t.getId())) {
                 int id = f.getId();
-                fichasReparacaoExpressoConcluidas.put(id, f);
-                fichasExpressoAtuais.remove(id);
+                reparacoesConcluidas.put(id, f);
+                expressoAtuais.remove(id);
                 return;
             }
         }
@@ -360,8 +378,9 @@ public class SGR implements SGRInterface {
         }
         t = encontraTecnicoDisponivel();
         t.ocupaTecnico();
-        FichaReparacaoExpresso ficha = new FichaReparacaoExpresso(idCliente,idReparacaoEfetuar, idCliente, t.getId());
-        this.fichasExpressoAtuais.add(ficha);
+        ReparacaoExpresso reparacaoExpresso = new ReparacaoExpresso(servicoExpresso.get(idReparacaoEfetuar),
+                idCliente,utilizadorAutenticado.getId(),utilizadorAutenticado.getId());
+        this.expressoAtuais.add(reparacaoExpresso);
     }
 
     // devolve a quantidade existente de um dado componete por descricao
@@ -445,8 +464,8 @@ public class SGR implements SGRInterface {
                 .findFirst();
     }
 
-    public List<FichaReparacaoProgramada> getFichasAguardarOrcamento() {
-        return this.fichasReparacaoAtuais
+    public List<ReparacaoProgramada> getFichasAguardarOrcamento() {
+        return this.reparacoesProgramadasAtuais
                 .values()
                 .stream()
                 .filter( f -> f.getFase().equals(Fase.AEsperaOrcamento))
