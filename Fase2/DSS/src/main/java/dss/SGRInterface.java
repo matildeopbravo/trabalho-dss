@@ -63,5 +63,4 @@ public interface SGRInterface {
     List<Componente> getComponentes();
     Componente getComponente(String id); // devolve null se não existir
 
-    void marcaReparacaoCompleta(Reparacao f);
 }

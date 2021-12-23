@@ -355,12 +355,22 @@ public class SGR implements SGRInterface {
                 boolean completa = ficha.efetuaReparacao(utilizadorAutenticado.getId(), custoReal, duracaoReal);
                 if (completa) {
                     this.marcaReparacaoCompleta(ficha);
+                    enviaMailReparacaoConcluida(clienteById.get(ficha.getIdCliente()));
                 }
             }
         }
         catch (NaoPodeSerReparadoAgoraException e) {
             e.printStackTrace();
         }
+    }
+
+    private void enviaMailReparacaoConcluida(Cliente cliente) {
+        email.enviaMail(cliente.getEmail(),"Reparacao Concluida", "Caro " + cliente.getNome() +
+                " a sua encomenda está completa\n");
+    }
+
+    private void marcaComoEntregue(Reparacao r){
+        r.marcaComoEntregue(utilizadorAutenticado.getId());
     }
 
     private void enviaMailOrcamentoUltrapassado(Cliente c) {

@@ -87,4 +87,8 @@ public abstract class Reparacao {
     public abstract  List<Intervencao>  getIntervencoesRealizadas();
 
 
+    public void marcaComoEntregue(String idFuncionario) {
+        fase = Fase.Entregue;
+        funcionarioEntregou = idFuncionario;
+    }
 }
