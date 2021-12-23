@@ -9,8 +9,10 @@ import dss.utilizador.*;
 
 import java.io.FileNotFoundException;
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SGR implements SGRInterface {
     //####ATRIBUTOS####
@@ -58,15 +60,10 @@ public class SGR implements SGRInterface {
         this.email = new Email();
     }
 
-    public static void main(String[] args) {
-    }
-
     //####MÉTODOS####
     public void autenticaUtilizador(String id, String senha) {
-        Utilizador utilizador = null;
         try {
-            utilizador = this.utilizadores.validaCredenciais(id, senha);
-            this.utilizadorAutenticado = utilizador;
+            this.utilizadorAutenticado = this.utilizadores.validaCredenciais(id, senha);
             System.out.println("Utilizador autenticado com sucesso:" + utilizadores.getUtilizador(id));
         } catch (CredenciasInvalidasException e) {
             e.printStackTrace();
@@ -108,48 +105,78 @@ public class SGR implements SGRInterface {
         return null;
     }
 
-    public Map<String, List<Intervencao>> intervencoesTecnicos() {
+    public Stream<Tecnico> getStreamTecnicos() {
         return utilizadores
                 .getUtilizadores()
                 .stream()
                 .filter(t-> t instanceof Tecnico)
-                .map(Tecnico.class::cast)
-                .collect(Collectors.toMap(Tecnico::getId, this::getIntervencoesByTecnico));
+                .map(Tecnico.class::cast);
     }
-
-    private List<Intervencao> getIntervencoesByTecnico(Tecnico t) {
-        List <Intervencao> l = reparacoesConcluidas
-                .values()
-                .stream()
-                .filter(r -> r.getTecnicosQueRepararam().contains(t.getId()))
-                .map(Reparacao::getIntervencoesRealizadas)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-
-        // Devolve apenas as intervenções já realizadas do plano de reparacao
-        List<Intervencao> programadasAtuais = reparacoesProgramadasAtuais
-                .values()
-                .stream()
-                .filter(r -> r.getTecnicosQueRepararam().contains(t.getId()))
-                .map(Reparacao::getIntervencoesRealizadas)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-        l.addAll(programadasAtuais);
-        return l;
-    }
-
-    @Override
-    public Map<String, EstatisticasFuncionario> estatisticasFuncionarios() {
+    public Stream<Funcionario> getStreamFuncionarios() {
         return utilizadores
                 .getUtilizadores()
                 .stream()
                 .filter(t-> t instanceof Funcionario)
-                .map(Funcionario.class::cast)
-                .collect(Collectors.toMap(Funcionario::getId, this::estatisticaFuncionario));
+                .map(Funcionario.class::cast);
     }
 
-    private EstatisticasFuncionario estatisticaFuncionario(Funcionario f) {
-        return new EstatisticasFuncionario(getNumRececoes(f), getNumEntregas(f));
+    public Map<String,EstatisticasReparacoesTecnico> estatisticasReparacoesTecnicos () {
+        return getStreamTecnicos()
+                .collect(Collectors.toMap(Tecnico::getId, this::estatisticasReparacoesByTecnico));
+    }
+
+    private EstatisticasReparacoesTecnico estatisticasReparacoesByTecnico(Tecnico t) {
+        Stream<Reparacao> reparacoes =
+                reparacoesConcluidas.values()
+                        .stream()
+                        .filter(r -> r.getTecnicosQueRepararam().contains(t.getId()));
+
+        Stream<Reparacao> reparacoesProgramadas =
+                reparacoes
+                        .filter(r -> r instanceof ReparacaoProgramada);
+
+        int numReparacoesProgramadas = (int)
+                reparacoesProgramadas
+                .count();
+        int numReparacoesExpresso = (int) reparacoes
+                .filter(r -> r instanceof ReparacaoExpresso)
+                .count();
+        //duracaoMediaDasReparacosProgramadas
+        double duracaoMedia = reparacoesProgramadas
+                .map(Reparacao::getDuracaoReal)
+                .map(Duration::toSeconds)
+                .mapToLong(Long::longValue)
+                .average()
+                .orElse(Double.NaN);
+
+        double desvioMedio = reparacoesProgramadas
+                .map(r -> Math.abs(r.getDuracaoPrevista().getSeconds() - r.getDuracaoReal().getSeconds()))
+                .mapToDouble(Long::doubleValue)
+                .average()
+                .orElse(Double.NaN);
+
+        return new EstatisticasReparacoesTecnico(numReparacoesExpresso,numReparacoesProgramadas, duracaoMedia, desvioMedio);
+    }
+
+    public Map<String, List<Intervencao>> intervencoesTecnicos() {
+        return getStreamTecnicos()
+                .collect(Collectors.toMap(Tecnico::getId, this::getIntervencoesByTecnico));
+    }
+
+    private List<Intervencao> getIntervencoesByTecnico(Tecnico t) {
+        return Stream.concat(reparacoesConcluidas.values().stream()
+                        , reparacoesProgramadasAtuais.values().stream())
+                .filter(r -> r.getTecnicosQueRepararam().contains(t.getId()))
+                .map(Reparacao::getIntervencoesRealizadas)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<String, EstatisticasFuncionario> estatisticasFuncionarios() {
+        return getStreamFuncionarios()
+                .collect(Collectors.toMap(Funcionario::getId,
+                        f -> new EstatisticasFuncionario(getNumRececoes(f), getNumEntregas(f))));
     }
 
     private int getNumRececoes(Funcionario f) {
@@ -188,10 +215,7 @@ public class SGR implements SGRInterface {
 
     @Override
     public List<Tecnico> getTecnicos() {
-        return this.utilizadores.getUtilizadores().stream()
-                .filter(e -> e instanceof Tecnico)
-                .map(Tecnico.class::cast)
-                .collect(Collectors.toList());
+        return getStreamTecnicos().collect(Collectors.toList());
     }
 
     @Override
@@ -447,7 +471,7 @@ public class SGR implements SGRInterface {
                 .findFirst();
     }
 
-    public List<ReparacaoProgramada> getFichasAguardarOrcamento() {
+    public List<ReparacaoProgramada> getReparacoesAguardarOrcamento() {
         return this.reparacoesProgramadasAtuais
                 .values()
                 .stream()

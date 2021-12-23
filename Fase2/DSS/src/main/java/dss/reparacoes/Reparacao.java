@@ -36,6 +36,14 @@ public abstract class Reparacao {
         this.duracaoCusto = new DuracaoCusto(duracaoPrevista, custoPrevisto);
     }
 
+    public Duration getDuracaoReal() {
+        return duracaoCusto.getDuracaoReal();
+    }
+
+    public Duration getDuracaoPrevista() {
+        return duracaoCusto.getDuracaoPrevista();
+    }
+
     public int getId() {
         return id;
     }
@@ -77,5 +85,6 @@ public abstract class Reparacao {
     }
 
     public abstract  List<Intervencao>  getIntervencoesRealizadas();
+
 
 }
