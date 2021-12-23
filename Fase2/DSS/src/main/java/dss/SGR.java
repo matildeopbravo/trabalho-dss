@@ -86,6 +86,17 @@ public class SGR implements SGRInterface {
         reparacoesProgramadasAtuais.put(f.getId(),f);
     }
 
+   public void marcaOrcamentoComoAceite(ReparacaoProgramada r)  {
+        r.setFase(Fase.EmReparacao);
+   }
+
+   public void marcaOrcamentoComoRecusado(ReparacaoProgramada r) {
+        r.setFase(Fase.Recusada);
+        int id = r.getId();
+        reparacoesProgramadasAtuais.remove(id);
+        reparacoesConcluidas.put(id,r);
+   }
+
     public void realizaOrcamento(ReparacaoProgramada ficha) {
         ficha.realizaOrcamento(utilizadorAutenticado.getId());
         Cliente c = clienteById.get(ficha.getIdCliente());
