@@ -6,9 +6,9 @@ import dss.equipamentos.Fase;
 import dss.Orcamento;
 import dss.PlanoReparacao;
 import dss.exceptions.NaoPodeSerReparadoAgoraException;
-import dss.exceptions.OrcamentoUltrapassadoException;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,7 +21,7 @@ public class ReparacaoProgramada extends Reparacao {
 
     public ReparacaoProgramada(String idCliente, String utilizadorCriador) {
         super(idCliente, utilizadorCriador);
-        this.equipamentoAReparar = new Equipamento(idCliente);
+        this.equipamentoAReparar = new Equipamento(idCliente, LocalDateTime.now());
         pausado = true;
         this.orcamento = null;
         fase = Fase.AEsperaOrcamento;
@@ -87,6 +87,10 @@ public class ReparacaoProgramada extends Reparacao {
 
     public Fase getFase() {
         return fase;
+    }
+
+    public boolean estaPausado() {
+        return pausado;
     }
 
 }

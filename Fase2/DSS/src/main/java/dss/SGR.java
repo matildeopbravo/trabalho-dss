@@ -288,10 +288,6 @@ public class SGR implements SGRInterface {
         return null;
     }
 
-    @Override
-    public List<ReparacaoProgramada> getReparacoesSemOrcamento() {
-        return null;
-    }
 
     @Override
     public Reparacao getServico(String id) {
@@ -496,7 +492,8 @@ public class SGR implements SGRInterface {
         return this.reparacoesProgramadasAtuais
                 .values()
                 .stream()
-                .filter( f -> f.getFase().equals(Fase.AEsperaOrcamento))
+                .filter(ReparacaoProgramada::estaPausado) // para garantir que nenhum tecnico esta a reparar
+                .filter( r -> r.getFase().equals(Fase.AEsperaOrcamento))
                 .collect(Collectors.toList());
     }
 }
