@@ -6,6 +6,7 @@ import dss.equipamentos.Fase;
 import dss.Orcamento;
 import dss.PlanoReparacao;
 import dss.exceptions.NaoPodeSerReparadoAgoraException;
+import dss.exceptions.NaoPodeSerReparadoException;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class ReparacaoProgramada extends Reparacao {
     Equipamento equipamentoAReparar;
-    PlanoReparacao planoReparacao;
+    PlanoReparacao planoReparacao = null;
     Orcamento orcamento;
     // pausado indica se esta a ser reparado neste preciso momento ou nao
     boolean pausado;
@@ -37,13 +38,13 @@ public class ReparacaoProgramada extends Reparacao {
                 .collect(Collectors.toList());
     }
 
-    public boolean podeSerReparado() {
+    public boolean podeSerReparadoAgora() {
         return fase.equals(Fase.EmReparacao) && pausado;
     }
 
     // marca como realizado um passo ou subpasso, indicando o custo e o tempo que gastou na realidade
     public boolean efetuaReparacao(String id, int custoReal, Duration tempoReal) throws NaoPodeSerReparadoAgoraException {
-        if (!this.podeSerReparado()) {
+        if (!this.podeSerReparadoAgora()) {
             throw new NaoPodeSerReparadoAgoraException();
         }
         if (!tecnicosQueRepararam.contains(id))
@@ -59,9 +60,12 @@ public class ReparacaoProgramada extends Reparacao {
     }
 
     public void notificaOrcamento() {
-
-
         this.fase = Fase.AEsperaResposta;
+    }
+
+    public PlanoReparacao criaPlanoReparacao() {
+        this.planoReparacao = new PlanoReparacao();
+        return this.planoReparacao;
     }
 
     public void aprovaOrcamento() {
@@ -93,4 +97,7 @@ public class ReparacaoProgramada extends Reparacao {
         return pausado;
     }
 
+    public PlanoReparacao getPlanoReparacao() {
+        return planoReparacao;
+    }
 }

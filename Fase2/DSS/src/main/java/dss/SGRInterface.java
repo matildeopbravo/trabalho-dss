@@ -54,7 +54,6 @@ public interface SGRInterface {
     List<Reparacao> getReparacoes();
     List<Reparacao> getReparacoesCompletadas();
     List<Reparacao> getReparacoesEmCurso();
-    List<ReparacaoProgramada> getReparacoesSemOrcamento();
     Reparacao getServico(String id); // devolve null se não existir
 
     List<ReparacaoExpresso> getReparacoesExpresso();

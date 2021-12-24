@@ -39,7 +39,7 @@ public class SGR implements SGRInterface {
     private final LinkedHashMap<Integer, ReparacaoProgramada> reparacoesProgramadasAtuais;
 
     private final List<ReparacaoExpresso> expressoAtuais;
-    // fichas de reparacao programadas ou expresso
+    // reparacaos de reparacao programadas ou expresso
     private final Map<Integer, Reparacao> reparacoesConcluidas;
     Email email ;
 
@@ -97,15 +97,38 @@ public class SGR implements SGRInterface {
         reparacoesConcluidas.put(id,r);
    }
 
-    public void realizaOrcamento(ReparacaoProgramada ficha) {
-        ficha.realizaOrcamento(utilizadorAutenticado.getId());
-        Cliente c = clienteById.get(ficha.getIdCliente());
-        email.enviaMail(c.getEmail(), "Orçamento",
-                ficha.getOrcamentoMail(c.getNome()));;
+
+   public void marcaComoImpossivelReparar (ReparacaoProgramada reparacao) {
+       reparacao.setFase(Fase.NaoPodeSerReparado);
+       Cliente c = clienteById.get(reparacao.getIdCliente());
+       // TODO
+       email.enviaMail(c.getEmail(), "Equipamento Não Pode ser Reparado",
+               "Nao pode ser reparado blah blah\n");
+   }
+    // so vai aparecer esta obção tendo criado um passo
+   public void adicionaSubpassoPlano(ReparacaoProgramada reparacao, PassoReparacao passo, String descricao, Duration duracao, float custo) {
+       PlanoReparacao plano = reparacao.getPlanoReparacao();
+       plano.addSubPasso(passo,descricao,duracao,custo);
+   }
+
+   public void adicionaPassoPlano(ReparacaoProgramada reparacao, String descricao, Duration duracao, float custo) {
+        PlanoReparacao plano = reparacao.getPlanoReparacao();
+        if (plano == null) {
+            plano = reparacao.criaPlanoReparacao();
+       }
+       plano.addPasso(descricao,duracao,custo);
+   }
+
+   // tem que ter plano de reparacao para poder criar orcamento
+    public void realizaOrcamento(ReparacaoProgramada reparacao) {
+            Cliente c = clienteById.get(reparacao.getIdCliente());
+            reparacao.realizaOrcamento(utilizadorAutenticado.getId());
+            email.enviaMail(c.getEmail(), "Orçamento",
+            reparacao.getOrcamentoMail(c.getNome()));;
     }
 
-    public void togglePausaReparacao(ReparacaoProgramada ficha) {
-        ficha.togglePausarReparacao();
+    public void togglePausaReparacao(ReparacaoProgramada reparacao) {
+        reparacao.togglePausarReparacao();
     }
 
     @Override
@@ -196,14 +219,14 @@ public class SGR implements SGRInterface {
         l.addAll(reparacoesConcluidas.values());
         return (int)
                 l.stream()
-                .filter(ficha -> ficha.getFuncionarioCriador().equals(f.getId()))
+                .filter(reparacao -> reparacao.getFuncionarioCriador().equals(f.getId()))
                 .count();
     }
 
     private int getNumEntregas(Funcionario f) {
         return (int) reparacoesConcluidas.values()
                 .stream()
-                .filter(ficha -> ficha.getFuncionarioEntregou().equals(f.getId()))
+                .filter(reparacao -> reparacao.getFuncionarioEntregou().equals(f.getId()))
                 .count();
     }
 
@@ -314,7 +337,6 @@ public class SGR implements SGRInterface {
         return null;
     }
 
-    @Override
     public void marcaReparacaoCompleta(Reparacao f) {
         if (f instanceof ReparacaoProgramada) {
             reparacoesProgramadasAtuais.remove(f.getId());
@@ -331,7 +353,7 @@ public class SGR implements SGRInterface {
 
 
     public ReparacaoProgramada obtemReparacaoProgramadaDisponivel(Tecnico t) {
-        // ir buscar ficha de reparacao que esteja em fase propicia a ser reparada
+        // ir buscar reparacao de reparacao que esteja em fase propicia a ser reparada
         // e que esteja pausada
         for (ReparacaoProgramada f : reparacoesProgramadasAtuais.values()) {
             if (f.podeSerReparadaAgora())
@@ -340,18 +362,18 @@ public class SGR implements SGRInterface {
         return null;
     }
     // executa Passo ou subpasso se programada ; executa a reparacao toda se for expresso
-    public void efetuaReparacaoProgramada(ReparacaoProgramada ficha, int custoReal, Duration duracaoReal) {
+    public void efetuaReparacaoProgramada(ReparacaoProgramada reparacao, int custoReal, Duration duracaoReal) {
         try {
-            if(ficha.ultrapassouOrcamento()) {
-                Cliente c = clienteById.get(ficha.getIdCliente());
+            if(reparacao.ultrapassouOrcamento()) {
+                Cliente c = clienteById.get(reparacao.getIdCliente());
                 enviaMailOrcamentoUltrapassado(c);
-                ficha.setFase(Fase.AEsperaResposta);
+                reparacao.setFase(Fase.AEsperaResposta);
             }
             else {
-                boolean completa = ficha.efetuaReparacao(utilizadorAutenticado.getId(), custoReal, duracaoReal);
+                boolean completa = reparacao.efetuaReparacao(utilizadorAutenticado.getId(), custoReal, duracaoReal);
                 if (completa) {
-                    this.marcaReparacaoCompleta(ficha);
-                    enviaMailReparacaoConcluida(clienteById.get(ficha.getIdCliente()));
+                    this.marcaReparacaoCompleta(reparacao);
+                    enviaMailReparacaoConcluida(clienteById.get(reparacao.getIdCliente()));
                 }
             }
         }

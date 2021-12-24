@@ -102,6 +102,10 @@ public class PlanoReparacao {
       }
     return map;
   }
+
+  public void addSubPasso(PassoReparacao passo, String descricao, Duration duracao, float custo) {
+      passo.addSubpasso(new PassoReparacao(descricao,duracao,custo));
+  }
 }
 
 
