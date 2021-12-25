@@ -352,13 +352,6 @@ public class SGR implements SGRInterface {
         f.setFase(Fase.Reparado);
     }
 
-    public void marcaReparacaoEntregue(Reparacao f) {
-        f.setFase(Fase.Entregue);
-        // poderá nao ser funcionario?
-        f.setFuncionarioEntregou(utilizadorAutenticado.getId());
-    }
-
-
     public ReparacaoProgramada obtemReparacaoProgramadaDisponivel(Tecnico t) {
         // ir buscar reparacao de reparacao que esteja em fase propicia a ser reparada
         // e que esteja pausada
@@ -394,8 +387,12 @@ public class SGR implements SGRInterface {
                 " a sua encomenda está completa\n");
     }
 
-    private void marcaComoEntregue(Reparacao r){
-        r.marcaComoEntregue(utilizadorAutenticado.getId());
+    private void marcaComoEntregueConluida(Reparacao r){
+        r.marcaComoEntregueConcluida(utilizadorAutenticado.getId());
+    }
+
+    private void marcaComoEntregueRecusada(Reparacao r){
+        r.marcaComoEntregueRecusada(utilizadorAutenticado.getId());
     }
 
     private void enviaMailOrcamentoUltrapassado(Cliente c) {

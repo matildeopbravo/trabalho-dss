@@ -87,8 +87,13 @@ public abstract class Reparacao {
     public abstract  List<Intervencao>  getIntervencoesRealizadas();
 
 
-    public void marcaComoEntregue(String idFuncionario) {
-        fase = Fase.Entregue;
+    public void marcaComoEntregueConcluida(String idFuncionario) {
+        fase = Fase.EntregueConcluida;
+        funcionarioEntregou = idFuncionario;
+    }
+
+    public void marcaComoEntregueRecusada(String idFuncionario) {
+        fase = Fase.EntregueRecusada;
         funcionarioEntregou = idFuncionario;
     }
 }

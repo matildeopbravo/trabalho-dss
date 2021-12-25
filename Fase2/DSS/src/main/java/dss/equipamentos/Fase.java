@@ -7,5 +7,6 @@ public enum Fase {
     Reparado,
     EmReparacao,
     NaoPodeSerReparado,
-    Entregue
+    EntregueConcluida,
+    EntregueRecusada
 }
