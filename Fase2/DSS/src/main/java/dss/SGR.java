@@ -9,7 +9,7 @@ import dss.utilizador.*;
 
 import java.io.FileNotFoundException;
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -21,6 +21,7 @@ public class SGR implements SGRInterface {
 
     // equipamentos deixados pelos clientes
     private final Map<String, Equipamento> equipamentoById;
+    private final Map<Integer, Equipamento> equipamentoAbandonado;
     private final Map<Integer, Componente> componenteById;
 
 
@@ -41,6 +42,7 @@ public class SGR implements SGRInterface {
     private final List<ReparacaoExpresso> expressoAtuais;
     // reparacaos de reparacao programadas ou expresso
     private final Map<Integer, Reparacao> reparacoesConcluidas;
+    private final Map<Integer, Reparacao> reparacoesArquivadas;
     Email email ;
 
     //####CONSTRUTOR####
@@ -51,13 +53,18 @@ public class SGR implements SGRInterface {
 
         this.equipamentoById = new HashMap<>();
         this.componenteById = new HashMap<>();
+        this.equipamentoAbandonado = new HashMap<>();
 
         this.servicoExpresso = new HashMap<>();
         this.clienteById = new HashMap<>();
         this.reparacoesProgramadasAtuais = new LinkedHashMap<>();
         this.expressoAtuais = new ArrayList<>();
         this.reparacoesConcluidas = new HashMap<>();
+        this.reparacoesArquivadas = new HashMap<>();
         this.email = new Email();
+
+        atualizarEquipamento();
+        atualizarReparacoes();
     }
 
     //####MÉTODOS####
@@ -427,6 +434,42 @@ public class SGR implements SGRInterface {
         ReparacaoExpresso reparacaoExpresso = new ReparacaoExpresso(servicoExpresso.get(idReparacaoEfetuar),
                 idCliente,utilizadorAutenticado.getId(),utilizadorAutenticado.getId());
         this.expressoAtuais.add(reparacaoExpresso);
+    }
+
+    public void atualizarEquipamento() {
+        Iterator<Map.Entry<String, Equipamento>> it = this.equipamentoById.entrySet().iterator();
+        LocalDateTime today = LocalDateTime.now();
+
+        while (it.hasNext()) {
+            Equipamento equipamento = it.next().getValue();
+            if (today.isAfter(equipamento.getDataEntrega().plusDays(90))) {
+                arquivaReparacoesDeEquipamento(equipamento.getIdEquipamento());
+                it.remove();
+                this.equipamentoAbandonado.put(equipamento.getIdEquipamento(), equipamento);
+            }
+        }
+    }
+
+    public void arquivaReparacoesDeEquipamento(int idEquipamento) {
+        Iterator<Map.Entry<Integer, ReparacaoProgramada>> it = this.reparacoesProgramadasAtuais.entrySet().iterator();
+        while (it.hasNext()) {
+            ReparacaoProgramada reparacao = it.next().getValue();
+            if (reparacao.getEquipamentoAReparar().getIdEquipamento() == idEquipamento)
+                it.remove();
+            this.reparacoesArquivadas.put(reparacao.getId(), reparacao);
+        }
+    }
+
+    public void atualizarReparacoes() {
+        Iterator<Map.Entry<Integer, ReparacaoProgramada>> it = this.reparacoesProgramadasAtuais.entrySet().iterator();
+        LocalDateTime today = LocalDateTime.now();
+        while (it.hasNext()) {
+            ReparacaoProgramada reparacao = it.next().getValue();
+            if (today.isAfter(reparacao.getDataEnvioOrcamento().plusDays(30))
+                && reparacao.getFase().equals(Fase.AEsperaResposta))
+                it.remove();
+            this.reparacoesArquivadas.put(reparacao.getId(), reparacao);
+        }
     }
 
     // devolve a quantidade existente de um dado componete por descricao

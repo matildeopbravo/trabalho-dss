@@ -14,17 +14,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ReparacaoProgramada extends Reparacao {
-    Equipamento equipamentoAReparar;
-    PlanoReparacao planoReparacao = null;
-    Orcamento orcamento;
+    private Equipamento equipamentoAReparar;
+    private PlanoReparacao planoReparacao = null;
+    private Orcamento orcamento;
+    private LocalDateTime dataEnvioOrcamento;
     // pausado indica se esta a ser reparado neste preciso momento ou nao
-    boolean pausado;
+    private boolean pausado;
 
     public ReparacaoProgramada(String idCliente, String utilizadorCriador) {
         super(idCliente, utilizadorCriador);
         this.equipamentoAReparar = new Equipamento(idCliente, LocalDateTime.now());
         pausado = true;
         this.orcamento = null;
+        this.dataEnvioOrcamento = null;
         fase = Fase.AEsperaOrcamento;
     }
 
@@ -36,6 +38,10 @@ public class ReparacaoProgramada extends Reparacao {
     public List<Intervencao> getIntervencoesRealizadas() {
         return planoReparacao.getPassosReparacaoConcluidos().stream().map(Intervencao.class::cast)
                 .collect(Collectors.toList());
+    }
+
+    public LocalDateTime getDataEnvioOrcamento() {
+        return dataEnvioOrcamento;
     }
 
     public boolean podeSerReparadoAgora() {
@@ -53,14 +59,16 @@ public class ReparacaoProgramada extends Reparacao {
         return this.planoReparacao.repara(custoReal, tempoReal);
     }
 
-    public void realizaOrcamento(String id) {
+    public void realizaOrcamento(String idTecnico) {
         // TODO Verifica que nao pode ser reparado e notififca
-        this.tecnicosQueRepararam.add(id);
+        this.tecnicosQueRepararam.add(idTecnico);
         this.orcamento = new Orcamento(planoReparacao);
     }
 
     public void notificaOrcamento() {
+        //TODO: Efetivamente enviar a notificação
         this.fase = Fase.AEsperaResposta;
+        this.dataEnvioOrcamento = LocalDateTime.now();
     }
 
     public PlanoReparacao criaPlanoReparacao() {
@@ -99,5 +107,9 @@ public class ReparacaoProgramada extends Reparacao {
 
     public PlanoReparacao getPlanoReparacao() {
         return planoReparacao;
+    }
+
+    public Equipamento getEquipamentoAReparar() {
+        return equipamentoAReparar;
     }
 }

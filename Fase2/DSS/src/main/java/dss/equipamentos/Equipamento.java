@@ -23,7 +23,7 @@ public class Equipamento {
         return idCliente;
     }
 
-    public LocalDateTime getDataEntrega() {k
+    public LocalDateTime getDataEntrega() {
         return dataEntrega;
     }
 }
