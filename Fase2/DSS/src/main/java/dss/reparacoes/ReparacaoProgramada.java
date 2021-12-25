@@ -9,6 +9,7 @@ import dss.exceptions.NaoPodeSerReparadoAgoraException;
 import dss.exceptions.NaoPodeSerReparadoException;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -63,12 +64,8 @@ public class ReparacaoProgramada extends Reparacao {
         // TODO Verifica que nao pode ser reparado e notififca
         this.tecnicosQueRepararam.add(idTecnico);
         this.orcamento = new Orcamento(planoReparacao);
-    }
-
-    public void notificaOrcamento() {
-        //TODO: Efetivamente enviar a notificação
-        this.fase = Fase.AEsperaResposta;
         this.dataEnvioOrcamento = LocalDateTime.now();
+        this.fase = Fase.AEsperaResposta;
     }
 
     public PlanoReparacao criaPlanoReparacao() {
