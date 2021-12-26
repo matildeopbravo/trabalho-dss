@@ -1,6 +1,8 @@
 package dss;
 
 
+import SGRModel.SGRModel;
+import dss.clientes.Cliente;
 import dss.equipamentos.*;
 import dss.estatisticas.*;
 import dss.exceptions.*;
@@ -15,123 +17,78 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SGR implements SGRInterface {
+    private final SGRModel model;
     //####ATRIBUTOS####
-    private final UtilizadorDAO utilizadores;
     private Utilizador utilizadorAutenticado;
-
-    // equipamentos deixados pelos clientes
-    private final Map<String, Equipamento> equipamentoById;
-    private final Map<Integer, Equipamento> equipamentoAbandonado;
-    private final Map<Integer, Componente> componenteById;
-
-
     // servicos expressos
     private final Map<Integer, ServicoExpressoTabelado> servicoExpresso;
-    //// componentes em stock na loja idComponente -> <Componente,Quantidade>
-    //private Map<Integer,Pair<Componente,Integer>> componenteById;
-    //// componentes reservado na loja descricao -> <Componente,Quantidade>
-    //private Map<String,Pair<Componente,Integer>> componenteReservadoById;
-
-    //// componentes em falta na loja descricao -> <Componente,Quantidade>
-    //private Map<String,Pair<Componente,Integer>> componentesEmFaltaById;
-    private final Map<String, Cliente> clienteById;
-
-    // reparacoes programadas apenas (expresso nao chegam a ser colocadas em espera)
-    private final LinkedHashMap<Integer, ReparacaoProgramada> reparacoesProgramadasAtuais;
-
-    private final List<ReparacaoExpresso> expressoAtuais;
-    // reparacaos de reparacao programadas ou expresso
-    private final Map<Integer, Reparacao> reparacoesConcluidas;
-    private final Map<Integer, Reparacao> reparacoesArquivadas;
-    Email email ;
+    private final Email email ;
 
     //####CONSTRUTOR####
 
     public SGR() throws FileNotFoundException {
-        this.utilizadores = new UtilizadorDAO();
+        this.model = new SGRModel();
         this.utilizadorAutenticado = null;
-
-        this.equipamentoById = new HashMap<>();
-        this.componenteById = new HashMap<>();
-        this.equipamentoAbandonado = new HashMap<>();
-
         this.servicoExpresso = new HashMap<>();
-        this.clienteById = new HashMap<>();
-        this.reparacoesProgramadasAtuais = new LinkedHashMap<>();
-        this.expressoAtuais = new ArrayList<>();
-        this.reparacoesConcluidas = new HashMap<>();
-        this.reparacoesArquivadas = new HashMap<>();
         this.email = new Email();
-
-        atualizarEquipamento();
-        atualizarReparacoes();
     }
 
     //####MÉTODOS####
-    public void autenticaUtilizador(String id, String senha) {
-        try {
-            this.utilizadorAutenticado = this.utilizadores.validaCredenciais(id, senha);
-            System.out.println("Utilizador autenticado com sucesso:" + utilizadores.getUtilizador(id));
-        } catch (CredenciasInvalidasException e) {
-            e.printStackTrace();
-        }
+    public void autenticaUtilizador(String id, String senha) throws CredenciasInvalidasException{
+        utilizadorAutenticado = model.validaCredenciais(id, senha);
+        //System.out.println("Utilizador autenticado com sucesso:" + utilizadores.getUtilizador(id));
     }
 
     public void criaCliente(String NIF, String nome, String email, String numeroTelemovel,
                                  String funcionarioCriador) throws UtilizadorJaExisteException {
-
-        Cliente cliente = new Cliente(NIF,nome,email,numeroTelemovel,funcionarioCriador);
-
-        if (clienteById.containsKey(cliente.getNIF()))
-            throw new UtilizadorJaExisteException();
-        clienteById.put(cliente.getNIF(), cliente);
+        model.criaCliente(NIF, nome, email, numeroTelemovel, funcionarioCriador);
     }
 
     public void criaFichaReparacaoProgramada(String NIFCliente) {
-        ReparacaoProgramada f = new ReparacaoProgramada(NIFCliente,utilizadorAutenticado.getId());
-        f.setFase(Fase.AEsperaOrcamento);
-        reparacoesProgramadasAtuais.put(f.getId(),f);
+        model.criaFichaReparacaoProgramada(NIFCliente, utilizadorAutenticado.getId());
     }
+
 
    public void marcaOrcamentoComoAceite(ReparacaoProgramada r)  {
         r.setFase(Fase.EmReparacao);
    }
 
-   public void marcaOrcamentoComoRecusado(ReparacaoProgramada r) {
+
+    public void marcaOrcamentoComoRecusado(ReparacaoProgramada r) {
         r.setFase(Fase.Recusada);
-        int id = r.getId();
-        reparacoesProgramadasAtuais.remove(id);
-        reparacoesConcluidas.put(id,r);
-   }
+    }
 
-
-   public void marcaComoImpossivelReparar (ReparacaoProgramada reparacao) {
+    public void marcaComoImpossivelReparar (ReparacaoProgramada reparacao) throws UtilizadorNaoExisteException{
        reparacao.setFase(Fase.NaoPodeSerReparado);
-       Cliente c = clienteById.get(reparacao.getIdCliente());
+       Cliente c = model.getCliente(reparacao.getIdCliente());
        // TODO
        email.enviaMail(c.getEmail(), "Equipamento Não Pode ser Reparado",
-               "Nao pode ser reparado blah blah\n");
-   }
-    // so vai aparecer esta obção tendo criado um passo
-   public void adicionaSubpassoPlano(ReparacaoProgramada reparacao, PassoReparacao passo, String descricao, Duration duracao, float custo) {
-       PlanoReparacao plano = reparacao.getPlanoReparacao();
-       plano.addSubPasso(passo,descricao,duracao,custo);
-   }
+               "Após uma análise do estado do equipamento, concluímos que a sua" +
+                       "reparação não será possível. Por favor levante o seu equipamento na loja.\n");
+    }
 
-   public void adicionaPassoPlano(ReparacaoProgramada reparacao, String descricao, Duration duracao, float custo) {
+
+    // so vai aparecer esta obção tendo criado um passo
+    public void adicionaSubpassoPlano(PassoReparacao passo, String descricao, Duration duracao, float custo) {
+       passo.addSubpasso(new PassoReparacao(descricao,duracao,custo));
+    }
+
+    public void adicionaPassoPlano(ReparacaoProgramada reparacao, String descricao, Duration duracao, float custo) {
         PlanoReparacao plano = reparacao.getPlanoReparacao();
         if (plano == null) {
             plano = reparacao.criaPlanoReparacao();
        }
        plano.addPasso(descricao,duracao,custo);
-   }
+    }
 
-   // tem que ter plano de reparacao para poder criar orcamento
-    public void realizaOrcamento(ReparacaoProgramada reparacao) {
-            Cliente c = clienteById.get(reparacao.getIdCliente());
-            reparacao.realizaOrcamento(utilizadorAutenticado.getId());
-            email.enviaMail(c.getEmail(), "Orçamento",
-            reparacao.getOrcamentoMail(c.getNome()));;
+    // tem que ter plano de reparacao para poder criar orcamento
+    public void realizaOrcamento(ReparacaoProgramada reparacao) throws UtilizadorNaoExisteException {
+        Cliente c = model.getCliente(reparacao.getIdCliente());
+        reparacao.realizaOrcamento(utilizadorAutenticado.getId());
+        reparacao.setDataEnvioOrcamento(LocalDateTime.now());
+        reparacao.setFase(Fase.AEsperaResposta);
+        email.enviaMail(c.getEmail(), "Orçamento",
+        reparacao.getOrcamentoMail(c.getNome()));
     }
 
     public void togglePausaReparacao(ReparacaoProgramada reparacao) {
@@ -139,252 +96,139 @@ public class SGR implements SGRInterface {
     }
 
     @Override
-    public String adicionaEquipamento(Equipamento equipamento) throws EquipamentoJaExisteException {
-        // TODO
-        //if(equipamentoById.containsKey(equipamento.getIdEquipamento()))
-        //    throw new EquipamentoJaExisteException();
-        return null;
+    public void adicionaEquipamento(Equipamento equipamento) throws EquipamentoJaExisteException {
+        model.adicionaEquipamento(equipamento);
     }
 
-    public Stream<Tecnico> getStreamTecnicos() {
-        return utilizadores
-                .getUtilizadores()
-                .stream()
-                .filter(t-> t instanceof Tecnico)
-                .map(Tecnico.class::cast);
-    }
-    public Stream<Funcionario> getStreamFuncionarios() {
-        return utilizadores
-                .getUtilizadores()
-                .stream()
-                .filter(t-> t instanceof Funcionario)
-                .map(Funcionario.class::cast);
-    }
-
-    public Map<String,EstatisticasReparacoesTecnico> estatisticasReparacoesTecnicos () {
-        return getStreamTecnicos()
-                .collect(Collectors.toMap(Tecnico::getId, this::estatisticasReparacoesByTecnico));
-    }
-
-    private EstatisticasReparacoesTecnico estatisticasReparacoesByTecnico(Tecnico t) {
-        Stream<Reparacao> reparacoes =
-                reparacoesConcluidas.values()
-                        .stream()
-                        .filter(r -> r.getTecnicosQueRepararam().contains(t.getId()));
-
-        Stream<Reparacao> reparacoesProgramadas =
-                reparacoes
-                        .filter(r -> r instanceof ReparacaoProgramada);
-
-        int numReparacoesProgramadas = (int)
-                reparacoesProgramadas
-                .count();
-        int numReparacoesExpresso = (int) reparacoes
-                .filter(r -> r instanceof ReparacaoExpresso)
-                .count();
-        //duracaoMediaDasReparacosProgramadas
-        double duracaoMedia = reparacoesProgramadas
-                .map(Reparacao::getDuracaoReal)
-                .map(Duration::toSeconds)
-                .mapToLong(Long::longValue)
-                .average()
-                .orElse(Double.NaN);
-
-        double desvioMedio = reparacoesProgramadas
-                .map(r -> Math.abs(r.getDuracaoPrevista().getSeconds() - r.getDuracaoReal().getSeconds()))
-                .mapToDouble(Long::doubleValue)
-                .average()
-                .orElse(Double.NaN);
-
-        return new EstatisticasReparacoesTecnico(numReparacoesExpresso,numReparacoesProgramadas, duracaoMedia, desvioMedio);
+    public Map<String,EstatisticasReparacoesTecnico> estatisticasReparacoesTecnicos() {
+        return model.estatisticasReparacoesTecnicos();
     }
 
     public Map<String, List<Intervencao>> intervencoesTecnicos() {
-        return getStreamTecnicos()
-                .collect(Collectors.toMap(Tecnico::getId, this::getIntervencoesByTecnico));
-    }
-
-    private List<Intervencao> getIntervencoesByTecnico(Tecnico t) {
-        return Stream.concat(reparacoesConcluidas.values().stream()
-                        , reparacoesProgramadasAtuais.values().stream())
-                .filter(r -> r.getTecnicosQueRepararam().contains(t.getId()))
-                .map(Reparacao::getIntervencoesRealizadas)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+        return model.intervencoesTecnicos();
     }
 
     @Override
     public Map<String, EstatisticasFuncionario> estatisticasFuncionarios() {
-        return getStreamFuncionarios()
-                .collect(Collectors.toMap(Funcionario::getId,
-                        f -> new EstatisticasFuncionario(getNumRececoes(f), getNumEntregas(f))));
-    }
-
-    private int getNumRececoes(Funcionario f) {
-        ArrayList<Reparacao> l = new ArrayList<>(reparacoesProgramadasAtuais.values());
-        l.addAll(expressoAtuais);
-        l.addAll(reparacoesConcluidas.values());
-        return (int)
-                l.stream()
-                .filter(reparacao -> reparacao.getFuncionarioCriador().equals(f.getId()))
-                .count();
-    }
-
-    private int getNumEntregas(Funcionario f) {
-        return (int) reparacoesConcluidas.values()
-                .stream()
-                .filter(reparacao -> reparacao.getFuncionarioEntregou().equals(f.getId()))
-                .count();
+        return model.estatisticasFuncionarios();
     }
 
     @Override
     public void registaUtilizador(Utilizador utilizador) throws UtilizadorJaExisteException {
-        if (!this.utilizadores.adicionaUtilizador(utilizador))
-            throw new UtilizadorJaExisteException();
+        model.adicionaUtilizador(utilizador);
     }
 
     @Override
     public void removeUtilizador(String idUtilizador) throws UtilizadorNaoExisteException {
-        if (this.utilizadores.removeUtilizador(idUtilizador) == null)
-            throw new UtilizadorNaoExisteException();
+        model.removeUtilizador(idUtilizador);
     }
 
     @Override
-    public List<Utilizador> getUtilizadores() {
-        return this.utilizadores.getUtilizadores();
+    public Collection<Utilizador> getUtilizadores() {
+        return model.getUtilizadores();
     }
 
     @Override
-    public List<Tecnico> getTecnicos() {
-        return getStreamTecnicos().collect(Collectors.toList());
+    public Collection<Tecnico> getTecnicos() {
+        return model.getTecnicos();
     }
 
     @Override
-    public List<Funcionario> getFuncionarios() {
-        return this.utilizadores.getUtilizadores().stream()
-                .filter(e -> e instanceof Funcionario)
-                .map(Funcionario.class::cast)
-                .collect(Collectors.toList());
+    public Collection<Funcionario> getFuncionarios() {
+        return model.getFuncionarios();
     }
 
     @Override
     //TODO nao tem clone
-    public List<Cliente> getClientes() {
-        return new ArrayList<>(clienteById.values());
+    public Collection<Cliente> getClientes() {
+        return model.getClientes();
     }
 
     @Override
     public Utilizador getUtilizador(String id) throws UtilizadorNaoExisteException {
-        Utilizador utilizador = this.utilizadores.getUtilizador(id);
-        if (utilizador == null)
-            throw new UtilizadorNaoExisteException();
-        return utilizador;
+        return model.getUtilizador(id);
     }
 
     @Override
-    public Cliente getCliente(String id) {
-        return clienteById.get(id);
+    public Cliente getCliente(String id) throws UtilizadorNaoExisteException{
+        return model.getCliente(id);
     }
 
     @Override
-    public List<Equipamento> getEquipamentos() {
-
-        return null;
+    public Collection<Equipamento> getEquipamentos() {
+        return model.getEquipamentos();
     }
 
     @Override
-    public List<Equipamento> getEquipamentosAbandonados() {
-        return null;
+    public Collection<Equipamento> getEquipamentosAbandonados() {
+        return model.getEquipamentosAbandonados();
     }
 
     @Override
     //CLONE???
-    public Equipamento getEquipamento(String codigo) {
-        return equipamentoById.get(codigo);
+    public Equipamento getEquipamento(String codigo) throws EquipamentoNaoExisteException{
+        return model.getEquipamento(codigo);
     }
 
     @Override
-    public List<Reparacao> getReparacoes() {
-        return null;
+    public Collection<Reparacao> getReparacoesConcluidas() {
+        return model.getReparacoesConcluidas();
     }
 
     @Override
-    public List<Reparacao> getReparacoesCompletadas() {
-        return null;
+    public Collection<Reparacao> getReparacoesAtuais() {
+        return model.getReparacoesAtuais();
     }
 
     @Override
-    public List<Reparacao> getReparacoesEmCurso() {
-        return null;
-    }
-
-
-    @Override
-    public Reparacao getServico(String id) {
-        return null;
+    public Collection<ReparacaoExpresso> getReparacoesExpresso() {
+        return model.getReparacoesExpresso();
     }
 
     @Override
-    public List<ReparacaoExpresso> getReparacoesExpresso() {
-        return null;
+    public Collection<ReparacaoProgramada> getReparacoesProgramadas() {
+        return model.getReparacoesProgramadas();
     }
 
     @Override
-    public List<ReparacaoProgramada> getReparacoesProgramadas() {
-        return null;
+    public Collection<Componente> getComponentes() {
+        return model.getComponentes();
     }
 
     @Override
-    public List<Componente> getComponentes() {
-        return null;
+    public Componente getComponente(Integer id) throws EquipamentoNaoExisteException {
+        return model.getComponente(id);
     }
 
-    @Override
-    public Componente getComponente(String id) {
-        return null;
+    public void marcaReparacaoCompleta(Reparacao reparacao) {
+        reparacao.setFase(Fase.Reparado);
     }
 
-    public void marcaReparacaoCompleta(Reparacao f) {
-        if (f instanceof ReparacaoProgramada) {
-            reparacoesProgramadasAtuais.remove(f.getId());
-        }
-        reparacoesConcluidas.put(f.getId(), f);
-        f.setFase(Fase.Reparado);
+    public ReparacaoProgramada obtemReparacaoProgramadaDisponivel() {
+        return model.getReparacaoProgramadaDisponivel();
     }
 
-    public ReparacaoProgramada obtemReparacaoProgramadaDisponivel(Tecnico t) {
-        // ir buscar reparacao de reparacao que esteja em fase propicia a ser reparada
-        // e que esteja pausada
-        for (ReparacaoProgramada f : reparacoesProgramadasAtuais.values()) {
-            if (f.podeSerReparadaAgora())
-                return f;
-        }
-        return null;
-    }
-    // executa Passo ou subpasso se programada ; executa a reparacao toda se for expresso
-    public void efetuaReparacaoProgramada(ReparacaoProgramada reparacao, int custoReal, Duration duracaoReal) {
-        try {
-            if(reparacao.ultrapassouOrcamento()) {
-                Cliente c = clienteById.get(reparacao.getIdCliente());
-                enviaMailOrcamentoUltrapassado(c);
-                reparacao.setFase(Fase.AEsperaResposta);
-            }
-            else {
-                boolean completa = reparacao.efetuaReparacao(utilizadorAutenticado.getId(), custoReal, duracaoReal);
-                if (completa) {
-                    this.marcaReparacaoCompleta(reparacao);
-                    enviaMailReparacaoConcluida(clienteById.get(reparacao.getIdCliente()));
-                }
+    /**
+     * Executa passo ou subpasso seguinte da reparação
+      */
+    public void efetuaReparacaoProgramada(ReparacaoProgramada reparacao, int custoReal, Duration duracaoReal)
+            throws NaoPodeSerReparadoAgoraException, UtilizadorNaoExisteException {
+        if (utilizadorAutenticado instanceof Tecnico) {
+            boolean completa = model.efetuaReparacaoProgramada(reparacao, custoReal, duracaoReal, (Tecnico) utilizadorAutenticado);
+            if (completa) {
+                marcaReparacaoCompleta(reparacao);
+                enviaMailReparacaoConcluida(model.getCliente(reparacao.getIdCliente()));
             }
         }
-        catch (NaoPodeSerReparadoAgoraException e) {
-            e.printStackTrace();
-        }
+    }
+
+    public boolean verificaExcedeOrcamento(float novoCusto, ReparacaoProgramada reparacaoProgramada) {
+        return reparacaoProgramada.ultrapassouOrcamento(novoCusto);
     }
 
     private void enviaMailReparacaoConcluida(Cliente cliente) {
         email.enviaMail(cliente.getEmail(),"Reparacao Concluida", "Caro " + cliente.getNome() +
-                " a sua encomenda está completa\n");
+                " a sua encomenda está completa. Por favor levante o seu equipamento na loja.\n");
     }
 
     private void marcaComoEntregueConluida(Reparacao r){
@@ -397,165 +241,36 @@ public class SGR implements SGRInterface {
 
     private void enviaMailOrcamentoUltrapassado(Cliente c) {
         email.enviaMail(c.getEmail(), "Orçamento Ultrapassado", "Caro " + c.getNome() +
-                ",\n O Orçamento Foi ultrapassado\n Atenciosamente, Centro de Reparações");
+                ",\n O Orçamento previsto será ultrapassado. Pretende continuar com o serviço de reparação?" +
+                "\n Atenciosamente, Centro de Reparações");
     }
 
     public Tecnico encontraTecnicoDisponivel() throws NaoHaTecnicosDisponiveisException {
-        return this.utilizadores.getUtilizadores()
-                .stream()
-                .filter(user -> user instanceof Tecnico t && !t.estaOcupado())
-                .map(Tecnico.class::cast)
-                .findFirst()
-                .orElseThrow(NaoHaTecnicosDisponiveisException::new);
+        return this.model.getTecnicoDisponivel();
     }
 
-    // uma reparacao expresso ativa nao podera estar associado ao mesmo tecnico mais que uma vez
-    public void concluiReparacaoExpresso(Tecnico t) {
-        t.libertaTecnico();
-        for (ReparacaoExpresso f : expressoAtuais) {
-            if (f.getIdTecnicoReparou().equals(t.getId())) {
-                int id = f.getId();
-                reparacoesConcluidas.put(id, f);
-                expressoAtuais.remove(id);
-                return;
-            }
-        }
+    public void concluiReparacaoExpresso(Integer id) throws ReparacaoNaoExisteException {
+        model.concluiReparacaoExpresso(id);
     }
-    public void iniciaReparacaoExpresso(Funcionario funcionario, String idCliente, int idReparacaoEfetuar) throws NaoHaTecnicosDisponiveisException {
-        Tecnico t;
-        if(utilizadorAutenticado instanceof Tecnico) {
-            t = (Tecnico)  utilizadorAutenticado;
-        }
-        t = encontraTecnicoDisponivel();
-        t.ocupaTecnico();
+
+    public void iniciaReparacaoExpresso(String idCliente, int idReparacaoEfetuar) throws ReparacaoJaExisteException{
+        Tecnico tecnico = (Tecnico) utilizadorAutenticado;
+        tecnico.ocupaTecnico();
         ReparacaoExpresso reparacaoExpresso = new ReparacaoExpresso(servicoExpresso.get(idReparacaoEfetuar),
                 idCliente,utilizadorAutenticado.getId(),utilizadorAutenticado.getId());
-        this.expressoAtuais.add(reparacaoExpresso);
+        model.adicionaReparacaoExpressoAtual(reparacaoExpresso);
     }
-
-    public void atualizarEquipamento() {
-        Iterator<Map.Entry<String, Equipamento>> it = this.equipamentoById.entrySet().iterator();
-        LocalDateTime today = LocalDateTime.now();
-
-        while (it.hasNext()) {
-            Equipamento equipamento = it.next().getValue();
-            if (today.isAfter(equipamento.getDataEntrega().plusDays(90))) {
-                arquivaReparacoesDeEquipamento(equipamento.getIdEquipamento());
-                it.remove();
-                this.equipamentoAbandonado.put(equipamento.getIdEquipamento(), equipamento);
-            }
-        }
-    }
-
-    public void arquivaReparacoesDeEquipamento(int idEquipamento) {
-        Iterator<Map.Entry<Integer, ReparacaoProgramada>> it = this.reparacoesProgramadasAtuais.entrySet().iterator();
-        while (it.hasNext()) {
-            ReparacaoProgramada reparacao = it.next().getValue();
-            if (reparacao.getEquipamentoAReparar().getIdEquipamento() == idEquipamento)
-                it.remove();
-            this.reparacoesArquivadas.put(reparacao.getId(), reparacao);
-        }
-    }
-
-    public void atualizarReparacoes() {
-        Iterator<Map.Entry<Integer, ReparacaoProgramada>> it = this.reparacoesProgramadasAtuais.entrySet().iterator();
-        LocalDateTime today = LocalDateTime.now();
-        while (it.hasNext()) {
-            ReparacaoProgramada reparacao = it.next().getValue();
-            if (today.isAfter(reparacao.getDataEnvioOrcamento().plusDays(30))
-                && reparacao.getFase().equals(Fase.AEsperaResposta))
-                it.remove();
-            this.reparacoesArquivadas.put(reparacao.getId(), reparacao);
-        }
-    }
-
-    // devolve a quantidade existente de um dado componete por descricao
-    //public int getQuantidadeComponeteByDescricao(String descricao){
-    //    Optional<Pair<Componente,Integer>> componenteIntegerPair =
-    //            componenteById
-    //                    .values()
-    //                    .stream()
-    //                    .filter(e-> e.getFirst().getDescricao().equals(descricao))
-    //                    .findFirst()
-    //            ;
-    //    int quantidade = 0;
-    //    if (componenteIntegerPair.isPresent())
-    //        quantidade = componenteIntegerPair.get().getSecond();
-    //    return quantidade;
-    //}
 
     // devolve todos os componentes que contêm todas as palavras da stringPesquisa na descrição
-    public List<Componente> pesquisaComponentes(String stringPesquisa) {
-        List<String> splitted = Arrays.asList(stringPesquisa.split(" "));
-        return componenteById
-                .values()
-                .stream()
-                .filter(comp -> List.of(comp.getDescricao()).containsAll(splitted))
-                .collect(Collectors.toList());
+    public Collection<Componente> pesquisaComponentes(String stringPesquisa) {
+        return model.pesquisaComponentes(stringPesquisa);
     }
 
-    //public void reservarEEmFaltaComponete(Componente c, int quantidade){
-    //    // vamos ao stock diminuir a quantidade
-    //    Optional<Pair<Componente,Integer>> componenteIntegerPair =
-    //        componenteById
-    //            .values()
-    //            .stream()
-    //            .filter(e-> e.getFirst().getDescricao().equals(c.getDescricao()))
-    //            .findFirst()
-    //        ;
-    //    Pair<Componente, Integer> p = componenteIntegerPair.orElse(null);
-    //    int emFalta = 0;
-    //    if (p==null) {
-    //        // nao existe nada em stock
-    //        emFalta = quantidade;
-    //    } else {
-    //        int emStock = p.getSecond();
-    //        emFalta = quantidade - emStock;
-    //        if(emFalta <= 0){
-    //            // existe em stock a quantidade toda
-    //            p.setY( p.getSecond()- quantidade );
-    //            emFalta = 0;
-    //        } else {
-    //            // nao existe a quantidade toda necessaria
-    //            emFalta = Math.abs(emFalta);
-    //            p.setY( 0 );
-    //        }
-    //    }
-
-    //    // vamos reservar
-    //    if (emFalta > 0){
-    //        Optional<Pair<Componente,Integer>> componenteReservarPair =
-    //            componenteReservadoById
-    //                 c
-    //                .stream()
-    //                .filter(e-> e.getFirst().getDescricao().equals(c.getDescricao()))
-    //                .findFirst()
-    //            ;
-    //        var p2 = componenteReservarPair.orElse(null) ;
-    //        if (p2 == null){
-    //            // caso nenhum do mesmo tipo já esteja reservado
-    //            componenteReservadoById.put(c.getDescricao(), new Pair<>(c,emFalta));
-    //        } else {
-    //            // senao aumenta-se apenas a quantidade
-    //            p2.setY( p2.getSecond() + emFalta);
-    //        }
-    //    }
-    //}
-
-    public Optional<Componente> getComponeteByDescricao(String descricao) {
-        return componenteById
-                .values()
-                .stream()
-                .filter(e -> e.getDescricao().equals(descricao))
-                .findFirst();
+    public Componente getComponeteByDescricao(String descricao) {
+        return model.getComponenteByDescricao(descricao);
     }
 
-    public List<ReparacaoProgramada> getReparacoesAguardarOrcamento() {
-        return this.reparacoesProgramadasAtuais
-                .values()
-                .stream()
-                .filter(ReparacaoProgramada::estaPausado) // para garantir que nenhum tecnico esta a reparar
-                .filter( r -> r.getFase().equals(Fase.AEsperaOrcamento))
-                .collect(Collectors.toList());
+    public Collection<ReparacaoProgramada> getReparacoesAguardarOrcamento() {
+        return model.getReparacoesAAguardarOrcamento();
     }
 }

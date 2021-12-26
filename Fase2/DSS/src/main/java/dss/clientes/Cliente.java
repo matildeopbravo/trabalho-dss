@@ -1,4 +1,4 @@
-package dss;
+package dss.clientes;
 
 public class Cliente {
     private String NIF;

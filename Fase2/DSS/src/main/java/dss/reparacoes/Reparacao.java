@@ -9,15 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Reparacao {
-    private static int lastId = -1;
-    int id;
-    String idCliente;
-    String funcionarioCriador;
-    String funcionarioEntregou;
-    List<String> tecnicosQueRepararam = new ArrayList<>();
-    Fase fase;
-    DuracaoCusto duracaoCusto;
-    String descricao;
+    protected static int lastId = -1;
+    protected int id;
+    protected String idCliente;
+    protected String funcionarioCriador;
+    protected String funcionarioEntregou;
+    protected List<String> tecnicosQueRepararam = new ArrayList<>();
+    protected Fase fase;
+    protected DuracaoCusto duracaoCusto;
+    protected String descricao;
 
 
     public Reparacao(String idCliente, String funcionarioCriador) {

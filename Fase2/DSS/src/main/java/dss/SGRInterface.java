@@ -1,8 +1,8 @@
 package dss;
 
+import dss.clientes.Cliente;
 import dss.equipamentos.Componente;
 import dss.equipamentos.Equipamento;
-import dss.equipamentos.Fase;
 import dss.estatisticas.EstatisticasFuncionario;
 import dss.reparacoes.Reparacao;
 import dss.reparacoes.ReparacaoExpresso;
@@ -12,6 +12,7 @@ import dss.utilizador.Tecnico;
 import dss.utilizador.Utilizador;
 import dss.exceptions.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +21,7 @@ public interface SGRInterface {
     //static void autenticaUtilizador(String id, String senha) throws UtilizadorNaoExisteException;
 
     //Tem de gerar um código para o equipamento, que será devolvido
-    String adicionaEquipamento(Equipamento equipamento) throws EquipamentoJaExisteException;
+    void adicionaEquipamento(Equipamento equipamento) throws EquipamentoJaExisteException;
 
 
     // TODO
@@ -39,27 +40,25 @@ public interface SGRInterface {
     //void removeComponente (String codComponente) throws ComponenteNaoExisteException;
 
     // Getters
-    List<Utilizador> getUtilizadores();
-    List<Tecnico> getTecnicos();
-    List<Funcionario> getFuncionarios();
-    List<Cliente> getClientes();
+    Collection<Utilizador> getUtilizadores();
+    Collection<Tecnico> getTecnicos();
+    Collection<Funcionario> getFuncionarios();
+    Collection<Cliente> getClientes();
 
     Utilizador getUtilizador(String id) throws UtilizadorNaoExisteException; // devolve null se não existir
-    Cliente getCliente(String id); // devolve null se não existir
+    Cliente getCliente(String id) throws UtilizadorNaoExisteException; // devolve null se não existir
 
-    List<Equipamento> getEquipamentos();
-    List<Equipamento> getEquipamentosAbandonados();
-    Equipamento getEquipamento(String codigo); // devolve null se não existir
+    Collection<Equipamento> getEquipamentos();
+    Collection<Equipamento> getEquipamentosAbandonados();
+    Equipamento getEquipamento(String codigo) throws EquipamentoNaoExisteException; // devolve null se não existir
 
-    List<Reparacao> getReparacoes();
-    List<Reparacao> getReparacoesCompletadas();
-    List<Reparacao> getReparacoesEmCurso();
-    Reparacao getServico(String id); // devolve null se não existir
+    Collection<Reparacao> getReparacoesConcluidas();
+    Collection<Reparacao> getReparacoesAtuais();
 
-    List<ReparacaoExpresso> getReparacoesExpresso();
-    List<ReparacaoProgramada> getReparacoesProgramadas();
+    Collection<ReparacaoExpresso> getReparacoesExpresso();
+    Collection<ReparacaoProgramada> getReparacoesProgramadas();
 
-    List<Componente> getComponentes();
-    Componente getComponente(String id); // devolve null se não existir
+    Collection<Componente> getComponentes();
+    Componente getComponente(Integer id) throws EquipamentoNaoExisteException; // devolve null se não existir
 
 }

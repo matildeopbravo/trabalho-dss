@@ -64,8 +64,6 @@ public class ReparacaoProgramada extends Reparacao {
         // TODO Verifica que nao pode ser reparado e notififca
         this.tecnicosQueRepararam.add(idTecnico);
         this.orcamento = new Orcamento(planoReparacao);
-        this.dataEnvioOrcamento = LocalDateTime.now();
-        this.fase = Fase.AEsperaResposta;
     }
 
     public PlanoReparacao criaPlanoReparacao() {
@@ -81,9 +79,9 @@ public class ReparacaoProgramada extends Reparacao {
         this.fase = Fase.Recusada;
     }
 
-    public boolean ultrapassouOrcamento() {
+    public boolean ultrapassouOrcamento(float precoReal) {
         //Não pode exceder orçamento aprovado por 120%
-        return planoReparacao.getCustoEDuracaoReal().getFirst() > orcamento.getPreco() * 1.2;
+        return precoReal > orcamento.getPreco() * 1.2;
     }
 
     public void togglePausarReparacao() {
@@ -108,5 +106,9 @@ public class ReparacaoProgramada extends Reparacao {
 
     public Equipamento getEquipamentoAReparar() {
         return equipamentoAReparar;
+    }
+
+    public void setDataEnvioOrcamento(LocalDateTime data) {
+        this.dataEnvioOrcamento = data;
     }
 }
