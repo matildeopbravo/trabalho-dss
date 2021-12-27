@@ -51,6 +51,7 @@ public class SGR implements SGRInterface {
 
    public void marcaOrcamentoComoAceite(ReparacaoProgramada r)  {
         r.setFase(Fase.EmReparacao);
+        r.marcaComoNaoNotificado();
    }
 
 
@@ -65,6 +66,7 @@ public class SGR implements SGRInterface {
        email.enviaMail(c.getEmail(), "Equipamento Não Pode ser Reparado",
                "Após uma análise do estado do equipamento, concluímos que a sua" +
                        "reparação não será possível. Por favor levante o seu equipamento na loja.\n");
+       reparacao.marcaComoNotificado();
     }
 
 
@@ -81,6 +83,10 @@ public class SGR implements SGRInterface {
        plano.addPasso(descricao,duracao,custo);
     }
 
+    public void marcaComoNotificado(Reparacao e) {
+        e.marcaComoNotificado();
+    }
+
     // tem que ter plano de reparacao para poder criar orcamento
     public void realizaOrcamento(ReparacaoProgramada reparacao) throws UtilizadorNaoExisteException {
         Cliente c = model.getCliente(reparacao.getIdCliente());
@@ -89,6 +95,7 @@ public class SGR implements SGRInterface {
         reparacao.setFase(Fase.AEsperaResposta);
         email.enviaMail(c.getEmail(), "Orçamento",
         reparacao.getOrcamentoMail(c.getNome()));
+        reparacao.marcaComoNotificado();
     }
 
     public void togglePausaReparacao(ReparacaoProgramada reparacao) {
@@ -226,9 +233,10 @@ public class SGR implements SGRInterface {
         return reparacaoProgramada.ultrapassouOrcamento(novoCusto);
     }
 
-    private void enviaMailReparacaoConcluida(Cliente cliente) {
+    private void enviaMailReparacaoConcluida(Reparacao r , Cliente cliente) {
         email.enviaMail(cliente.getEmail(),"Reparacao Concluida", "Caro " + cliente.getNome() +
                 " a sua encomenda está completa. Por favor levante o seu equipamento na loja.\n");
+        r.marcaComoNotificado();
     }
 
     private void marcaComoEntregueConluida(Reparacao r){
@@ -239,10 +247,11 @@ public class SGR implements SGRInterface {
         r.marcaComoEntregueRecusada(utilizadorAutenticado.getId());
     }
 
-    private void enviaMailOrcamentoUltrapassado(Cliente c) {
+    private void enviaMailOrcamentoUltrapassado(ReparacaoProgramada r, Cliente c) {
         email.enviaMail(c.getEmail(), "Orçamento Ultrapassado", "Caro " + c.getNome() +
                 ",\n O Orçamento previsto será ultrapassado. Pretende continuar com o serviço de reparação?" +
                 "\n Atenciosamente, Centro de Reparações");
+        r.marcaComoNotificado();
     }
 
     public Tecnico encontraTecnicoDisponivel() throws NaoHaTecnicosDisponiveisException {

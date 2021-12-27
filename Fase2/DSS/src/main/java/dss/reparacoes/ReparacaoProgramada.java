@@ -111,4 +111,8 @@ public class ReparacaoProgramada extends Reparacao {
     public void setDataEnvioOrcamento(LocalDateTime data) {
         this.dataEnvioOrcamento = data;
     }
+
+    public void marcaComoNaoNotificado() {
+        this.notificado = false;
+    }
 }

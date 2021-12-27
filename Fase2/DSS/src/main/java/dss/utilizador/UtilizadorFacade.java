@@ -30,7 +30,6 @@ public class UtilizadorFacade {
 
     /**
      * Adiciona um utilizador ao mapa de utilizadores deste objeto
-     * @return Verdadeiro se utilizador foi adicionado, falso se já existia
      */
     public void adicionaUtilizador(Utilizador utilizador) throws UtilizadorJaExisteException {
         if (utilizadoresPorID.containsKey(utilizador.getId()))

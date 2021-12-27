@@ -1,3 +1,4 @@
+
 package dss.reparacoes;
 
 import dss.DuracaoCusto;
@@ -18,6 +19,7 @@ public abstract class Reparacao {
     protected Fase fase;
     protected DuracaoCusto duracaoCusto;
     protected String descricao;
+    protected boolean notificado;
 
 
     public Reparacao(String idCliente, String funcionarioCriador) {
@@ -95,5 +97,9 @@ public abstract class Reparacao {
     public void marcaComoEntregueRecusada(String idFuncionario) {
         fase = Fase.EntregueRecusada;
         funcionarioEntregou = idFuncionario;
+    }
+
+    public void marcaComoNotificado() {
+        this.notificado = true;
     }
 }
