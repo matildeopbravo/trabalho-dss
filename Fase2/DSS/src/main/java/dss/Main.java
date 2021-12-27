@@ -23,4 +23,4 @@ public class Main extends Application {
         stage.setTitle("Sistema de Gestão de Reparações");
         stage.show();
     }
-    }
+}

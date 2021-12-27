@@ -24,10 +24,21 @@ public class SGRModel {
     private ClienteFacade clienteFacade;
 
     public SGRModel() {
-        utilizadorFacade = UtilizadorDAO.lerUtilizadores("utilizadores.obj");
-        reparacaoFacade = ReparacaoDAO.lerReparacoes("reparacoes.obj");
-        equipamentoFacade = EquipamentoDAO.lerEquipamento("equipamento.obj");
-        clienteFacade = ClienteDAO.lerClientes("clientes.obj");
+//        utilizadorFacade = UtilizadorDAO.lerUtilizadores("utilizadores.obj");
+//        reparacaoFacade = ReparacaoDAO.lerReparacoes("reparacoes.obj");
+//        equipamentoFacade = EquipamentoDAO.lerEquipamento("equipamento.obj");
+//        clienteFacade = ClienteDAO.lerClientes("clientes.obj");
+
+        utilizadorFacade = new UtilizadorFacade();
+        reparacaoFacade = new ReparacaoFacade();
+        equipamentoFacade = new EquipamentoFacade();
+        clienteFacade = new ClienteFacade();
+
+        try {
+            utilizadorFacade.adicionaUtilizador(new Gestor("Exemplo", "123456789", "password"));
+        } catch (UtilizadorJaExisteException e) {
+            e.printStackTrace();
+        }
 
         equipamentoFacade.atualizaEquipamentoAbandonado(reparacaoFacade);
         reparacaoFacade.arquivaReparacoesAntigas();

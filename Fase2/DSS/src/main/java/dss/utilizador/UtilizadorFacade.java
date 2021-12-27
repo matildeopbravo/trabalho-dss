@@ -59,8 +59,7 @@ public class UtilizadorFacade {
             return utilizador;
         }
         else {
-            throw new CredenciasInvalidasException();
-
+            throw new CredenciasInvalidasException("NIF ou password incorretos");
         }
     }
 

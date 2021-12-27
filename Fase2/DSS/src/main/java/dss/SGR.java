@@ -224,7 +224,7 @@ public class SGR implements SGRInterface {
             boolean completa = model.efetuaReparacaoProgramada(reparacao, custoReal, duracaoReal, (Tecnico) utilizadorAutenticado);
             if (completa) {
                 marcaReparacaoCompleta(reparacao);
-                enviaMailReparacaoConcluida(model.getCliente(reparacao.getIdCliente()));
+                enviaMailReparacaoConcluida(reparacao, model.getCliente(reparacao.getIdCliente()));
             }
         }
     }
