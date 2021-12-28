@@ -1,27 +1,25 @@
 package dss.reparacoes;
 
-import dss.utilizador.UtilizadorFacade;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-public class ReparacaoDAO {
-    public static ReparacaoFacade lerReparacoes(String ficheiro) {
+public class ReparacoesDAO {
+    public static ReparacoesFacade lerReparacoes(String ficheiro) {
         try {
             FileInputStream fis = new FileInputStream(ficheiro);
             ObjectInputStream ois = new ObjectInputStream(fis);
 
-            return (ReparacaoFacade)ois.readObject();
+            return (ReparacoesFacade)ois.readObject();
         }
         catch (Exception e) {
             e.printStackTrace();
         }
-        return new ReparacaoFacade();
+        return new ReparacoesFacade();
     }
 
-    public static void escreverReparacoes(String ficheiro, ReparacaoFacade reparacoes) {
+    public static void escreverReparacoes(String ficheiro, ReparacoesFacade reparacoes) {
         try {
             FileOutputStream fos = new FileOutputStream(ficheiro);
             ObjectOutputStream oos = new ObjectOutputStream(fos);

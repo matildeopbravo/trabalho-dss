@@ -6,10 +6,10 @@ import dss.exceptions.UtilizadorNaoExisteException;
 import java.util.Collection;
 import java.util.HashMap;
 
-public class ClienteFacade {
+public class ClientesFacade {
     private final HashMap<String, Cliente> clientesById;
 
-    public ClienteFacade() {
+    public ClientesFacade() {
         this.clientesById = new HashMap<>();
     }
 

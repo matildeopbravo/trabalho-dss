@@ -8,7 +8,7 @@ public abstract class Utilizador {
     public Utilizador(String nome, String id, String password) {
         this.nome = nome;
         this.id = id;
-        this.passwordHash = UtilizadorFacade.encriptaPassword(password);
+        this.passwordHash = UtilizadoresFacade.encriptaPassword(password);
     }
 
     public String getNome() {

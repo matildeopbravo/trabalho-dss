@@ -1,9 +1,7 @@
-package SGRModel;
+package dss;
 
-import dss.Intervencao;
 import dss.clientes.Cliente;
-import dss.clientes.ClienteDAO;
-import dss.clientes.ClienteFacade;
+import dss.clientes.ClientesFacade;
 import dss.equipamentos.*;
 import dss.estatisticas.EstatisticasFuncionario;
 import dss.estatisticas.EstatisticasReparacoesTecnico;
@@ -11,73 +9,74 @@ import dss.exceptions.*;
 import dss.reparacoes.*;
 import dss.utilizador.*;
 
+import java.io.*;
 import java.time.Duration;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class SGRModel {
-    private UtilizadorFacade utilizadorFacade;
-    private ReparacaoFacade reparacaoFacade;
-    private EquipamentoFacade equipamentoFacade;
-    private ClienteFacade clienteFacade;
+public class SGRFacade implements Serializable {
+    private UtilizadoresFacade utilizadoresFacade;
+    private ReparacoesFacade reparacoesFacade;
+    private EquipamentosFacade equipamentoFacade;
+    private ClientesFacade clientesFacade;
 
-    public SGRModel() {
+    public SGRFacade() {
 //        utilizadorFacade = UtilizadorDAO.lerUtilizadores("utilizadores.obj");
 //        reparacaoFacade = ReparacaoDAO.lerReparacoes("reparacoes.obj");
 //        equipamentoFacade = EquipamentoDAO.lerEquipamento("equipamento.obj");
 //        clienteFacade = ClienteDAO.lerClientes("clientes.obj");
 
-        utilizadorFacade = new UtilizadorFacade();
-        reparacaoFacade = new ReparacaoFacade();
-        equipamentoFacade = new EquipamentoFacade();
-        clienteFacade = new ClienteFacade();
+        utilizadoresFacade = new UtilizadoresFacade();
+        reparacoesFacade = new ReparacoesFacade();
+        equipamentoFacade = new EquipamentosFacade();
+        clientesFacade = new ClientesFacade();
 
         try {
-            utilizadorFacade.adicionaUtilizador(new Gestor("Exemplo", "123456789", "password"));
-            utilizadorFacade.adicionaUtilizador(new Gestor("Exemplo 2", "1", ""));
+            utilizadoresFacade.adicionaUtilizador(new Gestor("Exemplo", "123456789", "password"));
+            utilizadoresFacade.adicionaUtilizador(new Gestor("Exemplo 2", "1", ""));
         } catch (UtilizadorJaExisteException e) {
             e.printStackTrace();
         }
 
-        equipamentoFacade.atualizaEquipamentoAbandonado(reparacaoFacade);
-        reparacaoFacade.arquivaReparacoesAntigas();
+        equipamentoFacade.atualizaEquipamentoAbandonado(reparacoesFacade);
+        reparacoesFacade.arquivaReparacoesAntigas();
     }
 
     //############
     //#UTILIZADOR#
     //############
     public Utilizador validaCredenciais(String nome, String senha) throws CredenciasInvalidasException {
-        return utilizadorFacade.validaCredenciais(nome, senha);
+        return utilizadoresFacade.validaCredenciais(nome, senha);
     }
 
     public void adicionaUtilizador(Utilizador utilizador) throws UtilizadorJaExisteException {
-        utilizadorFacade.adicionaUtilizador(utilizador);
+        utilizadoresFacade.adicionaUtilizador(utilizador);
     }
 
     public void removeUtilizador(String utilizadorID) throws UtilizadorNaoExisteException {
-        utilizadorFacade.removeUtilizador(utilizadorID);
+        utilizadoresFacade.removeUtilizador(utilizadorID);
     }
 
     public Utilizador getUtilizador(String utilizadorID) throws UtilizadorNaoExisteException {
-        return utilizadorFacade.getUtilizador(utilizadorID);
+        return utilizadoresFacade.getUtilizador(utilizadorID);
     }
 
     public Collection<Utilizador> getUtilizadores() {
-        return utilizadorFacade.getUtilizadores();
+        return utilizadoresFacade.getUtilizadores();
     }
 
     public Collection<Tecnico> getTecnicos() {
-        return utilizadorFacade.getTecnicos();
+        return utilizadoresFacade.getTecnicos();
     }
 
     public Collection<Funcionario> getFuncionarios() {
-        return utilizadorFacade.getFuncionarios();
+        return utilizadoresFacade.getFuncionarios();
     }
 
     private EstatisticasReparacoesTecnico estatisticasReparacoesByTecnico(Tecnico t) {
-        Stream<Reparacao> reparacoesConcluidas = reparacaoFacade.getReparacoesConcluidas()
+        Stream<Reparacao> reparacoesConcluidas = reparacoesFacade.getReparacoesConcluidas()
                 .stream()
                 .filter(r -> r.getTecnicosQueRepararam().contains(t.getId()));
 
@@ -108,13 +107,13 @@ public class SGRModel {
     }
 
     public Map<String, EstatisticasReparacoesTecnico> estatisticasReparacoesTecnicos() {
-        return utilizadorFacade.getTecnicos().stream()
+        return utilizadoresFacade.getTecnicos().stream()
                 .collect(Collectors.toMap(Tecnico::getId, this::estatisticasReparacoesByTecnico));
     }
 
     private List<Intervencao> getIntervencoesByTecnico(Tecnico t) {
-        return Stream.concat(reparacaoFacade.getReparacoesConcluidas().stream()
-                        , reparacaoFacade.getReparacoesProgramadasAtuais().stream())
+        return Stream.concat(reparacoesFacade.getReparacoesConcluidas().stream()
+                        , reparacoesFacade.getReparacoesProgramadasAtuais().stream())
                 .filter(r -> r.getTecnicosQueRepararam().contains(t.getId()))
                 .map(Reparacao::getIntervencoesRealizadas)
                 .flatMap(Collection::stream)
@@ -122,14 +121,14 @@ public class SGRModel {
     }
 
     public Map<String, List<Intervencao>> intervencoesTecnicos() {
-        return utilizadorFacade.getTecnicos().stream()
+        return utilizadoresFacade.getTecnicos().stream()
                 .collect(Collectors.toMap(Tecnico::getId, this::getIntervencoesByTecnico));
     }
 
     private int getNumRececoes(Funcionario f) {
-        ArrayList<Reparacao> l = new ArrayList<>(reparacaoFacade.getReparacoesProgramadasAtuais());
-        l.addAll(reparacaoFacade.getReparacoesExpressoAtuais());
-        l.addAll(reparacaoFacade.getReparacoesConcluidas());
+        ArrayList<Reparacao> l = new ArrayList<>(reparacoesFacade.getReparacoesProgramadasAtuais());
+        l.addAll(reparacoesFacade.getReparacoesExpressoAtuais());
+        l.addAll(reparacoesFacade.getReparacoesConcluidas());
         return (int)
                 l.stream()
                         .filter(reparacao -> reparacao.getFuncionarioCriador().equals(f.getId()))
@@ -137,20 +136,20 @@ public class SGRModel {
     }
 
     private int getNumEntregas(Funcionario f) {
-        return (int) reparacaoFacade.getReparacoesConcluidas()
+        return (int) reparacoesFacade.getReparacoesConcluidas()
                 .stream()
                 .filter(reparacao -> reparacao.getFuncionarioEntregou().equals(f.getId()))
                 .count();
     }
 
     public Map<String, EstatisticasFuncionario> estatisticasFuncionarios() {
-        return utilizadorFacade.getFuncionarios().stream()
+        return utilizadoresFacade.getFuncionarios().stream()
                 .collect(Collectors.toMap(Funcionario::getId,
                         f -> new EstatisticasFuncionario(getNumRececoes(f), getNumEntregas(f))));
     }
 
     public Tecnico getTecnicoDisponivel() throws NaoHaTecnicosDisponiveisException{
-        return utilizadorFacade.getTecnicos().stream()
+        return utilizadoresFacade.getTecnicos().stream()
                 .filter(Predicate.not(Tecnico::estaOcupado))
                 .findFirst()
                 .orElseThrow(NaoHaTecnicosDisponiveisException::new);
@@ -163,15 +162,15 @@ public class SGRModel {
                             String funcionarioCriador) throws UtilizadorJaExisteException {
         Cliente cliente = new Cliente(NIF,nome,email,numeroTelemovel,funcionarioCriador);
 
-        clienteFacade.adicionaCliente(cliente);
+        clientesFacade.adicionaCliente(cliente);
     }
 
     public Cliente getCliente(String idCliente) throws UtilizadorNaoExisteException {
-        return clienteFacade.getCliente(idCliente);
+        return clientesFacade.getCliente(idCliente);
     }
 
     public Collection<Cliente> getClientes() {
-        return clienteFacade.getClientes();
+        return clientesFacade.getClientes();
     }
 
     //###########
@@ -179,31 +178,31 @@ public class SGRModel {
     //###########
     public void criaFichaReparacaoProgramada(String nifCliente, String utilizadorID) {
         ReparacaoProgramada reparacao = new ReparacaoProgramada(nifCliente, utilizadorID);
-        reparacaoFacade.adicionaReparacaoProgramadaAtual(reparacao);
+        reparacoesFacade.adicionaReparacaoProgramadaAtual(reparacao);
     }
 
     public Collection<Reparacao> getReparacoesConcluidas() {
-        return reparacaoFacade.getReparacoesConcluidas();
+        return reparacoesFacade.getReparacoesConcluidas();
     }
 
     public Collection<Reparacao> getReparacoesAtuais() {
-        Collection<Reparacao> reparacoes = new ArrayList<>(reparacaoFacade.getReparacoesExpressoAtuais());
-        reparacoes.addAll(reparacaoFacade.getReparacoesProgramadasAtuais());
+        Collection<Reparacao> reparacoes = new ArrayList<>(reparacoesFacade.getReparacoesExpressoAtuais());
+        reparacoes.addAll(reparacoesFacade.getReparacoesProgramadasAtuais());
         return reparacoes;
     }
 
     public Collection<ReparacaoProgramada> getReparacoesProgramadas() {
-        return reparacaoFacade.getReparacoesProgramadasAtuais();
+        return reparacoesFacade.getReparacoesProgramadasAtuais();
     }
 
     public Collection<ReparacaoExpresso> getReparacoesExpresso() {
-        return reparacaoFacade.getReparacoesExpressoAtuais();
+        return reparacoesFacade.getReparacoesExpressoAtuais();
     }
 
     public ReparacaoProgramada getReparacaoProgramadaDisponivel() {
         // ir buscar reparacao que esteja em fase propicia a ser reparada
         // e que esteja pausada
-        for (ReparacaoProgramada f : reparacaoFacade.getReparacoesProgramadasAtuais()) {
+        for (ReparacaoProgramada f : reparacoesFacade.getReparacoesProgramadasAtuais()) {
             if (f.podeSerReparadaAgora())
                 return f;
         }
@@ -215,15 +214,15 @@ public class SGRModel {
     }
 
     public void concluiReparacaoExpresso(Integer id) throws ReparacaoNaoExisteException{
-        reparacaoFacade.concluiExpresso(id);
+        reparacoesFacade.concluiExpresso(id);
     }
 
     public void adicionaReparacaoExpressoAtual(ReparacaoExpresso reparacao) throws ReparacaoJaExisteException {
-        reparacaoFacade.adicionaReparacaoExpressoAtual(reparacao);
+        reparacoesFacade.adicionaReparacaoExpressoAtual(reparacao);
     }
 
     public Collection<ReparacaoProgramada> getReparacoesAAguardarOrcamento() {
-        return reparacaoFacade.getReparacoesProgramadasAtuais().stream()
+        return reparacoesFacade.getReparacoesProgramadasAtuais().stream()
                 .filter(ReparacaoProgramada::estaPausado) // para garantir que nenhum tecnico esta a reparar
                 .filter( r -> r.getFase().equals(Fase.AEsperaOrcamento))
                 .collect(Collectors.toList());
@@ -270,4 +269,5 @@ public class SGRModel {
                 .findFirst()
                 .orElse(null);
     }
+
 }

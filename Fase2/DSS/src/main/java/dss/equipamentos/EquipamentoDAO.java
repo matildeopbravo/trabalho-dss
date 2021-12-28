@@ -1,27 +1,25 @@
 package dss.equipamentos;
 
-import dss.reparacoes.ReparacaoFacade;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class EquipamentoDAO {
-    public static EquipamentoFacade lerEquipamento(String ficheiro) {
+    public static EquipamentosFacade lerEquipamento(String ficheiro) {
         try {
             FileInputStream fis = new FileInputStream(ficheiro);
             ObjectInputStream ois = new ObjectInputStream(fis);
 
-            return (EquipamentoFacade)ois.readObject();
+            return (EquipamentosFacade)ois.readObject();
         }
         catch (Exception e) {
             e.printStackTrace();
         }
-        return new EquipamentoFacade();
+        return new EquipamentosFacade();
     }
 
-    public static void escreverEquipamento(String ficheiro, EquipamentoFacade equipamento) {
+    public static void escreverEquipamento(String ficheiro, EquipamentosFacade equipamento) {
         try {
             FileOutputStream fos = new FileOutputStream(ficheiro);
             ObjectOutputStream oos = new ObjectOutputStream(fos);

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class UtilizadorFacade {
+public class UtilizadoresFacade {
     public HashMap<String, Utilizador> utilizadoresPorID;
 
     /*public UtilizadorFacade() {
@@ -24,8 +24,8 @@ public class UtilizadorFacade {
         adicionaUtilizador(new Gestor("Mariana", "3", "Mariii_01"));
     }*/
 
-    public UtilizadorFacade() {
-        this.utilizadoresPorID = new HashMap<>();
+    public UtilizadoresFacade() {
+        this.utilizadoresPorID = new HashMap<String,Utilizador>();
     }
 
     /**

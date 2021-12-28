@@ -2,7 +2,7 @@ package dss.equipamentos;
 
 import dss.exceptions.EquipamentoJaExisteException;
 import dss.exceptions.EquipamentoNaoExisteException;
-import dss.reparacoes.ReparacaoFacade;
+import dss.reparacoes.ReparacoesFacade;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -10,12 +10,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class EquipamentoFacade {
+public class EquipamentosFacade {
     private final Map<Integer, Equipamento> equipamentoById;
     private final Map<Integer, Equipamento> equipamentoAbandonado;
     private final Map<Integer, Componente> componenteById;
 
-    public EquipamentoFacade() {
+    public EquipamentosFacade() {
         this.equipamentoById = new HashMap<>();
         this.componenteById = new HashMap<>();
         this.equipamentoAbandonado = new HashMap<>();
@@ -55,14 +55,14 @@ public class EquipamentoFacade {
         throw new EquipamentoNaoExisteException();
     }
 
-    public void atualizaEquipamentoAbandonado(ReparacaoFacade reparacaoFacade) {
+    public void atualizaEquipamentoAbandonado(ReparacoesFacade reparacoesFacade) {
         Iterator<Map.Entry<Integer, Equipamento>> it = equipamentoById.entrySet().iterator();
         LocalDateTime today = LocalDateTime.now();
 
         while (it.hasNext()) {
             Equipamento equipamento = it.next().getValue();
             if (today.isAfter(equipamento.getDataEntrega().plusDays(90))) {
-                reparacaoFacade.arquivaReparacoesDeEquipamento(equipamento.getIdEquipamento());
+                reparacoesFacade.arquivaReparacoesDeEquipamento(equipamento.getIdEquipamento());
                 it.remove();
                 this.equipamentoAbandonado.put(equipamento.getIdEquipamento(), equipamento);
             }

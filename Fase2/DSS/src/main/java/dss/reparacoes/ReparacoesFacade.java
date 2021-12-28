@@ -6,13 +6,13 @@ import dss.exceptions.ReparacaoNaoExisteException;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class ReparacaoFacade {
+public class ReparacoesFacade {
     private final HashMap<Integer, Reparacao> reparacoesConcluidas;
     private final HashMap<Integer, Reparacao> reparacoesArquivadas;
     private final LinkedHashMap<Integer, ReparacaoProgramada> reparacoesProgramadasAtuais;
     private final HashMap<Integer, ReparacaoExpresso> reparacoesExpressoAtuais;
 
-    public ReparacaoFacade() {
+    public ReparacoesFacade() {
         this.reparacoesConcluidas = new HashMap<>();
         this.reparacoesArquivadas = new HashMap<>();
         this.reparacoesProgramadasAtuais = new LinkedHashMap<>();
@@ -80,4 +80,5 @@ public class ReparacaoFacade {
             reparacoesArquivadas.put(reparacao.getId(), reparacao);
         }
     }
+
 }

@@ -1,7 +1,6 @@
 package dss;
 
 
-import SGRModel.SGRModel;
 import dss.clientes.Cliente;
 import dss.equipamentos.*;
 import dss.estatisticas.*;
@@ -9,15 +8,13 @@ import dss.exceptions.*;
 import dss.reparacoes.*;
 import dss.utilizador.*;
 
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public class SGR implements SGRInterface {
-    private final SGRModel model;
+public class SGR  implements  SGRInterface{
+    private SGRFacade sgrFacade;
     //####ATRIBUTOS####
     private Utilizador utilizadorAutenticado;
     // servicos expressos
@@ -27,33 +24,51 @@ public class SGR implements SGRInterface {
     //####CONSTRUTOR####
 
     public SGR() throws FileNotFoundException {
-        this.model = new SGRModel();
+        this.sgrFacade = new SGRFacade();
         this.utilizadorAutenticado = null;
+        // populate this
         this.servicoExpresso = new HashMap<>();
         this.email = new Email();
     }
 
+    public void loadFromFile(String objectFile) throws IOException, ClassNotFoundException {
+        FileInputStream fi = new FileInputStream(new File(objectFile));
+        ObjectInputStream oi = new ObjectInputStream(fi) ;
+        this.sgrFacade =  (SGRFacade) oi.readObject();
+        // ver como fazer quanto aos servico expresso
+    }
+
+    public void writeToFile(String objectFile) throws IOException {
+        FileOutputStream fo = new FileOutputStream(new File(objectFile));
+        ObjectOutputStream os = new ObjectOutputStream(fo);
+        os.writeObject(this.sgrFacade);
+    }
+
     //####MÉTODOS####
     public void autenticaUtilizador(String id, String senha) throws CredenciasInvalidasException{
-        utilizadorAutenticado = model.validaCredenciais(id, senha);
+        utilizadorAutenticado = sgrFacade.validaCredenciais(id, senha);
         //System.out.println("Utilizador autenticado com sucesso:" + utilizadores.getUtilizador(id));
     }
 
     public void criaCliente(String NIF, String nome, String email, String numeroTelemovel,
                                  String funcionarioCriador) throws UtilizadorJaExisteException {
-        model.criaCliente(NIF, nome, email, numeroTelemovel, funcionarioCriador);
+        sgrFacade.criaCliente(NIF, nome, email, numeroTelemovel, funcionarioCriador);
     }
 
-    public void criaFichaReparacaoProgramada(String NIFCliente) {
-        model.criaFichaReparacaoProgramada(NIFCliente, utilizadorAutenticado.getId());
+    public void criaReparacaoProgramada(String NIFCliente) {
+        sgrFacade.criaFichaReparacaoProgramada(NIFCliente, utilizadorAutenticado.getId());
     }
 
+    public void criaReparacaoExpresso(int idServico, String idCliente, String idTecnico ) throws ReparacaoJaExisteException {
+        ReparacaoExpresso r = new ReparacaoExpresso(servicoExpresso.get(idServico), idCliente,
+                utilizadorAutenticado.getId(), idTecnico);
+        sgrFacade.adicionaReparacaoExpressoAtual(r);
+    }
 
    public void marcaOrcamentoComoAceite(ReparacaoProgramada r)  {
         r.setFase(Fase.EmReparacao);
         r.marcaComoNaoNotificado();
    }
-
 
     public void marcaOrcamentoComoRecusado(ReparacaoProgramada r) {
         r.setFase(Fase.Recusada);
@@ -61,7 +76,7 @@ public class SGR implements SGRInterface {
 
     public void marcaComoImpossivelReparar (ReparacaoProgramada reparacao) throws UtilizadorNaoExisteException{
        reparacao.setFase(Fase.NaoPodeSerReparado);
-       Cliente c = model.getCliente(reparacao.getIdCliente());
+       Cliente c = sgrFacade.getCliente(reparacao.getIdCliente());
        // TODO
        email.enviaMail(c.getEmail(), "Equipamento Não Pode ser Reparado",
                "Após uma análise do estado do equipamento, concluímos que a sua" +
@@ -89,7 +104,7 @@ public class SGR implements SGRInterface {
 
     // tem que ter plano de reparacao para poder criar orcamento
     public void realizaOrcamento(ReparacaoProgramada reparacao) throws UtilizadorNaoExisteException {
-        Cliente c = model.getCliente(reparacao.getIdCliente());
+        Cliente c = sgrFacade.getCliente(reparacao.getIdCliente());
         reparacao.realizaOrcamento(utilizadorAutenticado.getId());
         reparacao.setDataEnvioOrcamento(LocalDateTime.now());
         reparacao.setFase(Fase.AEsperaResposta);
@@ -104,107 +119,107 @@ public class SGR implements SGRInterface {
 
     @Override
     public void adicionaEquipamento(Equipamento equipamento) throws EquipamentoJaExisteException {
-        model.adicionaEquipamento(equipamento);
+        sgrFacade.adicionaEquipamento(equipamento);
     }
 
     public Map<String,EstatisticasReparacoesTecnico> estatisticasReparacoesTecnicos() {
-        return model.estatisticasReparacoesTecnicos();
+        return sgrFacade.estatisticasReparacoesTecnicos();
     }
 
     public Map<String, List<Intervencao>> intervencoesTecnicos() {
-        return model.intervencoesTecnicos();
+        return sgrFacade.intervencoesTecnicos();
     }
 
     @Override
     public Map<String, EstatisticasFuncionario> estatisticasFuncionarios() {
-        return model.estatisticasFuncionarios();
+        return sgrFacade.estatisticasFuncionarios();
     }
 
     @Override
     public void registaUtilizador(Utilizador utilizador) throws UtilizadorJaExisteException {
-        model.adicionaUtilizador(utilizador);
+        sgrFacade.adicionaUtilizador(utilizador);
     }
 
     @Override
     public void removeUtilizador(String idUtilizador) throws UtilizadorNaoExisteException {
-        model.removeUtilizador(idUtilizador);
+        sgrFacade.removeUtilizador(idUtilizador);
     }
 
     @Override
     public Collection<Utilizador> getUtilizadores() {
-        return model.getUtilizadores();
+        return sgrFacade.getUtilizadores();
     }
 
     @Override
     public Collection<Tecnico> getTecnicos() {
-        return model.getTecnicos();
+        return sgrFacade.getTecnicos();
     }
 
     @Override
     public Collection<Funcionario> getFuncionarios() {
-        return model.getFuncionarios();
+        return sgrFacade.getFuncionarios();
     }
 
     @Override
     //TODO nao tem clone
     public Collection<Cliente> getClientes() {
-        return model.getClientes();
+        return sgrFacade.getClientes();
     }
 
     @Override
     public Utilizador getUtilizador(String id) throws UtilizadorNaoExisteException {
-        return model.getUtilizador(id);
+        return sgrFacade.getUtilizador(id);
     }
 
     @Override
     public Cliente getCliente(String id) throws UtilizadorNaoExisteException{
-        return model.getCliente(id);
+        return sgrFacade.getCliente(id);
     }
 
     @Override
     public Collection<Equipamento> getEquipamentos() {
-        return model.getEquipamentos();
+        return sgrFacade.getEquipamentos();
     }
 
     @Override
     public Collection<Equipamento> getEquipamentosAbandonados() {
-        return model.getEquipamentosAbandonados();
+        return sgrFacade.getEquipamentosAbandonados();
     }
 
     @Override
     //CLONE???
     public Equipamento getEquipamento(String codigo) throws EquipamentoNaoExisteException{
-        return model.getEquipamento(codigo);
+        return sgrFacade.getEquipamento(codigo);
     }
 
     @Override
     public Collection<Reparacao> getReparacoesConcluidas() {
-        return model.getReparacoesConcluidas();
+        return sgrFacade.getReparacoesConcluidas();
     }
 
     @Override
     public Collection<Reparacao> getReparacoesAtuais() {
-        return model.getReparacoesAtuais();
+        return sgrFacade.getReparacoesAtuais();
     }
 
     @Override
     public Collection<ReparacaoExpresso> getReparacoesExpresso() {
-        return model.getReparacoesExpresso();
+        return sgrFacade.getReparacoesExpresso();
     }
 
     @Override
     public Collection<ReparacaoProgramada> getReparacoesProgramadas() {
-        return model.getReparacoesProgramadas();
+        return sgrFacade.getReparacoesProgramadas();
     }
 
     @Override
     public Collection<Componente> getComponentes() {
-        return model.getComponentes();
+        return sgrFacade.getComponentes();
     }
 
     @Override
     public Componente getComponente(Integer id) throws EquipamentoNaoExisteException {
-        return model.getComponente(id);
+        return sgrFacade.getComponente(id);
     }
 
     public void marcaReparacaoCompleta(Reparacao reparacao) {
@@ -212,7 +227,7 @@ public class SGR implements SGRInterface {
     }
 
     public ReparacaoProgramada obtemReparacaoProgramadaDisponivel() {
-        return model.getReparacaoProgramadaDisponivel();
+        return sgrFacade.getReparacaoProgramadaDisponivel();
     }
 
     /**
@@ -221,10 +236,10 @@ public class SGR implements SGRInterface {
     public void efetuaReparacaoProgramada(ReparacaoProgramada reparacao, int custoReal, Duration duracaoReal)
             throws NaoPodeSerReparadoAgoraException, UtilizadorNaoExisteException {
         if (utilizadorAutenticado instanceof Tecnico) {
-            boolean completa = model.efetuaReparacaoProgramada(reparacao, custoReal, duracaoReal, (Tecnico) utilizadorAutenticado);
+            boolean completa = sgrFacade.efetuaReparacaoProgramada(reparacao, custoReal, duracaoReal, (Tecnico) utilizadorAutenticado);
             if (completa) {
                 marcaReparacaoCompleta(reparacao);
-                enviaMailReparacaoConcluida(reparacao, model.getCliente(reparacao.getIdCliente()));
+                enviaMailReparacaoConcluida(reparacao, sgrFacade.getCliente(reparacao.getIdCliente()));
             }
         }
     }
@@ -255,32 +270,33 @@ public class SGR implements SGRInterface {
     }
 
     public Tecnico encontraTecnicoDisponivel() throws NaoHaTecnicosDisponiveisException {
-        return this.model.getTecnicoDisponivel();
+        return this.sgrFacade.getTecnicoDisponivel();
     }
 
-    public void concluiReparacaoExpresso(Integer id) throws ReparacaoNaoExisteException {
-        model.concluiReparacaoExpresso(id);
+    public void iniciaReparacaoExpresso(ReparacaoExpresso r) throws TecnicoNaoAtribuidoException {
+        if(!r.getIdTecnicoReparou().equals(utilizadorAutenticado.getId()))
+            throw new TecnicoNaoAtribuidoException();
+        ((Tecnico) utilizadorAutenticado).ocupaTecnico();
     }
 
-    public void iniciaReparacaoExpresso(String idCliente, int idReparacaoEfetuar) throws ReparacaoJaExisteException{
-        Tecnico tecnico = (Tecnico) utilizadorAutenticado;
-        tecnico.ocupaTecnico();
-        ReparacaoExpresso reparacaoExpresso = new ReparacaoExpresso(servicoExpresso.get(idReparacaoEfetuar),
-                idCliente,utilizadorAutenticado.getId(),utilizadorAutenticado.getId());
-        model.adicionaReparacaoExpressoAtual(reparacaoExpresso);
+    public void concluiReparacaoExpresso(ReparacaoExpresso r) throws TecnicoNaoAtribuidoException, ReparacaoNaoExisteException {
+        if(!r.getIdTecnicoReparou().equals(utilizadorAutenticado.getId()))
+            throw new TecnicoNaoAtribuidoException();
+        ((Tecnico) utilizadorAutenticado).libertaTecnico();
+        sgrFacade.concluiReparacaoExpresso(r.getId());
     }
 
     // devolve todos os componentes que contêm todas as palavras da stringPesquisa na descrição
     public Collection<Componente> pesquisaComponentes(String stringPesquisa) {
-        return model.pesquisaComponentes(stringPesquisa);
+        return sgrFacade.pesquisaComponentes(stringPesquisa);
     }
 
     public Componente getComponeteByDescricao(String descricao) {
-        return model.getComponenteByDescricao(descricao);
+        return sgrFacade.getComponenteByDescricao(descricao);
     }
 
     public Collection<ReparacaoProgramada> getReparacoesAguardarOrcamento() {
-        return model.getReparacoesAAguardarOrcamento();
+        return sgrFacade.getReparacoesAAguardarOrcamento();
     }
 
     public Utilizador getUtilizadorAutenticado() {
