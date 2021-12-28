@@ -1,11 +1,11 @@
 package dss;
 
+import dss.gui.Frame;
+import dss.gui.LogIn;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-
 
 public class Main extends Application {
 
@@ -13,12 +13,9 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         SGR sgr = new SGR();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/dss/gui/Main.fxml"));
-        dss.gui.Main controller = new dss.gui.Main();
-        controller.setSGR(sgr);
-        loader.setController(controller);
-        Scene mainScene = new Scene(loader.load());
-        System.out.println("SGR LOADED");
+        Frame frame = new Frame(sgr);
+        Scene mainScene = frame.getScene();
+
         stage.setScene(mainScene);
         stage.setTitle("Sistema de Gestão de Reparações");
         stage.show();

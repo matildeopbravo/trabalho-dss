@@ -36,6 +36,7 @@ public class SGRModel {
 
         try {
             utilizadorFacade.adicionaUtilizador(new Gestor("Exemplo", "123456789", "password"));
+            utilizadorFacade.adicionaUtilizador(new Gestor("Exemplo 2", "1", ""));
         } catch (UtilizadorJaExisteException e) {
             e.printStackTrace();
         }

@@ -282,4 +282,8 @@ public class SGR implements SGRInterface {
     public Collection<ReparacaoProgramada> getReparacoesAguardarOrcamento() {
         return model.getReparacoesAAguardarOrcamento();
     }
+
+    public Utilizador getUtilizadorAutenticado() {
+        return utilizadorAutenticado;
+    }
 }

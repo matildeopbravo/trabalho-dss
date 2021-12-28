@@ -9,13 +9,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 
-public class Main implements Initializable {
+public class LogIn implements Initializable {
     @FXML
     private TextField nif;
 
@@ -29,18 +28,21 @@ public class Main implements Initializable {
     private Pane errors;
 
     private SGR sgr;
+    private Frame frame;
 
-    public void login(ActionEvent e)  {
-        try {
-            sgr.autenticaUtilizador(nif.getText(),password.getText());
-        } catch (CredenciasInvalidasException ex) {
-            showError(ex.getMessage());
-            // TODO: Apresentar erro
-        }
+    public LogIn(SGR sgr, Frame frame) {
+        this.sgr = sgr;
+        this.frame = frame;
     }
 
-    public void setSGR(SGR sgr) {
-        this.sgr = sgr;
+    public void login(ActionEvent e)  {
+        resetError();
+        try {
+            sgr.autenticaUtilizador(nif.getText(), password.getText());
+            frame.login();
+        } catch (CredenciasInvalidasException ex) {
+            showError(ex.getMessage());
+        }
     }
 
     @Override
