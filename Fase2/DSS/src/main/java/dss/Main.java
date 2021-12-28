@@ -14,6 +14,7 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         SGR sgr = new SGR();
         Frame frame = new Frame(sgr);
+        frame.setStage(stage);
         Scene mainScene = frame.getScene();
 
         stage.setScene(mainScene);

@@ -10,16 +10,16 @@ import java.util.List;
 
 public class NovoCliente extends Form {
     private SGR sgr;
-    private Frame frame;
+    private Navigator navigator;
 
     private TextField nome;
     private TextField nif;
     private TextField email;
     private TextField telemovel;
 
-    public NovoCliente(SGR sgr, Frame frame) {
+    public NovoCliente(SGR sgr, Navigator frame) {
         this.sgr = sgr;
-        this.frame = frame;
+        this.navigator = frame;
 
         LinkedHashMap<String, Node> inputs = new LinkedHashMap<>();
 
@@ -48,7 +48,7 @@ public class NovoCliente extends Form {
             try {
                 sgr.criaCliente(nif.getText(), nome.getText(), email.getText(), telemovel.getText(),
                         sgr.getUtilizadorAutenticado().getId());
-                frame.navigateBack("Cliente " + nome.getText() + " criado!");
+                navigator.navigateBack("Cliente " + nome.getText() + " criado!");
                 return List.of();
             } catch (UtilizadorJaExisteException e) {
                 return List.of("Cliente já existe");

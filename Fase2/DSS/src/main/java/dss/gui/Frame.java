@@ -12,13 +12,16 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.Stack;
 
-public class Frame implements Initializable {
+public class Frame implements Initializable, Navigator {
+    private Stage stage;
+
     @FXML
     private MenuBar topMenu;
     @FXML
@@ -89,6 +92,15 @@ public class Frame implements Initializable {
         this.message.setMaxHeight(Region.USE_COMPUTED_SIZE);
         this.message.setVisible(true);
         navigateBack();
+    }
+
+    @Override
+    public Stage getStage() {
+        return stage;
+    }
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
     }
 
     @Override

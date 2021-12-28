@@ -9,11 +9,11 @@ import javafx.scene.text.Font;
 
 public class MainMenu {
     private SGR sgr;
-    private Frame frame;
+    private Navigator navigator;
 
-    public MainMenu(SGR sgr, Frame frame) {
+    public MainMenu(SGR sgr, Navigator navigator) {
         this.sgr = sgr;
-        this.frame = frame;
+        this.navigator = navigator;
     }
 
     public Node getScene() {
@@ -23,9 +23,12 @@ public class MainMenu {
         vbox.getChildren().add(title);
 
         Button newClientButton = new Button("Novo cliente");
-        newClientButton.setOnAction(e -> frame.navigateTo(new NovoCliente(sgr, frame).getScene()));
+        newClientButton.setOnAction(e -> navigator.navigateTo(new NovoCliente(sgr, navigator).getScene()));
 
-        vbox.getChildren().add(newClientButton);
+        Button testPopUp = new Button("Testar popup");
+        testPopUp.setOnAction(s -> navigator.openPopup(new ClientsPopUp()));
+
+        vbox.getChildren().addAll(newClientButton, testPopUp);
 
         return vbox;
     }
