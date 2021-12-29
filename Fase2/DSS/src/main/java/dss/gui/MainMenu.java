@@ -7,7 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
-public class MainMenu {
+public class MainMenu  {
     private SGR sgr;
     private Navigator navigator;
 
@@ -25,10 +25,20 @@ public class MainMenu {
         Button newClientButton = new Button("Novo cliente");
         newClientButton.setOnAction(e -> navigator.navigateTo(new NovoCliente(sgr, navigator).getScene()));
 
+        // for testing purposes
+        Button allClientsButton = new Button("Mostra Clientes");
+        allClientsButton.setOnAction(e -> navigator.navigateTo(new TodosClientes(sgr, navigator).getScene()));
+
         Button testPopUp = new Button("Testar popup");
         testPopUp.setOnAction(s -> navigator.openPopup(new ClientsPopUp()));
 
-        vbox.getChildren().addAll(newClientButton, testPopUp);
+        Button criaReparacaoProgramada = new Button("Cria Reparação Programada");
+        criaReparacaoProgramada.setOnAction(e -> navigator.navigateTo(new NovaReparacaoProgramada(sgr, navigator).getScene()));
+
+        Button aguardarOrcamentoButton = new Button("Reparações a aguardar Orçamento");
+        aguardarOrcamentoButton.setOnAction(s -> navigator.navigateTo(new AguardarOrcamento(sgr,navigator).getScene()));
+
+        vbox.getChildren().addAll(newClientButton, allClientsButton,criaReparacaoProgramada, aguardarOrcamentoButton,testPopUp);
 
         return vbox;
     }
