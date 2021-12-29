@@ -15,8 +15,8 @@ import java.util.Map;
 
 public abstract class Form {
     private Map<String, Node> inputs;
-    private String title;
-    private String buttonText;
+    protected String title;
+    protected String buttonText;
     private Button button;
 
     protected void init(String title, Map<String, Node> inputs, String button) {

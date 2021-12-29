@@ -122,14 +122,17 @@ public class Frame implements Initializable, Navigator {
         this.exitButton.setVisible(false);
         this.backButton.setVisible(false);
 
+        Node n = null;
+        try {
+            n = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        Node finalN = n;
         navigateTo(() -> {
-            try {
-                return loader.load();
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.exit(1);
-                return null;
-            }
+            return finalN;
         });
     }
 
@@ -181,7 +184,7 @@ public class Frame implements Initializable, Navigator {
                 System.out.println("Loaded " + sgr.getClientes().size() + " clients");
             } catch (IOException | ClassNotFoundException e) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Impossível guardar");
+                alert.setTitle("Impossível abrir");
                 alert.setHeaderText(e.getMessage());
                 e.printStackTrace();
                 alert.showAndWait();
