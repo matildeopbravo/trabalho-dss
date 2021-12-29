@@ -2,6 +2,7 @@ package dss.gui;
 
 import dss.SGR;
 import dss.clientes.Cliente;
+import dss.exceptions.UtilizadorNaoExisteException;
 import dss.gui.components.TabelaClientes;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -53,6 +54,11 @@ public class TodosClientes implements Navigatable {
                     if (b == ButtonType.OK) {
                         // TODO: Implementar a funcionalidade de apagar clientes
                         System.err.println("Por implementar");
+                        try {
+                            sgr.apagaUtilizador(selected.getNIF());
+                        } catch (UtilizadorNaoExisteException e) {
+                            // nao vai acontecer
+                        }
                         tabelaClientes.getItems().setAll(sgr.getClientes());
                     }
                 });
