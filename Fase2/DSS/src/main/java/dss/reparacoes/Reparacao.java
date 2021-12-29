@@ -5,11 +5,12 @@ import dss.DuracaoCusto;
 import dss.Intervencao;
 import dss.equipamentos.Fase;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Reparacao {
+public abstract class Reparacao implements Serializable {
     protected static int lastId = -1;
     protected int id;
     protected String idCliente;

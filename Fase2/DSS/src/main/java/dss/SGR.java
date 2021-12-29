@@ -84,7 +84,6 @@ public class SGR  implements  SGRInterface{
        reparacao.marcaComoNotificado();
     }
 
-
     // so vai aparecer esta obção tendo criado um passo
     public void adicionaSubpassoPlano(PassoReparacao passo, String descricao, Duration duracao, float custo) {
        passo.addSubpasso(new PassoReparacao(descricao,duracao,custo));

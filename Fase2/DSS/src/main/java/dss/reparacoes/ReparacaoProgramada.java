@@ -8,13 +8,14 @@ import dss.PlanoReparacao;
 import dss.exceptions.NaoPodeSerReparadoAgoraException;
 import dss.exceptions.NaoPodeSerReparadoException;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ReparacaoProgramada extends Reparacao {
+public class ReparacaoProgramada extends Reparacao implements Serializable {
     private Equipamento equipamentoAReparar;
     private PlanoReparacao planoReparacao = null;
     private Orcamento orcamento;

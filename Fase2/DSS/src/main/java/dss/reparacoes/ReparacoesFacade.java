@@ -3,10 +3,11 @@ package dss.reparacoes;
 import dss.equipamentos.Fase;
 import dss.exceptions.ReparacaoNaoExisteException;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class ReparacoesFacade {
+public class ReparacoesFacade implements Serializable  {
     private final HashMap<Integer, Reparacao> reparacoesConcluidas;
     private final HashMap<Integer, Reparacao> reparacoesArquivadas;
     private final LinkedHashMap<Integer, ReparacaoProgramada> reparacoesProgramadasAtuais;

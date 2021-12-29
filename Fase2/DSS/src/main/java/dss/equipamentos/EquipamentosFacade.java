@@ -4,13 +4,14 @@ import dss.exceptions.EquipamentoJaExisteException;
 import dss.exceptions.EquipamentoNaoExisteException;
 import dss.reparacoes.ReparacoesFacade;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class EquipamentosFacade {
+public class EquipamentosFacade implements Serializable {
     private final Map<Integer, Equipamento> equipamentoById;
     private final Map<Integer, Equipamento> equipamentoAbandonado;
     private final Map<Integer, Componente> componenteById;

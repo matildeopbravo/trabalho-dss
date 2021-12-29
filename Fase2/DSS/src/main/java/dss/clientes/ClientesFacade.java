@@ -3,10 +3,11 @@ package dss.clientes;
 import dss.exceptions.UtilizadorJaExisteException;
 import dss.exceptions.UtilizadorNaoExisteException;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 
-public class ClientesFacade {
+public class ClientesFacade implements Serializable  {
     private final HashMap<String, Cliente> clientesById;
 
     public ClientesFacade() {

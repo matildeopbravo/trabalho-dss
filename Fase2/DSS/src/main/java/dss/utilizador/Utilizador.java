@@ -1,6 +1,8 @@
 package dss.utilizador;
 
-public abstract class Utilizador {
+import java.io.Serializable;
+
+public abstract class Utilizador implements Serializable  {
     private String nome;
     private String id;
     private String passwordHash;
