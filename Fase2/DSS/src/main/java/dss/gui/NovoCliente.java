@@ -12,10 +12,10 @@ public class NovoCliente extends Form implements Navigatable {
     private SGR sgr;
     private Navigator navigator;
 
-    private TextField nome;
-    private TextField nif;
-    private TextField email;
-    private TextField telemovel;
+    protected TextField nome;
+    protected TextField nif;
+    protected TextField email;
+    protected TextField telemovel;
 
     public NovoCliente(SGR sgr, Navigator frame) {
         this.sgr = sgr;

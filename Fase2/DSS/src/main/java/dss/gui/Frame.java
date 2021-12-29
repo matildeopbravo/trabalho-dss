@@ -181,7 +181,7 @@ public class Frame implements Initializable, Navigator {
                 System.out.println("Loaded " + sgr.getClientes().size() + " clients");
             } catch (IOException | ClassNotFoundException e) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Impossível guardar");
+                alert.setTitle("Impossível abrir");
                 alert.setHeaderText(e.getMessage());
                 e.printStackTrace();
                 alert.showAndWait();

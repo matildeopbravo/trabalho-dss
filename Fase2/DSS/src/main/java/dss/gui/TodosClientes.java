@@ -67,6 +67,14 @@ public class TodosClientes implements Navigatable {
         });
 
         detailsButton.setDisable(true);
+        detailsButton.setOnAction(e -> navigator.navigateTo(new DetalhesCliente(sgr, navigator, selected)));
+        tabelaClientes.setOnDoubleClick(new TabelaClientes.ClienteCallback() {
+            // Não entendo porque é que aqui não me deixa usar uma lambda...
+            @Override
+            public void run(Cliente cliente) {
+                navigator.navigateTo(new DetalhesCliente(sgr, navigator, cliente));
+            }
+        });
 
         tabelaClientes.getSelectionModel().selectedItemProperty().addListener((observableValue, old, cliente) -> {
             System.out.println("Selected " + cliente);

@@ -8,7 +8,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 public class TabelaClientes extends TableView<Cliente> {
-    abstract class ClienteCallback {
+    public abstract static class ClienteCallback {
         public abstract void run(Cliente cliente);
     }
 
