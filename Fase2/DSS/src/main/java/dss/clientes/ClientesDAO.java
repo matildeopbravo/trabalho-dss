@@ -1,5 +1,6 @@
 package dss.clientes;
 
+import dss.exceptions.ClienteNaoExisteException;
 import dss.exceptions.UtilizadorJaExisteException;
 import dss.exceptions.UtilizadorNaoExisteException;
 
@@ -56,4 +57,8 @@ public class ClientesDAO implements Serializable  {
         }
     }
 
+    public void removeCliente(String idCliente) throws ClienteNaoExisteException {
+            if (clientesById.remove(idCliente) == null)
+                throw new ClienteNaoExisteException();
+        }
 }

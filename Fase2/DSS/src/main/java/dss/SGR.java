@@ -416,7 +416,10 @@ public class SGR implements SGRInterface{
                 .orElse(null);
     }
 
-    public void apagaUtilizador(String idCliente) throws UtilizadorNaoExisteException {
-        utilizadoresDAO.removeUtilizador(idCliente);
+    public void apagaUtilizador(String idUtilizador) throws UtilizadorNaoExisteException {
+        utilizadoresDAO.removeUtilizador(idUtilizador);
+    }
+    public void apagaCliente(String idCliente) throws ClienteNaoExisteException {
+        clientesDAO.removeCliente(idCliente);
     }
 }
