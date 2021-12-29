@@ -215,8 +215,8 @@ public class SGRFacade implements Serializable {
         return reparacao.efetuaReparacao(tecnico.getId(), custoMaoDeObraReal, duracaoReal, componentesReais);
     }
 
-    public void concluiReparacaoExpresso(Integer id) throws ReparacaoNaoExisteException{
-        reparacoesFacade.concluiExpresso(id);
+    public void concluiReparacaoExpresso(Integer id, Duration duracaoReal) throws ReparacaoNaoExisteException{
+        reparacoesFacade.concluiExpresso(id,duracaoReal);
     }
 
     public void adicionaReparacaoExpressoAtual(ReparacaoExpresso reparacao) throws ReparacaoJaExisteException {

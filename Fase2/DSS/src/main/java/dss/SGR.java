@@ -280,11 +280,11 @@ public class SGR  implements  SGRInterface{
         ((Tecnico) utilizadorAutenticado).ocupaTecnico();
     }
 
-    public void concluiReparacaoExpresso(ReparacaoExpresso r) throws TecnicoNaoAtribuidoException, ReparacaoNaoExisteException {
+    public void concluiReparacaoExpresso(ReparacaoExpresso r, Duration duracaoReal) throws TecnicoNaoAtribuidoException, ReparacaoNaoExisteException {
         if(!r.getIdTecnicoReparou().equals(utilizadorAutenticado.getId()))
             throw new TecnicoNaoAtribuidoException();
         ((Tecnico) utilizadorAutenticado).libertaTecnico();
-        sgrFacade.concluiReparacaoExpresso(r.getId());
+        sgrFacade.concluiReparacaoExpresso(r.getId(),duracaoReal);
     }
 
     // devolve todos os componentes que contêm todas as palavras da stringPesquisa na descrição

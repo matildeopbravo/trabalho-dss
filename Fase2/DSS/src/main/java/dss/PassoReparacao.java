@@ -107,12 +107,10 @@ public class PassoReparacao implements Intervencao {
     return duracaoCusto.getDuracaoPrevista();
   }
 
-  @Override
   public float getCustoMaoDeObraReal() {
     return duracaoCusto.getCustoMaoDeObraReal();
   }
 
-  @Override
   public float getCustoMaoDeObraPrevisto() {
     return duracaoCusto.getCustoMaoDeObraPrevisto();
   }

@@ -5,20 +5,20 @@ import java.time.Duration;
 public class ServicoExpressoTabelado {
     private int id;
     private String descricao;
-    private float custoPrevisto ;
+    private float custo ;
     private Duration duracaoPrevista;
 
-    public ServicoExpressoTabelado(int id, String descricao, float custoPrevisto, Duration duracaoPrevista) {
+    public ServicoExpressoTabelado(int id, String descricao, float custo, Duration duracaoPrevista) {
         this.id = id;
         this.descricao = descricao;
-        this.custoPrevisto = custoPrevisto;
+        this.custo = custo;
         this.duracaoPrevista = duracaoPrevista;
     }
 
     public ServicoExpressoTabelado(ServicoExpressoTabelado servicoExpressoTabelado) {
         this.id = servicoExpressoTabelado.id;
         this.descricao = servicoExpressoTabelado.descricao;
-        this.custoPrevisto = servicoExpressoTabelado.custoPrevisto;
+        this.custo = servicoExpressoTabelado.custo;
         this.duracaoPrevista = servicoExpressoTabelado.duracaoPrevista;
     }
 
@@ -26,8 +26,8 @@ public class ServicoExpressoTabelado {
         return id;
     }
 
-    public float getCustoPrevisto() {
-        return custoPrevisto;
+    public float getCusto() {
+        return custo;
     }
 
     public String getDescricao() {

@@ -4,6 +4,7 @@ import dss.equipamentos.Fase;
 import dss.exceptions.ReparacaoNaoExisteException;
 
 import java.io.Serializable;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -46,9 +47,10 @@ public class ReparacoesFacade implements Serializable  {
         return reparacoesExpressoAtuais.values();
     }
 
-    public void concluiExpresso(int id) throws ReparacaoNaoExisteException{
+    public void concluiExpresso(int id, Duration duracaoReal) throws ReparacaoNaoExisteException{
         if (reparacoesExpressoAtuais.containsKey(id)) {
             ReparacaoExpresso reparacao = reparacoesExpressoAtuais.remove(id);
+            reparacao.setDuracaoReal(duracaoReal);
             reparacoesConcluidas.put(id, reparacao);
         }
         else

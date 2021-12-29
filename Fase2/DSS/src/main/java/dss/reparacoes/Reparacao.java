@@ -19,7 +19,6 @@ public abstract class Reparacao implements Serializable {
     protected String funcionarioEntregou = null;
     protected List<String> tecnicosQueRepararam = new ArrayList<>();
     protected Fase fase = Fase.NaoIniciada;
-    protected DuracaoCusto duracaoCusto;
     protected String descricao;
     protected boolean notificado = false;
     protected LocalDateTime dataCriacao = LocalDateTime.now();
@@ -38,18 +37,14 @@ public abstract class Reparacao implements Serializable {
         this.tecnicosQueRepararam.add(idTecnico);
     }
 
-    public Reparacao(String idCliente, String utilizadorCriador, String idTecnico, float custoPrevisto, Duration duracaoPrevista, String descricao) {
-        this(idCliente,utilizadorCriador,idTecnico);
-        this.duracaoCusto = new DuracaoCusto(duracaoPrevista, custoPrevisto);
-    }
 
-    public Duration getDuracaoReal() {
-        return duracaoCusto.getDuracaoReal();
-    }
+    public abstract Duration getDuracaoReal();
 
-    public Duration getDuracaoPrevista() {
-        return duracaoCusto.getDuracaoPrevista();
-    }
+    public abstract Duration getDuracaoPrevista() ;
+
+    public abstract float getCustoTotalPrevisto() ;
+
+    public abstract float getCustoTotalReal() ;
 
     public int getId() {
         return id;

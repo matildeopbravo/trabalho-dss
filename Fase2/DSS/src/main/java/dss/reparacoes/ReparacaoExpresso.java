@@ -11,8 +11,11 @@ import java.util.List;
 public class ReparacaoExpresso extends Reparacao implements Intervencao, Serializable {
     // TODO CLONES
     private final ServicoExpressoTabelado servicoTabelado;
+    private Duration duracaoReal;
+    // nao precisamos de guardar o custoReal porque vai ser sempre o tabelado
+
     public ReparacaoExpresso(ServicoExpressoTabelado servicoTabelado, String idCliente, String utilizadorCriador, String idTecnico, String descricao ) {
-        super(idCliente, utilizadorCriador,idTecnico, servicoTabelado.getCustoPrevisto(), servicoTabelado.getDuracaoPrevista(), descricao);
+        super(idCliente, utilizadorCriador,idTecnico, descricao);
         this.servicoTabelado = servicoTabelado.clone();
     }
 
@@ -31,23 +34,27 @@ public class ReparacaoExpresso extends Reparacao implements Intervencao, Seriali
         return this.descricao;
     }
 
+    public void setDuracaoReal(Duration d) {
+        duracaoReal = d;
+    }
+
     @Override
     public Duration getDuracaoReal() {
-        return duracaoCusto.getDuracaoReal();
+        return duracaoReal;
     }
 
     @Override
     public Duration getDuracaoPrevista() {
-        return duracaoCusto.getDuracaoPrevista();
+        return servicoTabelado.getDuracaoPrevista();
     }
 
     @Override
-    public float getCustoMaoDeObraReal() {
-        return duracaoCusto.getCustoMaoDeObraReal();
+    public float getCustoTotalPrevisto() {
+        return servicoTabelado.getCusto();
     }
 
     @Override
-    public float getCustoMaoDeObraPrevisto() {
-        return duracaoCusto.getCustoMaoDeObraPrevisto();
+    public float getCustoTotalReal() {
+        return servicoTabelado.getCusto();
     }
 }

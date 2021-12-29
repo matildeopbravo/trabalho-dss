@@ -1,5 +1,6 @@
 package dss.reparacoes;
 
+import dss.DuracaoCusto;
 import dss.Intervencao;
 import dss.equipamentos.Componente;
 import dss.equipamentos.Equipamento;
@@ -40,6 +41,27 @@ public class ReparacaoProgramada extends Reparacao implements Serializable {
 
     public String getOrcamentoMail(String nome) {
         return "Caro " + nome + ",\n" + orcamento.toString() + "\nAtenciosamente,\n Loja Reparações";
+    }
+
+
+    @Override
+    public Duration getDuracaoReal() {
+        return planoReparacao.getCustoTotalEDuracaoReal().getSecond();
+    }
+
+    @Override
+    public Duration getDuracaoPrevista() {
+        return planoReparacao.getCustoTotalEDuracaoPrevista().getSecond();
+    }
+
+    @Override
+    public float getCustoTotalPrevisto() {
+        return planoReparacao.getCustoTotalEDuracaoPrevista().getFirst();
+    }
+
+    @Override
+    public float getCustoTotalReal() {
+        return planoReparacao.getCustoTotalEDuracaoReal().getFirst();
     }
 
 
