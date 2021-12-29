@@ -2,7 +2,7 @@ package dss.equipamentos;
 
 import dss.exceptions.EquipamentoJaExisteException;
 import dss.exceptions.EquipamentoNaoExisteException;
-import dss.reparacoes.ReparacoesFacade;
+import dss.reparacoes.ReparacoesDAO;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -11,15 +11,45 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class EquipamentosFacade implements Serializable {
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+public class EquipamentosDAO implements Serializable {
     private final Map<Integer, Equipamento> equipamentoById;
     private final Map<Integer, Equipamento> equipamentoAbandonado;
     private final Map<Integer, Componente> componenteById;
 
-    public EquipamentosFacade() {
+    public EquipamentosDAO() {
         this.equipamentoById = new HashMap<>();
         this.componenteById = new HashMap<>();
         this.equipamentoAbandonado = new HashMap<>();
+    }
+
+    public static EquipamentosDAO lerEquipamento(String ficheiro) {
+        try {
+            FileInputStream fis = new FileInputStream(ficheiro);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+
+            return (EquipamentosDAO)ois.readObject();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new EquipamentosDAO();
+    }
+
+    public static void escreverEquipamento(String ficheiro, EquipamentosDAO equipamento) {
+        try {
+            FileOutputStream fos = new FileOutputStream(ficheiro);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+
+            oos.writeObject(equipamento);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void adicionaEquipamento(Equipamento equipamento) throws EquipamentoJaExisteException {
@@ -56,7 +86,7 @@ public class EquipamentosFacade implements Serializable {
         throw new EquipamentoNaoExisteException();
     }
 
-    public void atualizaEquipamentoAbandonado(ReparacoesFacade reparacoesFacade) {
+    public void atualizaEquipamentoAbandonado(ReparacoesDAO reparacoesFacade) {
         Iterator<Map.Entry<Integer, Equipamento>> it = equipamentoById.entrySet().iterator();
         LocalDateTime today = LocalDateTime.now();
 

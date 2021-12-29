@@ -10,7 +10,7 @@ public abstract class Utilizador implements Serializable  {
     public Utilizador(String nome, String id, String password) {
         this.nome = nome;
         this.id = id;
-        this.passwordHash = UtilizadoresFacade.encriptaPassword(password);
+        this.passwordHash = UtilizadoresDAO.encriptaPassword(password);
     }
 
     public String getNome() {

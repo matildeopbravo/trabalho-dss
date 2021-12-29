@@ -3,14 +3,14 @@ package dss.clientes;
 import dss.exceptions.UtilizadorJaExisteException;
 import dss.exceptions.UtilizadorNaoExisteException;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.Collection;
 import java.util.HashMap;
 
-public class ClientesFacade implements Serializable  {
+public class ClientesDAO implements Serializable  {
     private final HashMap<String, Cliente> clientesById;
 
-    public ClientesFacade() {
+    public ClientesDAO() {
         this.clientesById = new HashMap<>();
     }
 
@@ -31,4 +31,29 @@ public class ClientesFacade implements Serializable  {
     public Collection<Cliente> getClientes() {
         return clientesById.values();
     }
+    public static ClientesDAO lerClientes(String ficheiro) {
+        try {
+            FileInputStream fis = new FileInputStream(ficheiro);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+
+            return (ClientesDAO) ois.readObject();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ClientesDAO();
+    }
+
+    public static void escreverEquipamento(String ficheiro, ClientesDAO clientes) {
+        try {
+            FileOutputStream fos = new FileOutputStream(ficheiro);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+
+            oos.writeObject(clientes);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
