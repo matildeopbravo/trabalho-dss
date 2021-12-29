@@ -2,6 +2,8 @@ package dss.gui.components;
 
 import dss.SGR;
 import dss.clientes.Cliente;
+import dss.exceptions.NaoExisteException;
+import dss.exceptions.UtilizadorJaExisteException;
 import dss.exceptions.UtilizadorNaoExisteException;
 import dss.reparacoes.Reparacao;
 import dss.utilizador.Utilizador;
@@ -22,8 +24,7 @@ public class TabelaReparacoes extends TableView<Reparacao> {
             try {
                 Cliente c = sgr.getCliente(cellData.getValue().getIdCliente());
                 return new SimpleStringProperty(c.getNome());
-            } catch (UtilizadorNaoExisteException e) {
-                // Não deve acontecer!
+            } catch (NaoExisteException e) {
                 e.printStackTrace();
                 return null;
             }
@@ -34,7 +35,7 @@ public class TabelaReparacoes extends TableView<Reparacao> {
             try {
                 Utilizador f = sgr.getUtilizador(cellData.getValue().getFuncionarioCriador());
                 return new SimpleStringProperty(f.getNome());
-            } catch (UtilizadorNaoExisteException e) {
+            } catch (NaoExisteException e) {
                 e.printStackTrace();
                 return null;
             }
