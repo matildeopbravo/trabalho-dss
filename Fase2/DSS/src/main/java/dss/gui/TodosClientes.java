@@ -2,43 +2,88 @@ package dss.gui;
 
 import dss.SGR;
 import dss.clientes.Cliente;
-import javafx.geometry.Pos;
+import dss.gui.components.TabelaClientes;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.GridPane;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
+public class TodosClientes implements Navigatable {
+    private Button deleteButton;
+    private Button addButton;
+    private Button detailsButton;
+    private TabelaClientes tabelaClientes;
+    private Cliente selected;
 
-public class TodosClientes {
-    private Collection<Cliente> listaClientes ;
+    private final Collection<Cliente> listaClientes;
+    private final SGR sgr;
+    private final Navigator navigator;
+
     public TodosClientes(SGR sgr, Navigator navigator) {
         listaClientes = sgr.getClientes();
+        this.sgr = sgr;
+        this.navigator = navigator;
+
+        deleteButton = new Button("Apagar");
+        detailsButton = new Button("Detalhes");
+        addButton = new Button("Novo cliente");
+        tabelaClientes = new TabelaClientes();
+
+        addButton.setOnAction(e -> navigator.navigateTo(new NovoCliente(sgr, navigator)));
+
+        deleteButton.setDisable(true);
+        deleteButton.setStyle("-fx-background-color: #e83a3a");
+
+        deleteButton.setOnAction(ev -> {
+            if (selected != null) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Apagar cliente");
+                alert.setHeaderText("Apagar cliente " + selected.getNome() + "?");
+                Optional<ButtonType> result = alert.showAndWait();
+
+                result.ifPresent(b -> {
+                    if (b == ButtonType.OK) {
+                        // TODO: Implementar a funcionalidade de apagar clientes
+                        System.err.println("Por implementar");
+                        tabelaClientes.getItems().setAll(sgr.getClientes());
+                    }
+                });
+            }
+        });
+
+        detailsButton.setDisable(true);
+
+        tabelaClientes.getSelectionModel().selectedItemProperty().addListener((observableValue, old, cliente) -> {
+            System.out.println("Selected " + cliente);
+            selected = cliente;
+
+            deleteButton.setDisable(selected == null);
+            detailsButton.setDisable(selected == null);
+        });
     }
 
     public Node getScene() {
-        TableView<Cliente> tabela = new TableView<>();
-        TableColumn<Cliente,String> nif = new TableColumn<>("NIF");
-        nif.setCellValueFactory(new PropertyValueFactory<>("NIF"));
+        VBox vbox = new VBox();
+        vbox.setSpacing(10.0);
+        
+        VBox.setVgrow(tabelaClientes, Priority.ALWAYS);
+        tabelaClientes.getItems().setAll(listaClientes);
 
-        TableColumn<Cliente,String> nome = new TableColumn<>("Nome");
-        nome.setCellValueFactory(new PropertyValueFactory<>("Nome"));
-        TableColumn<Cliente,String> mail = new TableColumn<>("Email");
-        mail.setCellValueFactory(new PropertyValueFactory<>("Email"));
-        TableColumn<Cliente,String> telemovel = new TableColumn<>("Telemovel");
-        telemovel.setCellValueFactory(new PropertyValueFactory<>("numeroTelemovel"));
+        HBox buttons = new HBox();
+        buttons.setSpacing(5.0);
 
-        tabela.getColumns().addAll(nif, nome,mail, telemovel);
-        tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        tabela.getItems().setAll(listaClientes);
-        return tabela;
+        buttons.getChildren().addAll(addButton, detailsButton, deleteButton);
+
+        vbox.getChildren().addAll(tabelaClientes, buttons);
+
+        return vbox;
     }
 }

@@ -8,7 +8,7 @@ import java.util.concurrent.Future;
 
 public interface Navigator {
     // Esta interface gere a navegação entre dois ecrãs
-    void navigateTo(Node node);
+    void navigateTo(Navigatable node);
     void navigateBack();
     void navigateBack(String message);
 
