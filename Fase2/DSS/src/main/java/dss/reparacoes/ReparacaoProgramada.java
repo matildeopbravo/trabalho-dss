@@ -23,8 +23,8 @@ public class ReparacaoProgramada extends Reparacao implements Serializable {
     // pausado indica se esta a ser reparado neste preciso momento ou nao
     private boolean pausado;
 
-    public ReparacaoProgramada(String idCliente, String utilizadorCriador) {
-        super(idCliente, utilizadorCriador);
+    public ReparacaoProgramada(String idCliente, String utilizadorCriador, String descricao) {
+        super(idCliente, utilizadorCriador, descricao);
         this.equipamentoAReparar = new Equipamento(idCliente, LocalDateTime.now());
         pausado = true;
         this.orcamento = null;
@@ -32,9 +32,14 @@ public class ReparacaoProgramada extends Reparacao implements Serializable {
         fase = Fase.AEsperaOrcamento;
     }
 
+    public String getDescricao() {
+        return this.descricao;
+    }
+
     public String getOrcamentoMail(String nome) {
         return "Caro " + nome + ",\n" + orcamento.toString() + "\nAtenciosamente,\n Loja Reparações";
     }
+
 
     @Override
     public List<Intervencao> getIntervencoesRealizadas() {

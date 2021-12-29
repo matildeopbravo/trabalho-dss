@@ -1,6 +1,7 @@
 package dss.equipamentos;
 
 public enum Fase {
+    NaoIniciada,
     AEsperaOrcamento,
     AEsperaResposta,
     Recusada,

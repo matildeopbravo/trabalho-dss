@@ -1,8 +1,9 @@
 package dss.equipamentos;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class Equipamento {
+public class Equipamento implements Serializable  {
     private static int lastId = -1;
 
     private final int idEquipamento;

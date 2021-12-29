@@ -11,8 +11,8 @@ import java.util.List;
 public class ReparacaoExpresso extends Reparacao implements Intervencao, Serializable {
     // TODO CLONES
     private final ServicoExpressoTabelado servicoTabelado;
-    public ReparacaoExpresso(ServicoExpressoTabelado servicoTabelado, String idCliente, String utilizadorCriador, String idTecnico ) {
-        super(idCliente, utilizadorCriador,idTecnico, servicoTabelado.getCustoPrevisto(), servicoTabelado.getDuracaoPrevista());
+    public ReparacaoExpresso(ServicoExpressoTabelado servicoTabelado, String idCliente, String utilizadorCriador, String idTecnico, String descricao ) {
+        super(idCliente, utilizadorCriador,idTecnico, servicoTabelado.getCustoPrevisto(), servicoTabelado.getDuracaoPrevista(), descricao);
         this.servicoTabelado = servicoTabelado.clone();
     }
 

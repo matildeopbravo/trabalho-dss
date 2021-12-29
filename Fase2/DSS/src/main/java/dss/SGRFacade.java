@@ -176,8 +176,8 @@ public class SGRFacade implements Serializable {
     //###########
     //#REPARACAO#
     //###########
-    public void criaFichaReparacaoProgramada(String nifCliente, String utilizadorID) {
-        ReparacaoProgramada reparacao = new ReparacaoProgramada(nifCliente, utilizadorID);
+    public void criaFichaReparacaoProgramada(String nifCliente, String utilizadorID, String descricao) {
+        ReparacaoProgramada reparacao = new ReparacaoProgramada(nifCliente, utilizadorID, descricao);
         reparacoesFacade.adicionaReparacaoProgramadaAtual(reparacao);
     }
 

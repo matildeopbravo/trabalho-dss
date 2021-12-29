@@ -14,15 +14,19 @@ public class NovaReparacaoProgramada extends  Form {
     SGR sgr;
     Navigator navigator;
     private TextField idCliente;
+    private TextField descricao;
 
     public NovaReparacaoProgramada(SGR sgr, Navigator frame) {
         this.sgr = sgr;
         this.navigator = frame;
 
+        this.idCliente = new TextField();
+        this.descricao = new TextField();
         LinkedHashMap<String, Node> inputs = new LinkedHashMap<>();
 
         this.idCliente = new javafx.scene.control.TextField();
         inputs.put("Id Cliente", this.idCliente);
+        inputs.put("Descricao ", this.descricao);
 
         init("Nova Reparação Programada", inputs, "Criar Reparação Programada");
     }
@@ -35,7 +39,7 @@ public class NovaReparacaoProgramada extends  Form {
     @Override
     protected List<String> submit() {
         if (validateSubmit()) {
-            sgr.criaReparacaoProgramada(idCliente.getText());
+            sgr.criaReparacaoProgramada(idCliente.getText(),descricao.getText() );
             navigator.navigateBack("Ficha de Reparação do Cliente " + idCliente.getText() + " criada!");
             return List.of();
         } else {

@@ -7,6 +7,7 @@ import dss.equipamentos.Fase;
 
 import java.io.Serializable;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,26 +16,29 @@ public abstract class Reparacao implements Serializable {
     protected int id;
     protected String idCliente;
     protected String funcionarioCriador;
-    protected String funcionarioEntregou;
+    protected String funcionarioEntregou = null;
     protected List<String> tecnicosQueRepararam = new ArrayList<>();
-    protected Fase fase;
+    protected Fase fase = Fase.NaoIniciada;
     protected DuracaoCusto duracaoCusto;
     protected String descricao;
-    protected boolean notificado;
+    protected boolean notificado = false;
+    protected LocalDateTime dataCriacao = LocalDateTime.now();
 
 
-    public Reparacao(String idCliente, String funcionarioCriador) {
+    public Reparacao(String idCliente, String funcionarioCriador, String descricao) {
         this.id = ++lastId;
         this.idCliente = idCliente;
         this.funcionarioCriador = funcionarioCriador;
+        this.descricao = descricao;
+
     }
 
-    public Reparacao(String idCliente, String funcionarioCriador, String idTecnico) {
-        this(idCliente,funcionarioCriador);
+    public Reparacao(String idCliente, String funcionarioCriador, String idTecnico, String descricao) {
+        this(idCliente,funcionarioCriador, descricao);
         this.tecnicosQueRepararam.add(idTecnico);
     }
 
-    public Reparacao(String idCliente, String utilizadorCriador, String idTecnico, float custoPrevisto, Duration duracaoPrevista) {
+    public Reparacao(String idCliente, String utilizadorCriador, String idTecnico, float custoPrevisto, Duration duracaoPrevista, String descricao) {
         this(idCliente,utilizadorCriador,idTecnico);
         this.duracaoCusto = new DuracaoCusto(duracaoPrevista, custoPrevisto);
     }

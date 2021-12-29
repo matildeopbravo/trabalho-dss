@@ -55,13 +55,13 @@ public class SGR  implements  SGRInterface{
         sgrFacade.criaCliente(NIF, nome, email, numeroTelemovel, funcionarioCriador);
     }
 
-    public void criaReparacaoProgramada(String NIFCliente) {
-        sgrFacade.criaFichaReparacaoProgramada(NIFCliente, utilizadorAutenticado.getId());
+    public void criaReparacaoProgramada(String NIFCliente, String descricao) {
+        sgrFacade.criaFichaReparacaoProgramada(NIFCliente, utilizadorAutenticado.getId(), descricao);
     }
 
-    public void criaReparacaoExpresso(int idServico, String idCliente, String idTecnico ) throws ReparacaoJaExisteException {
+    public void criaReparacaoExpresso(int idServico, String idCliente, String idTecnico , String descricao) throws ReparacaoJaExisteException {
         ReparacaoExpresso r = new ReparacaoExpresso(servicoExpresso.get(idServico), idCliente,
-                utilizadorAutenticado.getId(), idTecnico);
+                utilizadorAutenticado.getId(), idTecnico, descricao);
         sgrFacade.adicionaReparacaoExpressoAtual(r);
     }
 
