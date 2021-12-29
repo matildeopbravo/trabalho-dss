@@ -3,6 +3,7 @@ package dss.gui;
 import dss.SGR;
 import dss.clientes.Cliente;
 import dss.exceptions.ClienteNaoExisteException;
+import dss.exceptions.NaoExisteException;
 import dss.exceptions.UtilizadorNaoExisteException;
 import dss.gui.components.TabelaClientes;
 import javafx.beans.value.ChangeListener;
@@ -42,7 +43,7 @@ public class TodosClientes implements Navigatable {
         addButton.setOnAction(e -> navigator.navigateTo(new NovoCliente(sgr, navigator)));
 
         deleteButton.setDisable(true);
-        deleteButton.setStyle("-fx-background-color: #e83a3a");
+        deleteButton.setStyle("-fx-background-color: rgba(19,154,98,0.58)");
 
         deleteButton.setOnAction(ev -> {
             if (selected != null) {
@@ -57,8 +58,8 @@ public class TodosClientes implements Navigatable {
                         System.err.println("Por implementar");
                         try {
                             sgr.apagaCliente(selected.getNIF());
-                        } catch (ClienteNaoExisteException e) {
-                            // nao vai acontecer
+                        } catch (NaoExisteException e) {
+                            e.printStackTrace();
                         }
                         tabelaClientes.getItems().setAll(sgr.getClientes());
                     }

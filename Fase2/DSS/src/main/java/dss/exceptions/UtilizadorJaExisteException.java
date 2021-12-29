@@ -1,4 +1,4 @@
 package dss.exceptions;
 
-public class UtilizadorJaExisteException extends Exception {
+public class UtilizadorJaExisteException extends JaExisteException {
 }

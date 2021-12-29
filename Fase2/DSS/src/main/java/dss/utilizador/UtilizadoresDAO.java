@@ -1,6 +1,7 @@
 package dss.utilizador;
 
 import dss.BCrypt.BCrypt;
+import dss.IDAO;
 import dss.exceptions.CredenciasInvalidasException;
 import dss.exceptions.UtilizadorJaExisteException;
 import dss.exceptions.UtilizadorNaoExisteException;
@@ -11,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class UtilizadoresDAO implements Serializable  {
+public class UtilizadoresDAO implements IDAO<Utilizador,String>, Serializable  {
     private Map<String, Utilizador> utilizadoresPorID;
 
     public static UtilizadoresDAO lerUtilizadores(String ficheiro) {
@@ -65,9 +66,10 @@ public class UtilizadoresDAO implements Serializable  {
      * Remove um utilizador do mapa de utilizadores deste objeto
      * @return Utilizador que foi removido, ou nulo se não existia
      */
-    public void removeUtilizador(String idUtilizador) throws UtilizadorNaoExisteException {
+    public Utilizador removeUtilizador(String idUtilizador) throws UtilizadorNaoExisteException {
         if (utilizadoresPorID.remove(idUtilizador) == null)
             throw new UtilizadorNaoExisteException();
+        return null;
     }
 
     /**
@@ -110,8 +112,32 @@ public class UtilizadoresDAO implements Serializable  {
 
     public Collection<Funcionario> getFuncionarios() {
         return utilizadoresPorID.values().stream()
-                .filter(u -> u instanceof  Tecnico)
+                .filter(u -> u instanceof  Funcionario)
                 .map(f -> (Funcionario) f)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Utilizador get(String id) throws UtilizadorNaoExisteException {
+        return getUtilizador(id);
+    }
+
+    @Override
+    public void add(Utilizador item) throws UtilizadorJaExisteException {
+        adicionaUtilizador(item);
+    }
+
+    @Override
+    public void remove(String id) throws UtilizadorNaoExisteException {
+        removeUtilizador(id);
+    }
+
+    public <C> Collection<C> getByClass(Class<C> classe) {
+        return utilizadoresPorID.values().stream().filter(classe::isInstance).map(classe::cast).collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<Utilizador> getAll() {
+        return utilizadoresPorID.values();
     }
 }

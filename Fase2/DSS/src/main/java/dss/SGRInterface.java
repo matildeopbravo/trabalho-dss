@@ -32,8 +32,8 @@ public interface SGRInterface {
     //Devolve a lista de total de intervenções realizadas por cada técnico
     Map<String, List<Intervencao>> intervencoesTecnicos();
 
-    void registaUtilizador (Utilizador utilizador) throws UtilizadorJaExisteException;
-    void removeUtilizador (String idUtilizador) throws UtilizadorNaoExisteException;
+    void registaUtilizador (Utilizador utilizador) throws JaExisteException;
+    void removeUtilizador (String idUtilizador) throws NaoExisteException;
 
     // Se o componente já existir, soma a quantidade ao stock
     //void adicionaComponente (Componente componente);
@@ -45,12 +45,12 @@ public interface SGRInterface {
     Collection<Funcionario> getFuncionarios();
     Collection<Cliente> getClientes();
 
-    Utilizador getUtilizador(String id) throws UtilizadorNaoExisteException; // devolve null se não existir
-    Cliente getCliente(String id) throws UtilizadorNaoExisteException; // devolve null se não existir
+    Utilizador getUtilizador(String id) throws NaoExisteException; // devolve null se não existir
+    Cliente getCliente(String id) throws NaoExisteException; // devolve null se não existir
 
     Collection<Equipamento> getEquipamentos();
     Collection<Equipamento> getEquipamentosAbandonados();
-    Equipamento getEquipamento(String codigo) throws EquipamentoNaoExisteException; // devolve null se não existir
+    Equipamento getEquipamento(int codigo) throws EquipamentoNaoExisteException; // devolve null se não existir
 
     Collection<Reparacao> getReparacoesConcluidas();
     Collection<Reparacao> getReparacoesAtuais();

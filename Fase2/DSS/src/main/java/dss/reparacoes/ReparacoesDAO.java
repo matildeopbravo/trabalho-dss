@@ -1,6 +1,8 @@
 package dss.reparacoes;
 
+import dss.IDAO;
 import dss.equipamentos.Fase;
+import dss.exceptions.NaoExisteException;
 import dss.exceptions.ReparacaoNaoExisteException;
 
 import java.io.*;
@@ -8,7 +10,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class ReparacoesDAO implements Serializable  {
+public class ReparacoesDAO implements  Serializable {
     private final HashMap<Integer, Reparacao> reparacoesConcluidas;
     private final HashMap<Integer, Reparacao> reparacoesArquivadas;
     private final LinkedHashMap<Integer, ReparacaoProgramada> reparacoesProgramadasAtuais;
@@ -26,9 +28,8 @@ public class ReparacoesDAO implements Serializable  {
             FileInputStream fis = new FileInputStream(ficheiro);
             ObjectInputStream ois = new ObjectInputStream(fis);
 
-            return (ReparacoesDAO)ois.readObject();
-        }
-        catch (Exception e) {
+            return (ReparacoesDAO) ois.readObject();
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return new ReparacoesDAO();
@@ -40,8 +41,7 @@ public class ReparacoesDAO implements Serializable  {
             ObjectOutputStream oos = new ObjectOutputStream(fos);
 
             oos.writeObject(reparacoes);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -54,8 +54,7 @@ public class ReparacoesDAO implements Serializable  {
         if (reparacoesProgramadasAtuais.containsKey(reparacaoID)) {
             ReparacaoProgramada reparacao = reparacoesProgramadasAtuais.get(reparacaoID);
             reparacao.setFase(fase);
-        }
-        else
+        } else
             throw new ReparacaoNaoExisteException("Não existe nenhuma reparação " +
                     "programada atual com o id " + reparacaoID + ".");
     }
@@ -72,13 +71,12 @@ public class ReparacoesDAO implements Serializable  {
         return reparacoesExpressoAtuais.values();
     }
 
-    public void concluiExpresso(int id, Duration duracaoReal) throws ReparacaoNaoExisteException{
+    public void concluiExpresso(int id, Duration duracaoReal) throws ReparacaoNaoExisteException {
         if (reparacoesExpressoAtuais.containsKey(id)) {
             ReparacaoExpresso reparacao = reparacoesExpressoAtuais.remove(id);
             reparacao.setDuracaoReal(duracaoReal);
             reparacoesConcluidas.put(id, reparacao);
-        }
-        else
+        } else
             throw new ReparacaoNaoExisteException("Não existe nenhuma reparação " +
                     "expresso atual com o id " + id + ".");
     }
@@ -95,6 +93,11 @@ public class ReparacoesDAO implements Serializable  {
                 it.remove();
             reparacoesArquivadas.put(reparacao.getId(), reparacao);
         }
+    }
+
+    public void marcarOrcamentoComoArquivado(ReparacaoProgramada reparacao){
+        reparacoesProgramadasAtuais.remove(reparacao.getId());
+        reparacoesArquivadas.put(reparacao.getId(),reparacao);
     }
 
     public void arquivaReparacoesAntigas() {

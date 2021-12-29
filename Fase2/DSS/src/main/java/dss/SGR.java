@@ -17,11 +17,11 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class SGR implements SGRInterface{
-    private UtilizadoresDAO utilizadoresDAO;
+public class SGR implements SGRInterface {
+    private IDAO<Utilizador,String> utilizadoresDAO;
     private ReparacoesDAO reparacoesDAO;
     private EquipamentosDAO equipamentosDAO;
-    private ClientesDAO clientesDAO;
+    private IDAO<Cliente,String> clientesDAO;
     //####ATRIBUTOS####
     private Utilizador utilizadorAutenticado ;
     // servicos expressos
@@ -42,9 +42,9 @@ public class SGR implements SGRInterface{
         clientesDAO = new ClientesDAO();
 
         try {
-            utilizadoresDAO.adicionaUtilizador(new Gestor("Exemplo", "123456789", "password"));
-            utilizadoresDAO.adicionaUtilizador(new Gestor("Exemplo 2", "1", ""));
-        } catch (UtilizadorJaExisteException e) {
+            utilizadoresDAO.add(new Gestor("Exemplo", "123456789", "password"));
+            utilizadoresDAO.add(new Gestor("Exemplo 2", "1", ""));
+        } catch (JaExisteException e) {
             e.printStackTrace();
         }
 
@@ -89,9 +89,13 @@ public class SGR implements SGRInterface{
         r.setFase(Fase.Recusada);
     }
 
-    public void marcaComoImpossivelReparar (ReparacaoProgramada reparacao) throws UtilizadorNaoExisteException{
+    public void marcarOrcamentoComoArquivado(ReparacaoProgramada r){
+        reparacoesDAO.marcarOrcamentoComoArquivado(r);
+    }
+
+    public void marcaComoImpossivelReparar (ReparacaoProgramada reparacao) throws NaoExisteException {
        reparacao.setFase(Fase.NaoPodeSerReparado);
-       Cliente c = clientesDAO.getCliente(reparacao.getIdCliente());
+       Cliente c = clientesDAO.get(reparacao.getIdCliente());
        email.enviaMail(c.getEmail(), "Equipamento Não Pode ser Reparado",
                "Após uma análise do estado do equipamento, concluímos que a sua" +
                        "reparação não será possível. Por favor levante o seu equipamento na loja.\n");
@@ -116,8 +120,8 @@ public class SGR implements SGRInterface{
     }
 
     // tem que ter plano de reparacao para poder criar orcamento
-    public void realizaOrcamento(ReparacaoProgramada reparacao) throws UtilizadorNaoExisteException {
-        Cliente c = clientesDAO.getCliente(reparacao.getIdCliente());
+    public void realizaOrcamento(ReparacaoProgramada reparacao) throws NaoExisteException {
+        Cliente c = clientesDAO.get(reparacao.getIdCliente());
         reparacao.realizaOrcamento(utilizadorAutenticado.getId());
         reparacao.setDataEnvioOrcamento(LocalDateTime.now());
         reparacao.setFase(Fase.AEsperaResposta);
@@ -143,13 +147,13 @@ public class SGR implements SGRInterface{
       */
     public void efetuaReparacaoProgramada(ReparacaoProgramada reparacao, int custoMaoDeObraReal, Duration duracaoReal
                                             , Collection<Componente> componentesReais)
-            throws NaoPodeSerReparadoAgoraException, UtilizadorNaoExisteException {
+            throws NaoPodeSerReparadoAgoraException, NaoExisteException {
         //if (utilizadorAutenticado instanceof Tecnico) {
                 boolean completa = reparacao.efetuaReparacao(utilizadorAutenticado.getId(),
                         custoMaoDeObraReal, duracaoReal, componentesReais);
             if (completa) {
                 marcaReparacaoCompleta(reparacao);
-                enviaMailReparacaoConcluida(reparacao, clientesDAO.getCliente(reparacao.getIdCliente()));
+                enviaMailReparacaoConcluida(reparacao, clientesDAO.get(reparacao.getIdCliente()));
             }
         //}
     }
@@ -201,31 +205,31 @@ public class SGR implements SGRInterface{
     }
 
     public void autenticaUtilizador(String nome, String senha) throws CredenciasInvalidasException {
-        utilizadorAutenticado = utilizadoresDAO.validaCredenciais(nome, senha);
+        utilizadorAutenticado = ((UtilizadoresDAO)utilizadoresDAO).validaCredenciais(nome, senha);
     }
 
-    public void registaUtilizador(Utilizador utilizador) throws UtilizadorJaExisteException {
-        utilizadoresDAO.adicionaUtilizador(utilizador);
+    public void registaUtilizador(Utilizador utilizador) throws JaExisteException {
+        utilizadoresDAO.add(utilizador);
     }
 
-    public void removeUtilizador(String utilizadorID) throws UtilizadorNaoExisteException {
-        utilizadoresDAO.removeUtilizador(utilizadorID);
+    public void removeUtilizador(String utilizadorID) throws NaoExisteException {
+        utilizadoresDAO.remove(utilizadorID);
     }
 
-    public Utilizador getUtilizador(String utilizadorID) throws UtilizadorNaoExisteException {
-        return utilizadoresDAO.getUtilizador(utilizadorID);
+    public Utilizador getUtilizador(String utilizadorID) throws NaoExisteException {
+        return utilizadoresDAO.get(utilizadorID);
     }
 
     public Collection<Utilizador> getUtilizadores() {
-        return utilizadoresDAO.getUtilizadores();
+        return utilizadoresDAO.getAll();
     }
 
     public Collection<Tecnico> getTecnicos() {
-        return utilizadoresDAO.getTecnicos();
+        return utilizadoresDAO.getByClass(Tecnico.class);
     }
 
     public Collection<Funcionario> getFuncionarios() {
-        return utilizadoresDAO.getFuncionarios();
+        return utilizadoresDAO.getByClass(Funcionario.class);
     }
 
     private EstatisticasReparacoesTecnico estatisticasReparacoesByTecnico(Tecnico t) {
@@ -260,7 +264,7 @@ public class SGR implements SGRInterface{
     }
 
     public Map<String, EstatisticasReparacoesTecnico> estatisticasReparacoesTecnicos() {
-        return utilizadoresDAO.getTecnicos().stream()
+        return utilizadoresDAO.getByClass(Tecnico.class).stream()
                 .collect(Collectors.toMap(Tecnico::getId, this::estatisticasReparacoesByTecnico));
     }
 
@@ -274,7 +278,7 @@ public class SGR implements SGRInterface{
     }
 
     public Map<String, List<Intervencao>> intervencoesTecnicos() {
-        return utilizadoresDAO.getTecnicos().stream()
+        return utilizadoresDAO.getByClass(Tecnico.class).stream()
                 .collect(Collectors.toMap(Tecnico::getId, this::getIntervencoesByTecnico));
     }
 
@@ -296,13 +300,13 @@ public class SGR implements SGRInterface{
     }
 
     public Map<String, EstatisticasFuncionario> estatisticasFuncionarios() {
-        return utilizadoresDAO.getFuncionarios().stream()
+        return utilizadoresDAO.getByClass(Funcionario.class).stream()
                 .collect(Collectors.toMap(Funcionario::getId,
                         f -> new EstatisticasFuncionario(getNumRececoes(f), getNumEntregas(f))));
     }
 
     public Tecnico getTecnicoDisponivel() throws NaoHaTecnicosDisponiveisException{
-        return utilizadoresDAO.getTecnicos().stream()
+        return utilizadoresDAO.getByClass(Tecnico.class).stream()
                 .filter(Predicate.not(Tecnico::estaOcupado))
                 .findFirst()
                 .orElseThrow(NaoHaTecnicosDisponiveisException::new);
@@ -312,18 +316,18 @@ public class SGR implements SGRInterface{
     //#CLIENTE#
     //#########
     public void criaCliente(String NIF, String nome, String email, String numeroTelemovel,
-                            String funcionarioCriador) throws UtilizadorJaExisteException {
+                            String funcionarioCriador) throws JaExisteException {
         Cliente cliente = new Cliente(NIF,nome,email,numeroTelemovel,funcionarioCriador);
 
-        clientesDAO.adicionaCliente(cliente);
+        clientesDAO.add(cliente);
     }
 
-    public Cliente getCliente(String idCliente) throws UtilizadorNaoExisteException {
-        return clientesDAO.getCliente(idCliente);
+    public Cliente getCliente(String idCliente) throws NaoExisteException {
+        return clientesDAO.get(idCliente);
     }
 
     public Collection<Cliente> getClientes() {
-        return clientesDAO.getClientes();
+        return clientesDAO.getAll();
     }
 
     //###########
@@ -389,7 +393,8 @@ public class SGR implements SGRInterface{
         return equipamentosDAO.getEquipamentosAbandonados();
     }
 
-    public Equipamento getEquipamento(String id) throws EquipamentoNaoExisteException {
+    @Override
+    public Equipamento getEquipamento(int id) throws EquipamentoNaoExisteException {
         return equipamentosDAO.getEquipamento(id);
     }
 
@@ -416,10 +421,10 @@ public class SGR implements SGRInterface{
                 .orElse(null);
     }
 
-    public void apagaUtilizador(String idUtilizador) throws UtilizadorNaoExisteException {
-        utilizadoresDAO.removeUtilizador(idUtilizador);
+    public void apagaUtilizador(String idUtilizador) throws NaoExisteException {
+        utilizadoresDAO.remove(idUtilizador);
     }
-    public void apagaCliente(String idCliente) throws ClienteNaoExisteException {
-        clientesDAO.removeCliente(idCliente);
+    public void apagaCliente(String idCliente) throws NaoExisteException {
+        clientesDAO.remove(idCliente);
     }
 }

@@ -9,14 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReparacaoExpresso extends Reparacao implements Intervencao, Serializable {
-    // TODO CLONES
     private final ServicoExpressoTabelado servicoTabelado;
     private Duration duracaoReal;
     // nao precisamos de guardar o custoReal porque vai ser sempre o tabelado
 
     public ReparacaoExpresso(ServicoExpressoTabelado servicoTabelado, String idCliente, String utilizadorCriador, String idTecnico, String descricao ) {
         super(idCliente, utilizadorCriador,idTecnico, descricao);
-        this.servicoTabelado = servicoTabelado.clone();
+        this.servicoTabelado = servicoTabelado;
     }
 
     // no serviço expresso só sera um

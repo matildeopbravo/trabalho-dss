@@ -1,7 +1,7 @@
 package dss.exceptions;
 
-public class ReparacaoNaoExisteException extends Exception{
-    public ReparacaoNaoExisteException (String erro) {
+public class ReparacaoNaoExisteException extends NaoExisteException{
+    public ReparacaoNaoExisteException(String erro) {
         super(erro);
     }
 }

@@ -1,32 +1,37 @@
 package dss.clientes;
 
+import dss.IDAO;
+import dss.exceptions.ClienteJaExisteException;
 import dss.exceptions.ClienteNaoExisteException;
 import dss.exceptions.UtilizadorJaExisteException;
 import dss.exceptions.UtilizadorNaoExisteException;
+import dss.utilizador.Tecnico;
+import dss.utilizador.Utilizador;
 
 import java.io.*;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
-public class ClientesDAO implements Serializable  {
+public class ClientesDAO implements IDAO<Cliente,String>, Serializable  {
     private final HashMap<String, Cliente> clientesById;
 
     public ClientesDAO() {
         this.clientesById = new HashMap<>();
     }
 
-    public void adicionaCliente(Cliente cliente) throws UtilizadorJaExisteException {
+    public void adicionaCliente(Cliente cliente) throws ClienteJaExisteException {
         if (clientesById.containsKey(cliente.getNIF()))
-            throw new UtilizadorJaExisteException();
+            throw new ClienteJaExisteException();
         else
             clientesById.put(cliente.getNIF(), cliente);
     }
 
-    public Cliente getCliente(String idCliente) throws UtilizadorNaoExisteException {
+    public Cliente getCliente(String idCliente) throws ClienteNaoExisteException{
         Cliente cliente = clientesById.get(idCliente);
         if (cliente != null)
             return cliente;
-        throw new UtilizadorNaoExisteException();
+        throw new ClienteNaoExisteException();
     }
 
     public Collection<Cliente> getClientes() {
@@ -61,4 +66,30 @@ public class ClientesDAO implements Serializable  {
             if (clientesById.remove(idCliente) == null)
                 throw new ClienteNaoExisteException();
         }
+
+    @Override
+    public Cliente get(String id) throws ClienteNaoExisteException {
+        return getCliente(id);
+    }
+
+    @Override
+    public void add(Cliente item) throws ClienteJaExisteException {
+        adicionaCliente(item);
+    }
+
+    @Override
+    public void remove(String id) throws ClienteNaoExisteException {
+        removeCliente(id);
+
+    }
+
+    @Override
+    public <C> Collection<C> getByClass(Class<C> classe) {
+        return clientesById.values().stream().filter(classe::isInstance).map(classe::cast).collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<Cliente> getAll() {
+        return null;
+    }
 }

@@ -1,4 +1,4 @@
 package dss.exceptions;
 
-public class EquipamentoJaExisteException extends Exception {
+public class EquipamentoJaExisteException extends JaExisteException {
 }

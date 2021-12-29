@@ -1,6 +1,7 @@
 package dss.gui;
 
 import dss.SGR;
+import dss.exceptions.JaExisteException;
 import dss.exceptions.UtilizadorJaExisteException;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
@@ -50,7 +51,7 @@ public class NovoCliente extends Form implements Navigatable {
                         sgr.getUtilizadorAutenticado().getId());
                 navigator.navigateBack("Cliente " + nome.getText() + " criado!");
                 return List.of();
-            } catch (UtilizadorJaExisteException e) {
+            } catch (JaExisteException e) {
                 return List.of("Cliente já existe");
             }
         } else {

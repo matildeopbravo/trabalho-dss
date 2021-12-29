@@ -1,5 +1,6 @@
 package dss.equipamentos;
 
+import dss.IDAO;
 import dss.exceptions.EquipamentoJaExisteException;
 import dss.exceptions.EquipamentoNaoExisteException;
 import dss.reparacoes.ReparacoesDAO;
@@ -16,7 +17,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-public class EquipamentosDAO implements Serializable {
+public class EquipamentosDAO {
     private final Map<Integer, Equipamento> equipamentoById;
     private final Map<Integer, Equipamento> equipamentoAbandonado;
     private final Map<Integer, Componente> componenteById;
@@ -68,7 +69,7 @@ public class EquipamentosDAO implements Serializable {
         return equipamentoAbandonado.values();
     }
 
-    public Equipamento getEquipamento(String id) throws EquipamentoNaoExisteException {
+    public Equipamento getEquipamento(Integer id) throws EquipamentoNaoExisteException {
         Equipamento equipamento = equipamentoById.get(id);
         if (equipamento!=null)
             return equipamento;
