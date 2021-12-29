@@ -6,14 +6,17 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -145,9 +148,44 @@ public class Frame implements Initializable, Navigator {
             navigateBack("Sessão terminada");
     }
     @FXML
-    public void onOpen() {}
+    public void onSave() {
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("OBJ Files (*.obj)", "*.obj");
+        fileChooser.getExtensionFilters().add(extFilter);
+        File file = fileChooser.showSaveDialog(getStage());
+        if (file != null) {
+            try {
+                sgr.writeToFile(file.getAbsolutePath());
+            } catch (IOException e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Impossível guardar");
+                alert.setHeaderText(e.getMessage());
+                e.printStackTrace();
+                alert.showAndWait();
+            }
+        }
+    }
+
     @FXML
-    public void onSave() {}
+    public void onOpen() {
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("OBJ Files (*.obj)", "*.obj");
+        fileChooser.getExtensionFilters().add(extFilter);
+        File file = fileChooser.showOpenDialog(getStage());
+        if (file != null) {
+            try {
+                sgr.loadFromFile(file.getAbsolutePath());
+                System.out.println("Loaded " + sgr.getClientes().size() + " clients");
+            } catch (IOException | ClassNotFoundException e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Impossível guardar");
+                alert.setHeaderText(e.getMessage());
+                e.printStackTrace();
+                alert.showAndWait();
+            }
+        }
+    }
+
     @FXML
     public void closeMessage() {
         this.message.setVisible(false);
