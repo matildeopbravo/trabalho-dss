@@ -232,10 +232,12 @@ public class SGR  implements  SGRInterface{
     /**
      * Executa passo ou subpasso seguinte da reparação
       */
-    public void efetuaReparacaoProgramada(ReparacaoProgramada reparacao, int custoReal, Duration duracaoReal)
+    public void efetuaReparacaoProgramada(ReparacaoProgramada reparacao, int custoMaoDeObraReal, Duration duracaoReal
+                                            , Collection<Componente> componentesReais)
             throws NaoPodeSerReparadoAgoraException, UtilizadorNaoExisteException {
         if (utilizadorAutenticado instanceof Tecnico) {
-            boolean completa = sgrFacade.efetuaReparacaoProgramada(reparacao, custoReal, duracaoReal, (Tecnico) utilizadorAutenticado);
+            boolean completa = sgrFacade.efetuaReparacaoProgramada(reparacao, custoMaoDeObraReal
+                    , duracaoReal, componentesReais, (Tecnico) utilizadorAutenticado);
             if (completa) {
                 marcaReparacaoCompleta(reparacao);
                 enviaMailReparacaoConcluida(reparacao, sgrFacade.getCliente(reparacao.getIdCliente()));

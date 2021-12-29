@@ -42,12 +42,12 @@ public class ReparacaoExpresso extends Reparacao implements Intervencao, Seriali
     }
 
     @Override
-    public float getCustoReal() {
-        return duracaoCusto.getCustoReal();
+    public float getCustoMaoDeObraReal() {
+        return duracaoCusto.getCustoMaoDeObraReal();
     }
 
     @Override
-    public float getCustoPrevisto() {
-        return duracaoCusto.getCustoPrevisto();
+    public float getCustoMaoDeObraPrevisto() {
+        return duracaoCusto.getCustoMaoDeObraPrevisto();
     }
 }

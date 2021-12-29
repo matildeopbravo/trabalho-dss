@@ -6,6 +6,8 @@ public interface Intervencao {
     String getDescricao();
     Duration getDuracaoReal();
     Duration getDuracaoPrevista();
-    float getCustoReal();
-    float getCustoPrevisto();
+    float getCustoMaoDeObraReal();
+    float getCustoMaoDeObraPrevisto();
+    float getCustoTotalPrevisto();
+    float getCustoTotalReal();
 }

@@ -14,9 +14,9 @@ public class Orcamento {
     private final LocalDateTime prazoMaximo;
 
     public Orcamento(PlanoReparacao p) {
-        this.componentesNecessarios = p.getComponentes().values().stream().map(Pair::getFirst).toList();
+        this.componentesNecessarios = p.getComponentesPrevistos().values().stream().map(Pair::getFirst).toList();
 
-        Pair<Float, Duration> custoEDuracao = p.getCustoEDuracaoPrevista();
+        Pair<Float, Duration> custoEDuracao = p.getCustoTotalEDuracaoPrevista();
         this.custoTotal = custoEDuracao.getFirst();
         Duration duracao = custoEDuracao.getSecond();
         this.prazoMaximo = LocalDateTime.now().plusSeconds(duracao.getSeconds());

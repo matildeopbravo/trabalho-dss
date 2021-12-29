@@ -1,6 +1,7 @@
 package dss.reparacoes;
 
 import dss.Intervencao;
+import dss.equipamentos.Componente;
 import dss.equipamentos.Equipamento;
 import dss.equipamentos.Fase;
 import dss.Orcamento;
@@ -12,6 +13,7 @@ import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,14 +58,15 @@ public class ReparacaoProgramada extends Reparacao implements Serializable {
     }
 
     // marca como realizado um passo ou subpasso, indicando o custo e o tempo que gastou na realidade
-    public boolean efetuaReparacao(String id, int custoReal, Duration tempoReal) throws NaoPodeSerReparadoAgoraException {
+    public boolean efetuaReparacao(String id, int custoMaoDeObraReal, Duration tempoReal
+            , Collection<Componente> componentesReais) throws NaoPodeSerReparadoAgoraException {
         if (!this.podeSerReparadoAgora()) {
             throw new NaoPodeSerReparadoAgoraException();
         }
         if (!tecnicosQueRepararam.contains(id))
             tecnicosQueRepararam.add(id);
 
-        return this.planoReparacao.repara(custoReal, tempoReal);
+        return this.planoReparacao.repara(custoMaoDeObraReal, tempoReal, componentesReais);
     }
 
     public void realizaOrcamento(String idTecnico) {

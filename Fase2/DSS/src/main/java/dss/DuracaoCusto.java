@@ -5,14 +5,14 @@ import java.time.Duration;
 public class DuracaoCusto {
   private Duration duracaoReal;
   private Duration duracaoPrevista;
-  private float  custoReal;
-  private float  custoPrevisto;
+  private float custoMaoDeObraReal;
+  private float custoMaoDeObraPrevisto;
 
     public DuracaoCusto(Duration duracaoPrevista,  float custoPrevisto) {
         this.duracaoReal = null;
-        this.custoReal = -1;
+        this.custoMaoDeObraReal = -1;
         this.duracaoPrevista = duracaoPrevista;
-        this.custoPrevisto = custoPrevisto;
+        this.custoMaoDeObraPrevisto = custoPrevisto;
     }
 
     public Duration getDuracaoReal() {
@@ -31,28 +31,28 @@ public class DuracaoCusto {
         this.duracaoPrevista = duracaoPrevista;
     }
 
-    public float getCustoReal() {
-        return custoReal;
+    public float getCustoMaoDeObraReal() {
+        return custoMaoDeObraReal;
     }
 
-    public void setCustoReal(float custoReal) {
-        this.custoReal = custoReal;
+    public void setCustoMaoDeObraReal(float custoMaoDeObraReal) {
+        this.custoMaoDeObraReal = custoMaoDeObraReal;
     }
 
-    public float getCustoPrevisto() {
-        return custoPrevisto;
+    public float getCustoMaoDeObraPrevisto() {
+        return custoMaoDeObraPrevisto;
     }
 
-    public void setCustoPrevisto(float custoPrevisto) {
-        this.custoPrevisto = custoPrevisto;
+    public void setCustoMaoDeObraPrevisto(float custoMaoDeObraPrevisto) {
+        this.custoMaoDeObraPrevisto = custoMaoDeObraPrevisto;
     }
 
     public void aumentaCustoPrevisto(float custo) {
-        this.custoPrevisto += custo;
+        this.custoMaoDeObraPrevisto += custo;
     }
 
-    public void aumentaCustoReal(float custo) {
-        this.custoReal += this.custoReal == -1 ? custo + 1: custo;
+    public void aumentaCustoRealMaoDeObra(float custo) {
+        this.custoMaoDeObraReal += this.custoMaoDeObraReal == -1 ? custo + 1: custo;
     }
 
     public void aumentaDuracaoPrevista(Duration duracaoPrevista) {

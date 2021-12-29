@@ -209,8 +209,10 @@ public class SGRFacade implements Serializable {
         return null;
     }
 
-    public boolean efetuaReparacaoProgramada(ReparacaoProgramada reparacao, int custoReal, Duration duracaoReal, Tecnico tecnico) throws NaoPodeSerReparadoAgoraException{
-        return reparacao.efetuaReparacao(tecnico.getId(), custoReal, duracaoReal);
+    public boolean efetuaReparacaoProgramada(ReparacaoProgramada reparacao, int custoMaoDeObraReal
+            , Duration duracaoReal, Collection<Componente> componentesReais, Tecnico tecnico)
+            throws NaoPodeSerReparadoAgoraException{
+        return reparacao.efetuaReparacao(tecnico.getId(), custoMaoDeObraReal, duracaoReal, componentesReais);
     }
 
     public void concluiReparacaoExpresso(Integer id) throws ReparacaoNaoExisteException{
