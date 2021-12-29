@@ -8,7 +8,7 @@ import javafx.scene.control.TextField;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class NovoCliente extends Form {
+public class NovoCliente extends Form implements Navigatable {
     private SGR sgr;
     private Navigator navigator;
 

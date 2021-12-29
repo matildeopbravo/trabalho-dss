@@ -10,7 +10,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.util.Collection;
 
-public class AguardarOrcamento {
+public class AguardarOrcamento implements Navigatable {
 
     private Collection<ReparacaoProgramada> lista ;
     public AguardarOrcamento(SGR sgr, Navigator navigator) {

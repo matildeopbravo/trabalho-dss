@@ -9,7 +9,7 @@ import javafx.scene.control.TextField;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class NovaReparacaoProgramada extends  Form {
+public class NovaReparacaoProgramada extends  Form implements Navigatable {
 
     SGR sgr;
     Navigator navigator;

@@ -7,7 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
-public class MainMenu  {
+public class MainMenu implements Navigatable {
     private SGR sgr;
     private Navigator navigator;
 
@@ -23,20 +23,20 @@ public class MainMenu  {
         vbox.getChildren().add(title);
 
         Button newClientButton = new Button("Novo cliente");
-        newClientButton.setOnAction(e -> navigator.navigateTo(new NovoCliente(sgr, navigator).getScene()));
+        newClientButton.setOnAction(e -> navigator.navigateTo(new NovoCliente(sgr, navigator)));
 
         // for testing purposes
         Button allClientsButton = new Button("Mostra Clientes");
-        allClientsButton.setOnAction(e -> navigator.navigateTo(new TodosClientes(sgr, navigator).getScene()));
+        allClientsButton.setOnAction(e -> navigator.navigateTo(new TodosClientes(sgr, navigator)));
 
         Button testPopUp = new Button("Testar popup");
         testPopUp.setOnAction(s -> navigator.openPopup(new ClientsPopUp()));
 
         Button criaReparacaoProgramada = new Button("Cria Reparação Programada");
-        criaReparacaoProgramada.setOnAction(e -> navigator.navigateTo(new NovaReparacaoProgramada(sgr, navigator).getScene()));
+        criaReparacaoProgramada.setOnAction(e -> navigator.navigateTo(new NovaReparacaoProgramada(sgr, navigator)));
 
         Button aguardarOrcamentoButton = new Button("Reparações a aguardar Orçamento");
-        aguardarOrcamentoButton.setOnAction(s -> navigator.navigateTo(new AguardarOrcamento(sgr,navigator).getScene()));
+        aguardarOrcamentoButton.setOnAction(s -> navigator.navigateTo(new AguardarOrcamento(sgr,navigator)));
 
         vbox.getChildren().addAll(newClientButton, allClientsButton,criaReparacaoProgramada, aguardarOrcamentoButton,testPopUp);
 

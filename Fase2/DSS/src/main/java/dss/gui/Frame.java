@@ -42,7 +42,7 @@ public class Frame implements Initializable, Navigator {
 
     private FXMLLoader frameLoader;
     private SGR sgr;
-    private Stack<Node> navigationStack;
+    private Stack<Navigatable> navigationStack;
 
     public Frame(SGR sgr) {
         this.sgr = sgr;
@@ -64,11 +64,11 @@ public class Frame implements Initializable, Navigator {
         this.content.getChildren().add(content);
     }
 
-    public void navigateTo(Node content) {
+    public void navigateTo(Navigatable content) {
         // TODO: Inserir botão de retrocesso
         navigationStack.push(content);
         closeMessage();
-        setContent(content);
+        setContent(content.getScene());
 
         if (this.navigationStack.size() >= 2) {
             this.exitButton.setVisible(true);
@@ -80,7 +80,7 @@ public class Frame implements Initializable, Navigator {
 
     public void navigateBack() {
         navigationStack.pop();
-        setContent(navigationStack.peek());
+        setContent(navigationStack.peek().getScene());
 
         if (navigationStack.size() == 1) {
             this.exitButton.setVisible(false);
@@ -122,12 +122,15 @@ public class Frame implements Initializable, Navigator {
         this.exitButton.setVisible(false);
         this.backButton.setVisible(false);
 
-        try {
-            navigateTo(loader.load());
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
+        navigateTo(() -> {
+            try {
+                return loader.load();
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.exit(1);
+                return null;
+            }
+        });
     }
 
     public void login() {
@@ -135,7 +138,7 @@ public class Frame implements Initializable, Navigator {
         MainMenu mainMenu = new MainMenu(sgr, this);
 
         this.exitButton.setVisible(true);
-        navigateTo(mainMenu.getScene());
+        navigateTo(mainMenu);
     }
 
     @FXML

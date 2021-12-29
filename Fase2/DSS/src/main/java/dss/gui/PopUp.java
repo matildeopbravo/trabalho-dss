@@ -17,7 +17,7 @@ public abstract class PopUp<T> implements Navigator {
     protected abstract Scene getScene();
 
     @Override
-    public void navigateTo(Node node) {
+    public void navigateTo(Navigatable node) {
         // TODO: stack
     }
 
