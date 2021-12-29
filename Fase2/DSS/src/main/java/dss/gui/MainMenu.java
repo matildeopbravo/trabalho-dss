@@ -36,9 +36,12 @@ public class MainMenu implements Navigatable {
         criaReparacaoProgramada.setOnAction(e -> navigator.navigateTo(new NovaReparacaoProgramada(sgr, navigator)));
 
         Button aguardarOrcamentoButton = new Button("Reparações a aguardar Orçamento");
-        aguardarOrcamentoButton.setOnAction(s -> navigator.navigateTo(new AguardarOrcamento(sgr,navigator)));
+        aguardarOrcamentoButton.setOnAction(s -> navigator.navigateTo(new AguardarOrcamento(sgr, navigator)));
 
-        vbox.getChildren().addAll(newClientButton, allClientsButton,criaReparacaoProgramada, aguardarOrcamentoButton,testPopUp);
+        Button listaReparacoesButton = new Button("Lista de Reparações");
+        listaReparacoesButton.setOnAction(s -> navigator.navigateTo(new TodasReparacoes(sgr, navigator)));
+
+        vbox.getChildren().addAll(newClientButton, allClientsButton,criaReparacaoProgramada, aguardarOrcamentoButton, listaReparacoesButton, testPopUp);
 
         return vbox;
     }
