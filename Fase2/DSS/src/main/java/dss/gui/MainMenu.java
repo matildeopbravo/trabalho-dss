@@ -14,8 +14,8 @@ import java.time.Duration;
 import java.util.ArrayList;
 
 public class MainMenu implements Navigatable {
-    private SGRInterface sgr;
-    private Navigator navigator;
+    private final SGRInterface sgr;
+    private final Navigator navigator;
 
     public MainMenu(SGRInterface sgr, Navigator navigator) {
         this.sgr = sgr;
@@ -55,6 +55,13 @@ public class MainMenu implements Navigatable {
         Button listaReparacoesButton = new Button("Lista de Reparações");
         listaReparacoesButton.setOnAction(s -> navigator.navigateTo(new TodasReparacoes(sgr, navigator)));
 
+        Button intervencoesTecnicos = new Button("Intervenções Dos Técnicos");
+        intervencoesTecnicos.setOnAction(e -> navigator.navigateTo(new EstatisticasIntervencoesTecnicos(sgr)));
+        Button estatisticasFuncionarios = new Button("Estatísticas sobre os Funcionários");
+        estatisticasFuncionarios.setOnAction(e -> navigator.navigateTo(new EstatisticasFuncionarios(sgr)));
+        Button estatisticasDasReparacoesDosTecnicos = new Button("Estatísticas sobre as reparações dos Técnicos");
+        estatisticasDasReparacoesDosTecnicos.setOnAction(e -> navigator.navigateTo(new EstatisticasTecnico(sgr)));
+
         Button previewTabelaPasso = new Button("Experimentar tabela de passos");
         previewTabelaPasso.setOnAction(s -> navigator.navigateTo(() -> {
             PlanoReparacao plano = new PlanoReparacao();
@@ -70,7 +77,7 @@ public class MainMenu implements Navigatable {
             return tabelaPlanoReparacao;
         }));
 
-        vbox.getChildren().addAll(newUserButton,allUsersButton, newClientButton, allClientsButton,criaReparacaoProgramada,criaReparacaoExpresso, aguardarOrcamentoButton, listaReparacoesButton, testPopUp, previewTabelaPasso);
+        vbox.getChildren().addAll(newUserButton,allUsersButton, newClientButton, allClientsButton,criaReparacaoProgramada,criaReparacaoExpresso, aguardarOrcamentoButton, listaReparacoesButton, testPopUp, previewTabelaPasso, estatisticasDasReparacoesDosTecnicos,estatisticasFuncionarios,intervencoesTecnicos);
 
         return vbox;
     }

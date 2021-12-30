@@ -29,10 +29,6 @@ public class ReparacaoProgramada extends Reparacao implements Serializable {
         fase = Fase.AEsperaOrcamento;
     }
 
-    public String getDescricao() {
-        return this.descricao;
-    }
-
     public String getOrcamentoMail(String nome) {
         return "Caro " + nome + ",\n" + orcamento.toString() + "\nAtenciosamente,\n Loja Reparações";
     }
@@ -126,5 +122,9 @@ public class ReparacaoProgramada extends Reparacao implements Serializable {
 
     public void marcaComoNaoNotificado() {
         this.notificado = false;
+    }
+
+    public boolean reparado() {
+        return planoReparacao.reparado();
     }
 }

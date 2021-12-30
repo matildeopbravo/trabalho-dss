@@ -5,8 +5,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public abstract class PopUp<T> {
-    class OnDone {
-        public void run(T result, String message) {}
+    interface OnDone<T> {
+        void run(T result, String message);
     }
 
     private Node content;
@@ -24,7 +24,7 @@ public abstract class PopUp<T> {
         return this.stage;
     }
 
-    public void setOnDone(OnDone onDone) {
+    public void setOnDone(OnDone<T> onDone) {
         this.onDone = onDone;
     }
 

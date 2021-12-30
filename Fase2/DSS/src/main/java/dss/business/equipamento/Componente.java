@@ -1,9 +1,10 @@
 package dss.business.equipamento;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Componente {
+public class Componente implements Serializable {
     private static int lastId = -1;
 
     private int id;
@@ -11,9 +12,10 @@ public class Componente {
     private float preco;
     private List<String> categorias;
 
-    public Componente(String descricao, List<String> categorias) {
+    public Componente(String descricao, float preco, List<String> categorias) {
         this.id = ++lastId;
         this.descricao = descricao;
+        this.preco = preco;
         this.categorias = new ArrayList<>(categorias);
     }
 

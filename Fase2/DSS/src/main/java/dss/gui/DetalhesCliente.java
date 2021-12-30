@@ -11,7 +11,7 @@ public class DetalhesCliente implements Navigatable {
         public UpdateForm(SGRInterface sgr, Navigator navigator, Cliente cliente) {
             super(sgr, navigator);
             this.title = "Editar cliente";
-            this.buttonText = " Guardar alterações";
+            this.setButtonText("Guardar alterações");
         }
 
         @Override
@@ -35,6 +35,11 @@ public class DetalhesCliente implements Navigatable {
             navigator.navigateBack("Cliente alterado com sucesso!");
             return List.of();
         }
+        @Override
+        protected boolean validateSubmit() {
+            return !this.nome.getText().isEmpty() && !this.nif.getText().isEmpty();
+        }
+
     }
 
     private final SGRInterface sgr;

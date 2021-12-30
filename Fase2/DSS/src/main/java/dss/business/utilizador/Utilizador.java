@@ -44,11 +44,7 @@ public abstract class Utilizador implements Serializable  {
 
     @Override
     public String toString() {
-        return "Utilizador{" +
-                "nome='" + nome + '\'' +
-                ", id='" + id + '\'' +
-                ", passwordHash='" + passwordHash + '\'' +
-                '}';
+        return  nome + " - " + id;
     }
 
 }

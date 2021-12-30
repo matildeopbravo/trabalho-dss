@@ -1,6 +1,7 @@
 package dss.gui;
 
 import dss.business.SGR.SGRInterface;
+import dss.business.reparacao.ReparacaoProgramada;
 import dss.exceptions.NaoExisteException;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
@@ -8,12 +9,17 @@ import javafx.scene.control.TextField;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class NovaReparacaoProgramada extends  Form implements Navigatable {
+public class NovaReparacaoProgramada extends Form implements Navigatable {
 
     SGRInterface sgr;
     Navigator navigator;
     private TextField idCliente;
     private TextField descricao;
+
+    public NovaReparacaoProgramada(SGRInterface sgr, Navigator frame, String idCliente) {
+        this(sgr, frame);
+        this.idCliente.setText(idCliente);
+    }
 
     public NovaReparacaoProgramada(SGRInterface sgr, Navigator frame) {
         this.sgr = sgr;
@@ -24,28 +30,26 @@ public class NovaReparacaoProgramada extends  Form implements Navigatable {
         LinkedHashMap<String, Node> inputs = new LinkedHashMap<>();
 
         this.idCliente = new javafx.scene.control.TextField();
-        inputs.put("Id Cliente", this.idCliente);
-        inputs.put("Descricao ", this.descricao);
+        inputs.put("NIF Cliente", this.idCliente);
+        inputs.put("Descrição ", this.descricao);
 
         init("Nova Reparação Programada", inputs, "Criar Reparação Programada");
     }
 
     @Override
     protected boolean validateSubmit() {
-        return !this.idCliente.getText().isEmpty();
+        return !this.idCliente.getText().isEmpty() && !this.descricao.getText().isBlank();
     }
 
     @Override
     protected List<String> submit() {
         if (validateSubmit()) {
             try {
-                sgr.criaReparacaoProgramada(idCliente.getText(),descricao.getText() );
-                navigator.navigateBack("Ficha de Reparação do Cliente " + idCliente.getText() + " criada!");
+                ReparacaoProgramada rp = sgr.criaReparacaoProgramada(idCliente.getText(), descricao.getText());
+                navigator.navigateBack("Código do equipamento é #" + rp.getEquipamentoAReparar().getIdEquipamento() + ".");
                 return List.of();
             } catch (NaoExisteException e) {
-                // TODO
-                e.printStackTrace();
-                return null;
+                return List.of("Cliente não existe");
             }
         } else {
             // Isto não deve acontecer!

@@ -1,5 +1,6 @@
 package dss.business.SGR;
 
+import dss.business.auxiliar.Pair;
 import dss.business.cliente.Cliente;
 import dss.business.equipamento.Componente;
 import dss.business.equipamento.Equipamento;
@@ -13,45 +14,53 @@ import dss.business.utilizador.Utilizador;
 import dss.exceptions.*;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 public interface SGRInterface {
 
+    void atualizaEquipamentoAbandonado();
+
     void loadFromFile(String objectFile) throws IOException, ClassNotFoundException;
 
     void writeToFile(String objectFile) throws IOException;
 
-    void criaReparacaoProgramada(String nifCliente, String descricao) throws NaoExisteException;
+    ReparacaoProgramada criaReparacaoProgramada(String nifCliente, String descricao) throws NaoExisteException;
 
     void criaReparacaoExpresso(int idServico, String idCliente, String idTecnico, String descricao);
+
+    void marcaOrcamentoComoAceite(ReparacaoProgramada r);
 
     void marcaOrcamentoComoRecusado(ReparacaoProgramada r);
 
     void marcarOrcamentoComoArquivado(ReparacaoProgramada r);
 
-    void marcaComoImpossivelReparar(ReparacaoProgramada reparacao) throws NaoExisteException;
-
-    void adicionaSubpassoPlano(PassoReparacao passo, String descricao, Duration duracao, float custo);
-
-    void adicionaPassoPlano(ReparacaoProgramada reparacao, String descricao, Duration duracao, float custo);
+    boolean marcaComoImpossivelReparar(ReparacaoProgramada reparacao) throws NaoExisteException;
 
     void marcaComoNotificado(Reparacao e);
 
-    void realizaOrcamento(ReparacaoProgramada reparacao) throws NaoExisteException;
+    boolean realizaOrcamento(ReparacaoProgramada reparacao) throws NaoExisteException;
 
     void togglePausaReparacao(ReparacaoProgramada reparacao);
 
     void marcaReparacaoCompleta(Reparacao reparacao);
 
+    Pair<Boolean, Boolean> verificaExcedeOrcamento(float novoCusto, ReparacaoProgramada reparacaoProgramada);
+
+    boolean enviaMailReparacaoConcluida(Reparacao r, Cliente cliente);
+
+    void marcaComoEntregueConluida(Reparacao r);
+
+    void marcaComoEntregueRecusada(Reparacao r);
+
+    void enviaMailOrcamentoUltrapassado(ReparacaoProgramada r, Cliente c);
+
     void iniciaReparacaoExpresso(ReparacaoExpresso r) throws TecnicoNaoAtribuidoException;
 
     void adicionaEquipamento(Equipamento equipamento) throws EquipamentoJaExisteException;
 
-    void concluiReparacaoExpresso(ReparacaoExpresso r, Duration duracaoReal)
-            throws TecnicoNaoAtribuidoException, ReparacaoNaoExisteException;
+    void concluiReparacao(Reparacao reparacao);
 
     Utilizador getUtilizadorAutenticado();
 
@@ -59,9 +68,9 @@ public interface SGRInterface {
 
     //Devolve a lista das estatísticas de atendimentos de cada funcionário
     //de balcão
-    Map<String, EstatisticasFuncionario> estatisticasFuncionarios();
+    List<EstatisticasFuncionario> estatisticasFuncionarios();
 
-    Map<String, EstatisticasReparacoesTecnico> estatisticasReparacoesTecnicos();
+    List<EstatisticasReparacoesTecnico> estatisticasReparacoesTecnicos();
 
     //Devolve a lista de total de intervenções realizadas por cada técnico
     Map<String, List<Intervencao>> intervencoesTecnicos();
@@ -72,14 +81,13 @@ public interface SGRInterface {
                      String funcionarioCriador) throws JaExisteException;
 
 
-    public void registaUtilizador(String nome, String id, String password, TipoUtilizador t) throws JaExisteException;
+    void registaUtilizador(String nome, String id, String password, TipoUtilizador t) throws JaExisteException;
+
     void registaUtilizador(Utilizador utilizador) throws JaExisteException;
 
-    void removeUtilizador(String idUtilizador) throws NaoExisteException;
+    void apagaUtilizador(String idUtilizador) throws NaoExisteException;
 
-    public void apagaUtilizador(String idUtilizador) throws NaoExisteException;
-
-    public void apagaCliente(String idCliente) throws NaoExisteException;
+    void apagaCliente(String idCliente) throws NaoExisteException;
 
     // Getters
     Collection<Utilizador> getUtilizadores();
@@ -108,15 +116,13 @@ public interface SGRInterface {
 
     Collection<ReparacaoProgramada> getReparacoesProgramadas();
 
-    public void adicionaReparacaoExpressoAtual(ReparacaoExpresso reparacao) throws ReparacaoJaExisteException;
+    void adicionaReparacaoExpressoAtual(ReparacaoExpresso reparacao) throws ReparacaoJaExisteException;
 
-    public Collection<ReparacaoProgramada> getReparacoesAguardarOrcamento();
+    Collection<ReparacaoProgramada> getReparacoesAguardarOrcamento();
 
     Collection<Componente> getComponentes();
 
     Componente getComponente(Integer id) throws EquipamentoNaoExisteException; // devolve null se não existir
 
-    public Componente getComponenteByDescricao(String descricao);
-
-    public Collection<Componente> pesquisaComponentes(String stringPesquisa);
+    Collection<Componente> pesquisaComponentes(String stringPesquisa);
 }

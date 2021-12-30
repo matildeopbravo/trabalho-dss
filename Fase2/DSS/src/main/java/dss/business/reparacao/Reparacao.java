@@ -21,7 +21,6 @@ public abstract class Reparacao implements Serializable {
     protected boolean notificado = false;
     protected LocalDateTime dataCriacao = LocalDateTime.now();
 
-
     public Reparacao(String idCliente, String funcionarioCriador, String descricao) {
         this.id = ++lastId;
         this.idCliente = idCliente;
@@ -86,6 +85,9 @@ public abstract class Reparacao implements Serializable {
 
     public abstract  List<Intervencao>  getIntervencoesRealizadas();
 
+    public String getDescricao() {
+        return this.descricao;
+    }
 
     public void marcaComoEntregueConcluida(String idFuncionario) {
         fase = Fase.EntregueConcluida;

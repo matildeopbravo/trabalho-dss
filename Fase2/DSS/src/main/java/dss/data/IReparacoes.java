@@ -9,14 +9,14 @@ import java.util.Collection;
 import java.time.Duration;
 
 public interface IReparacoes extends IDAO<Reparacao,Integer> {
-    public void adicionaReparacaoProgramadaAtual(ReparacaoProgramada reparacao);
-    public void setFase(Integer reparacaoID, Fase fase) throws ReparacaoNaoExisteException ;
-    public Collection<Reparacao> getReparacoesConcluidas();
-    public Collection<ReparacaoProgramada> getReparacoesProgramadasAtuais();
-    public Collection<ReparacaoExpresso> getReparacoesExpressoAtuais();
-    public void concluiExpresso(int id, Duration duracaoReal) throws ReparacaoNaoExisteException;
-    public void adicionaReparacaoExpressoAtual(ReparacaoExpresso reparacaoExpresso);
-    public void arquivaReparacoesDeEquipamento(int idEquipamento);
-    public void marcarOrcamentoComoArquivado(ReparacaoProgramada reparacao);
-    public void arquivaReparacoesAntigas();
+    void adicionaReparacaoProgramadaAtual(ReparacaoProgramada reparacao);
+    void setFase(Integer reparacaoID, Fase fase) throws ReparacaoNaoExisteException ;
+    Collection<Reparacao> getReparacoesConcluidas();
+    Collection<ReparacaoProgramada> getReparacoesProgramadasAtuais();
+    Collection<ReparacaoExpresso> getReparacoesExpressoAtuais();
+    void concluiExpresso(int id, Duration duracaoReal) throws ReparacaoNaoExisteException;
+    void adicionaReparacaoExpressoAtual(ReparacaoExpresso reparacaoExpresso);
+    void arquivaReparacoesDeEquipamento(int idEquipamento);
+    void marcarOrcamentoComoArquivado(ReparacaoProgramada reparacao);
+    void arquivaReparacoesAntigas();
 }

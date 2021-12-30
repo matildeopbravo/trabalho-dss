@@ -14,6 +14,10 @@ public class PlanoReparacao {
     //private float custoAteAgora = 0;
     private List<PassoReparacao> subpassos = new ArrayList<>();
 
+    public boolean reparado() {
+        return subpassos.stream().allMatch(PassoReparacao::getExecutado);
+    }
+
     public List<PassoReparacao> getPassosReparacaoConcluidos() {
         return subpassos.stream().filter(PassoReparacao::getExecutado).toList();
     }
@@ -31,6 +35,11 @@ public class PlanoReparacao {
      *
      * @return O objeto de passo criado
      */
+    public PassoReparacao addPasso(PassoReparacao p) {
+        subpassos.add(p);
+        return p;
+    }
+
     public PassoReparacao addPasso(String descricao, Duration duracao, float custoMaoDeObra, List<Componente> componentesPrevistos) {
         PassoReparacao p = new PassoReparacao(descricao, duracao, custoMaoDeObra, componentesPrevistos);
         subpassos.add(p);

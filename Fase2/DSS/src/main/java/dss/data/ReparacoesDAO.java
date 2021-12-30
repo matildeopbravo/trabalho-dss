@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ReparacoesDAO implements IDAO<Reparacao, Integer>, IReparacoes, Serializable {
+public class ReparacoesDAO implements IReparacoes, Serializable {
     private final HashMap<Integer, Reparacao> reparacoesConcluidas;
     private final HashMap<Integer, Reparacao> reparacoesArquivadas;
     private final LinkedHashMap<Integer, ReparacaoProgramada> reparacoesProgramadasAtuais;

@@ -9,7 +9,7 @@ import dss.exceptions.UtilizadorJaExisteException;
 import dss.exceptions.UtilizadorNaoExisteException;
 import java.util.Collection;
 
-public interface IUtilizadores  extends IDAO<Utilizador,String>{
+public interface IUtilizadores extends IDAO<Utilizador,String>{
 
     public void adicionaUtilizador(Utilizador utilizador) throws UtilizadorJaExisteException;
 
