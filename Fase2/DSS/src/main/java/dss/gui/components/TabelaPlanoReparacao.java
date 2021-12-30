@@ -33,7 +33,7 @@ public class TabelaPlanoReparacao extends TreeTableView<PassoReparacao> {
             TreeTableColumn<PassoReparacao, String> componentesPrevisto = new TreeTableColumn<>("Custo de componentes (previsto)");
             componentesPrevisto.setCellValueFactory(new TreeItemPropertyValueFactory<>("custoComponentesPrevisto"));
             TreeTableColumn<PassoReparacao, String> componentesReal = new TreeTableColumn<>("Custo de componentes (real)");
-            componentesReal.setCellValueFactory(new TreeItemPropertyValueFactory<>("componentesReal"));
+            componentesReal.setCellValueFactory(new TreeItemPropertyValueFactory<>("custoComponentesReal"));
             TreeTableColumn<PassoReparacao, String> totalPrevisto = new TreeTableColumn<>("Custo total (previsto)");
             totalPrevisto.setCellValueFactory(new TreeItemPropertyValueFactory<>("custoTotalPrevisto"));
             TreeTableColumn<PassoReparacao, String> totalReal = new TreeTableColumn<>("Custo total (real)");

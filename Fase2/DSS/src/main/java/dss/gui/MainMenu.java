@@ -77,7 +77,7 @@ public class MainMenu implements Navigatable {
             return tabelaPlanoReparacao;
         }));
 
-        vbox.getChildren().addAll(newUserButton,allUsersButton, newClientButton, allClientsButton,criaReparacaoProgramada,criaReparacaoExpresso, aguardarOrcamentoButton, listaReparacoesButton, testPopUp, previewTabelaPasso);
+        vbox.getChildren().addAll(newUserButton,allUsersButton, newClientButton, allClientsButton,criaReparacaoProgramada,criaReparacaoExpresso, aguardarOrcamentoButton, listaReparacoesButton, testPopUp, previewTabelaPasso, estatisticasDasReparacoesDosTecnicos,estatisticasFuncionarios,intervencoesTecnicos);
 
         return vbox;
     }
