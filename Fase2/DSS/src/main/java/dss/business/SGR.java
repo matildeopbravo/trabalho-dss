@@ -23,9 +23,7 @@ public class SGR implements SGRInterface {
     private IReparacoes reparacoes;
     private IEquipamentos equipamentos;
     private IClientes clientes;
-    //####ATRIBUTOS####
     private Utilizador utilizadorAutenticado ;
-    // servicos expressos
     private final Map<Integer, ServicoExpressoTabelado> servicoExpresso;
     private final Email email ;
 
@@ -34,7 +32,6 @@ public class SGR implements SGRInterface {
     public SGR() throws FileNotFoundException {
 
         this.utilizadorAutenticado = null;
-        // populate this
         this.servicoExpresso = ServicoExpressoTabelado.populate();
         this.email = new Email();
         utilizadores = new UtilizadoresDAO();
@@ -77,8 +74,6 @@ public class SGR implements SGRInterface {
     }
 
     //####MÉTODOS####
-
-
     public void criaReparacaoExpresso(int idServico, String idCliente, String idTecnico , String descricao) {
         ReparacaoExpresso r = new ReparacaoExpresso(servicoExpresso.get(idServico), idCliente,
                 utilizadorAutenticado.getId(), idTecnico, descricao);
