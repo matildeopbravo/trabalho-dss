@@ -17,7 +17,8 @@ public class ClientesDAO implements IClientes, Serializable  {
     }
 
     public void adicionaCliente(Cliente cliente) throws ClienteJaExisteException {
-        if (clientesById.containsKey(cliente.getNIF()))
+        if (clientesById.containsKey(cliente.getNIF()) || clientesById.containsKey(cliente.getEmail())
+                || clientesById.containsKey(cliente.getNumeroTelemovel()))
             throw new ClienteJaExisteException();
         else
             clientesById.put(cliente.getNIF(), cliente);

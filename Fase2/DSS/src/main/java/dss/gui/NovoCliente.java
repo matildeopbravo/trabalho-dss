@@ -2,8 +2,11 @@ package dss.gui;
 
 import dss.business.SGRInterface;
 import dss.exceptions.JaExisteException;
+import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -51,11 +54,13 @@ public class NovoCliente extends Form implements Navigatable {
                 navigator.navigateBack("Cliente " + nome.getText() + " criado!");
                 return List.of();
             } catch (JaExisteException e) {
-                return List.of("Cliente já existe");
+                // TODO
+                return null;
             }
         } else {
             // Isto não deve acontecer!
             return null;
         }
     }
+
 }

@@ -16,7 +16,7 @@ public class DetalhesCliente implements Navigatable {
         }
 
         @Override
-        public Scene getScene() {
+        public Node getScene() {
             Node n = super.getScene();
             this.nif.setText(cliente.getNIF());
             this.email.setText(cliente.getEmail());
@@ -49,7 +49,7 @@ public class DetalhesCliente implements Navigatable {
     }
 
     @Override
-    public Scene getScene() {
+    public Node getScene() {
         return updateForm.getScene();
     }
 }

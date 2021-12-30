@@ -3,6 +3,7 @@ package dss.gui;
 import dss.business.SGRInterface;
 import dss.business.reparacao.Reparacao;
 import dss.business.reparacao.ReparacaoProgramada;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -17,7 +18,7 @@ public class AguardarOrcamento implements Navigatable {
         lista = sgr.getReparacoesAguardarOrcamento();
     }
 
-    public Scene getScene() {
+    public Node getScene() {
         TableView<Reparacao> tabela = new TableView<>();
         TableColumn<Reparacao,String> id = new TableColumn<>("ID");
         id.setCellValueFactory(new PropertyValueFactory<>("id"));

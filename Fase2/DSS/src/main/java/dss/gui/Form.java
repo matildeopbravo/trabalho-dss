@@ -36,7 +36,7 @@ public abstract class Form {
     protected abstract boolean validateSubmit();
     protected abstract List<String> submit(); // Devolve lista de erros
 
-    public Scene getScene() {
+    public Node getScene() {
         HBox hcontainer = new HBox();
         VBox vcontainer = new VBox();
 
