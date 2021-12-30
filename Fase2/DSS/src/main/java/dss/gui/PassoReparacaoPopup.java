@@ -14,6 +14,8 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.time.Duration;
+
 public class PassoReparacaoPopup extends PopUp<PassoReparacao> {
     private final SGRInterface sgr;
 
@@ -39,6 +41,38 @@ public class PassoReparacaoPopup extends PopUp<PassoReparacao> {
         componenteTableView.getColumns().addAll(descricaoComponente, precoComponente);
 
         componenteComboBox.getItems().setAll(sgr.getComponentes());
+        submit.setDisable(true);
+
+        descricao.setOnKeyTyped(e -> this.onValidate());
+        custoMaoDeObra.setOnKeyTyped(e -> this.onValidate());
+        duracao.setOnKeyTyped(e -> this.onValidate());
+
+        cancel.setOnAction(ev -> getStage().close());
+        submit.setOnAction(ev -> {
+            if (validate()) {
+                PassoReparacao p = new PassoReparacao(
+                        descricao.getText(),
+                        Duration.ofMinutes(Integer.parseInt(duracao.getText())),
+                        Float.parseFloat(custoMaoDeObra.getText()),
+                        componenteTableView.getItems().stream().toList());
+                this.getOnDone().run(p, "Passo criado");
+                this.getStage().close();
+            }
+        });
+    }
+
+    private void onValidate() {
+        submit.setDisable(!validate());
+    }
+
+    private boolean validate() {
+        try {
+            Integer.parseInt(this.duracao.getText());
+            Float.parseFloat(this.custoMaoDeObra.getText());
+        } catch (NumberFormatException f) {
+            return false;
+        }
+        return !this.descricao.getText().isBlank();
     }
 
     public PassoReparacaoPopup(SGRInterface sgr, PassoReparacao passoReparacao) {
@@ -65,9 +99,13 @@ public class PassoReparacaoPopup extends PopUp<PassoReparacao> {
         gridPane.setVgap(5);
         gridPane.setHgap(10);
 
+        GridPane.setHgrow(descricao, Priority.ALWAYS);
+        GridPane.setHgrow(duracao, Priority.ALWAYS);
+        GridPane.setHgrow(custoMaoDeObra, Priority.ALWAYS);
+
         gridPane.add(new Label("Descrição"), 0, 0);
         gridPane.add(new Label("Duração prevista (minutos)"), 0, 1);
-        gridPane.add(new Label("Custo previsto"), 0, 2);
+        gridPane.add(new Label("Custo previsto (€)"), 0, 2);
         gridPane.add(descricao, 1, 0);
         gridPane.add(duracao, 1, 1);
         gridPane.add(custoMaoDeObra, 1, 2);
@@ -80,6 +118,7 @@ public class PassoReparacaoPopup extends PopUp<PassoReparacao> {
         addComponente.setOnAction(ev -> {
             if (componenteComboBox.getValue() != null)
                 componenteTableView.getItems().add(componenteComboBox.getValue());
+            this.onValidate();
         });
         componenteComboBox.setMaxWidth(Double.MAX_VALUE);
         componenteComboBox.setPlaceholder(new Label("Selecionar componente"));
@@ -96,6 +135,7 @@ public class PassoReparacaoPopup extends PopUp<PassoReparacao> {
         componenteTableView.setMinHeight(100.0);
         componenteTableView.setPrefHeight(100.0);
         componenteTableView.setPlaceholder(new Label("Sem componentes"));
+        VBox.setVgrow(componenteTableView, Priority.ALWAYS);
 
         vbox.getChildren().addAll(gridPane, new Label("Componentes"), componenteTableView, componenteBox, buttonBox);
 

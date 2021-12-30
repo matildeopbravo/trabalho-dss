@@ -14,8 +14,8 @@ import java.time.Duration;
 import java.util.ArrayList;
 
 public class MainMenu implements Navigatable {
-    private SGRInterface sgr;
-    private Navigator navigator;
+    private final SGRInterface sgr;
+    private final Navigator navigator;
 
     public MainMenu(SGRInterface sgr, Navigator navigator) {
         this.sgr = sgr;

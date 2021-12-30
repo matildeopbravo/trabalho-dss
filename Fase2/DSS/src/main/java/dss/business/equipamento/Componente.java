@@ -11,9 +11,10 @@ public class Componente {
     private float preco;
     private List<String> categorias;
 
-    public Componente(String descricao, List<String> categorias) {
+    public Componente(String descricao, float preco, List<String> categorias) {
         this.id = ++lastId;
         this.descricao = descricao;
+        this.preco = preco;
         this.categorias = new ArrayList<>(categorias);
     }
 

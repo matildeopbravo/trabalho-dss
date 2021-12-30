@@ -20,6 +20,8 @@ import java.util.Map;
 
 public interface SGRInterface {
 
+    void atualizaEquipamentoAbandonado();
+
     void loadFromFile(String objectFile) throws IOException, ClassNotFoundException;
 
     void writeToFile(String objectFile) throws IOException;
@@ -28,15 +30,13 @@ public interface SGRInterface {
 
     void criaReparacaoExpresso(int idServico, String idCliente, String idTecnico, String descricao);
 
+    void marcaOrcamentoComoAceite(ReparacaoProgramada r);
+
     void marcaOrcamentoComoRecusado(ReparacaoProgramada r);
 
     void marcarOrcamentoComoArquivado(ReparacaoProgramada r);
 
     void marcaComoImpossivelReparar(ReparacaoProgramada reparacao) throws NaoExisteException;
-
-    void adicionaSubpassoPlano(PassoReparacao passo, String descricao, Duration duracao, float custo);
-
-    void adicionaPassoPlano(ReparacaoProgramada reparacao, String descricao, Duration duracao, float custo);
 
     void marcaComoNotificado(Reparacao e);
 
@@ -46,12 +46,21 @@ public interface SGRInterface {
 
     void marcaReparacaoCompleta(Reparacao reparacao);
 
+    boolean verificaExcedeOrcamento(float novoCusto, ReparacaoProgramada reparacaoProgramada);
+
+    void enviaMailReparacaoConcluida(Reparacao r, Cliente cliente);
+
+    void marcaComoEntregueConluida(Reparacao r);
+
+    void marcaComoEntregueRecusada(Reparacao r);
+
+    void enviaMailOrcamentoUltrapassado(ReparacaoProgramada r, Cliente c);
+
     void iniciaReparacaoExpresso(ReparacaoExpresso r) throws TecnicoNaoAtribuidoException;
 
     void adicionaEquipamento(Equipamento equipamento) throws EquipamentoJaExisteException;
 
-    void concluiReparacaoExpresso(ReparacaoExpresso r, Duration duracaoReal)
-            throws TecnicoNaoAtribuidoException, ReparacaoNaoExisteException;
+    void concluiReparacao(Reparacao reparacao);
 
     Utilizador getUtilizadorAutenticado();
 
@@ -60,7 +69,8 @@ public interface SGRInterface {
     //Devolve a lista das estatísticas de atendimentos de cada funcionário
     //de balcão
     List<EstatisticasFuncionario> estatisticasFuncionarios();
-     List<EstatisticasReparacoesTecnico> estatisticasReparacoesTecnicos();
+
+    List<EstatisticasReparacoesTecnico> estatisticasReparacoesTecnicos();
 
     //Devolve a lista de total de intervenções realizadas por cada técnico
     Map<String, List<Intervencao>> intervencoesTecnicos();
@@ -71,14 +81,13 @@ public interface SGRInterface {
                      String funcionarioCriador) throws JaExisteException;
 
 
-    public void registaUtilizador(String nome, String id, String password, TipoUtilizador t) throws JaExisteException;
+    void registaUtilizador(String nome, String id, String password, TipoUtilizador t) throws JaExisteException;
+
     void registaUtilizador(Utilizador utilizador) throws JaExisteException;
 
-    void removeUtilizador(String idUtilizador) throws NaoExisteException;
+    void apagaUtilizador(String idUtilizador) throws NaoExisteException;
 
-    public void apagaUtilizador(String idUtilizador) throws NaoExisteException;
-
-    public void apagaCliente(String idCliente) throws NaoExisteException;
+    void apagaCliente(String idCliente) throws NaoExisteException;
 
     // Getters
     Collection<Utilizador> getUtilizadores();
@@ -107,15 +116,13 @@ public interface SGRInterface {
 
     Collection<ReparacaoProgramada> getReparacoesProgramadas();
 
-    public void adicionaReparacaoExpressoAtual(ReparacaoExpresso reparacao) throws ReparacaoJaExisteException;
+    void adicionaReparacaoExpressoAtual(ReparacaoExpresso reparacao) throws ReparacaoJaExisteException;
 
-    public Collection<ReparacaoProgramada> getReparacoesAguardarOrcamento();
+    Collection<ReparacaoProgramada> getReparacoesAguardarOrcamento();
 
     Collection<Componente> getComponentes();
 
     Componente getComponente(Integer id) throws EquipamentoNaoExisteException; // devolve null se não existir
 
-    public Componente getComponenteByDescricao(String descricao);
-
-    public Collection<Componente> pesquisaComponentes(String stringPesquisa);
+    Collection<Componente> pesquisaComponentes(String stringPesquisa);
 }

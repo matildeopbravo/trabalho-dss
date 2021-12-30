@@ -25,6 +25,15 @@ public class EquipamentosDAO implements IEquipamentos, Serializable{
     public EquipamentosDAO() {
         this.equipamentoById = new HashMap<>();
         this.componenteById = new HashMap<>();
+
+        adicionaComponente(new Componente("Parafuso pequeno", 0.01f, List.of("Parafusos")));
+        adicionaComponente(new Componente("Parafuso médio", 0.01f, List.of("Parafusos")));
+        adicionaComponente(new Componente("Parafuso grande", 0.02f, List.of("Parafusos")));
+        adicionaComponente(new Componente("Ecrã iPhone 11", 50.00f, List.of("Ecrã", "iPhone")));
+        adicionaComponente(new Componente("Ecrã iPhone 12", 50.00f, List.of("Ecrã", "iPhone")));
+        adicionaComponente(new Componente("Bateria iPhone 11", 25.00f, List.of("Bateria", "iPhone")));
+        adicionaComponente(new Componente("Bateria iPhone 12", 25.00f, List.of("Bateria", "iPhone")));
+
         this.equipamentoAbandonado = new HashMap<>();
     }
 
@@ -59,6 +68,10 @@ public class EquipamentosDAO implements IEquipamentos, Serializable{
             equipamentoById.put(equipamento.getIdEquipamento(), equipamento);
         }
         throw new EquipamentoJaExisteException();
+    }
+
+    public void adicionaComponente(Componente componente) {
+        componenteById.put(componente.getId(), componente);
     }
 
     public Collection<Equipamento> getEquipamentos() {
