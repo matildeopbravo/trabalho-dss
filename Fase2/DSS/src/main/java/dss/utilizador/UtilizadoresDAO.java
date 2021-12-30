@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class UtilizadoresDAO implements IDAO<Utilizador,String>, Serializable  {
+public class UtilizadoresDAO implements IDAO<Utilizador,String>, IUtilizadores, Serializable  {
     private Map<String, Utilizador> utilizadoresPorID;
 
     public static UtilizadoresDAO lerUtilizadores(String ficheiro) {
@@ -39,19 +39,9 @@ public class UtilizadoresDAO implements IDAO<Utilizador,String>, Serializable  {
             e.printStackTrace();
         }
     }
-    /*public UtilizadorFacade() {
-        //hard coded database
-        this.utilizadoresPorID = new HashMap<>();
-        adicionaUtilizador(new Tecnico("Matilde", "0","matildeopbravo"));
-        adicionaUtilizador(new Tecnico("Pedro", "1", "pta2002"));
-        adicionaUtilizador(new Funcionario("Alex", "2", "SugaryLump"));
-        adicionaUtilizador(new Gestor("Mariana", "3", "Mariii_01"));
-    }*/
-
     public UtilizadoresDAO() {
         this.utilizadoresPorID = new HashMap<String,Utilizador>();
     }
-
     /**
      * Adiciona um utilizador ao mapa de utilizadores deste objeto
      */
@@ -64,12 +54,10 @@ public class UtilizadoresDAO implements IDAO<Utilizador,String>, Serializable  {
 
     /**
      * Remove um utilizador do mapa de utilizadores deste objeto
-     * @return Utilizador que foi removido, ou nulo se não existia
      */
-    public Utilizador removeUtilizador(String idUtilizador) throws UtilizadorNaoExisteException {
+    public void removeUtilizador(String idUtilizador) throws UtilizadorNaoExisteException {
         if (utilizadoresPorID.remove(idUtilizador) == null)
             throw new UtilizadorNaoExisteException();
-        return null;
     }
 
     /**

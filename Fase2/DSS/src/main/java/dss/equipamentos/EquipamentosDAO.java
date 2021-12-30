@@ -3,21 +3,22 @@ package dss.equipamentos;
 import dss.IDAO;
 import dss.exceptions.EquipamentoJaExisteException;
 import dss.exceptions.EquipamentoNaoExisteException;
+import dss.exceptions.JaExisteException;
+import dss.exceptions.NaoExisteException;
+import dss.reparacoes.IReparacoes;
 import dss.reparacoes.ReparacoesDAO;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.stream.Collectors;
 
-public class EquipamentosDAO {
+public class EquipamentosDAO implements IEquipamentos, Serializable{
     private final Map<Integer, Equipamento> equipamentoById;
     private final Map<Integer, Equipamento> equipamentoAbandonado;
     private final Map<Integer, Componente> componenteById;
@@ -87,17 +88,58 @@ public class EquipamentosDAO {
         throw new EquipamentoNaoExisteException();
     }
 
-    public void atualizaEquipamentoAbandonado(ReparacoesDAO reparacoesFacade) {
+    @Override
+    public void atualizaEquipamentoAbandonado(IReparacoes reparacoes) {
         Iterator<Map.Entry<Integer, Equipamento>> it = equipamentoById.entrySet().iterator();
         LocalDateTime today = LocalDateTime.now();
 
         while (it.hasNext()) {
             Equipamento equipamento = it.next().getValue();
             if (today.isAfter(equipamento.getDataEntrega().plusDays(90))) {
-                reparacoesFacade.arquivaReparacoesDeEquipamento(equipamento.getIdEquipamento());
+                reparacoes.arquivaReparacoesDeEquipamento(equipamento.getIdEquipamento());
                 it.remove();
                 this.equipamentoAbandonado.put(equipamento.getIdEquipamento(), equipamento);
             }
         }
+    }
+
+
+    @Override
+    public Equipamento get(Integer id) throws NaoExisteException {
+        Equipamento equipamento;
+        equipamento = equipamentoById.get(id);
+        if( equipamento == null)
+            equipamento = this.equipamentoAbandonado.get(id);
+        if (equipamento == null)
+            throw new NaoExisteException();
+        return equipamento;
+    }
+
+    @Override
+    public void add(Equipamento item) throws JaExisteException {
+        adicionaEquipamento(item);
+    }
+
+    @Override
+    public void remove(Integer id) throws NaoExisteException {
+        Equipamento equipamento = equipamentoById.remove(id);
+        if(equipamento == null)
+            equipamento = equipamentoAbandonado.remove(id);
+
+        if(equipamento == null)
+            throw new NaoExisteException();
+    }
+
+    @Override
+    public <C> Collection<C> getByClass(Class<C> classe) {
+        return getAll().stream().filter(classe::isInstance).map(classe::cast).collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<Equipamento> getAll() {
+        ArrayList<Equipamento> r = new ArrayList<> ();
+        r.addAll(equipamentoById.values());
+        r.addAll(equipamentoAbandonado.values());
+        return r;
     }
 }

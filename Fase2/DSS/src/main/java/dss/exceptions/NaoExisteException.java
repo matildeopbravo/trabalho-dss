@@ -1,6 +1,8 @@
 package dss.exceptions;
 
-public class NaoExisteException extends Exception{
+import java.util.function.Supplier;
+
+public class NaoExisteException extends Exception {
     public NaoExisteException() {
 
     }

@@ -3,17 +3,13 @@ package dss.clientes;
 import dss.IDAO;
 import dss.exceptions.ClienteJaExisteException;
 import dss.exceptions.ClienteNaoExisteException;
-import dss.exceptions.UtilizadorJaExisteException;
-import dss.exceptions.UtilizadorNaoExisteException;
-import dss.utilizador.Tecnico;
-import dss.utilizador.Utilizador;
 
 import java.io.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
-public class ClientesDAO implements IDAO<Cliente,String>, Serializable  {
+public class ClientesDAO implements IClientes, Serializable  {
     private final HashMap<String, Cliente> clientesById;
 
     public ClientesDAO() {
@@ -50,7 +46,7 @@ public class ClientesDAO implements IDAO<Cliente,String>, Serializable  {
         return new ClientesDAO();
     }
 
-    public static void escreverEquipamento(String ficheiro, ClientesDAO clientes) {
+    public static void escreverClientes(String ficheiro, ClientesDAO clientes) {
         try {
             FileOutputStream fos = new FileOutputStream(ficheiro);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -80,7 +76,6 @@ public class ClientesDAO implements IDAO<Cliente,String>, Serializable  {
     @Override
     public void remove(String id) throws ClienteNaoExisteException {
         removeCliente(id);
-
     }
 
     @Override
@@ -90,6 +85,6 @@ public class ClientesDAO implements IDAO<Cliente,String>, Serializable  {
 
     @Override
     public Collection<Cliente> getAll() {
-        return null;
+        return clientesById.values();
     }
 }

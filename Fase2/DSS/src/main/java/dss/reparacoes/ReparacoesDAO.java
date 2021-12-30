@@ -2,6 +2,7 @@ package dss.reparacoes;
 
 import dss.IDAO;
 import dss.equipamentos.Fase;
+import dss.exceptions.JaExisteException;
 import dss.exceptions.NaoExisteException;
 import dss.exceptions.ReparacaoNaoExisteException;
 
@@ -9,8 +10,9 @@ import java.io.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class ReparacoesDAO implements  Serializable {
+public class ReparacoesDAO implements IDAO<Reparacao, Integer>, IReparacoes, Serializable {
     private final HashMap<Integer, Reparacao> reparacoesConcluidas;
     private final HashMap<Integer, Reparacao> reparacoesArquivadas;
     private final LinkedHashMap<Integer, ReparacaoProgramada> reparacoesProgramadasAtuais;
@@ -112,4 +114,50 @@ public class ReparacoesDAO implements  Serializable {
         }
     }
 
+    @Override
+    public Reparacao get(Integer id) throws NaoExisteException {
+        return getAll().stream().filter(c -> c.getId() == id).findAny().orElseThrow(NaoExisteException::new);
+    }
+
+    @Override
+    public void add(Reparacao item) throws JaExisteException {
+        reparacoesProgramadasAtuais.put(item.getId(), (ReparacaoProgramada) item);
+    }
+
+    @Override
+    public void remove(Integer id) throws NaoExisteException {
+        if(reparacoesProgramadasAtuais.containsKey(id)) {
+            reparacoesProgramadasAtuais.remove(id);
+
+        }
+        else if (reparacoesExpressoAtuais.containsKey(id)) {
+            reparacoesExpressoAtuais.remove(id);
+
+        }
+        else if (reparacoesArquivadas.containsKey(id)) {
+            reparacoesArquivadas.remove(id);
+
+        }
+        else if (reparacoesConcluidas.containsKey(id)) {
+            reparacoesConcluidas.remove(id);
+        }
+         else {
+             throw  new ReparacaoNaoExisteException();
+        }
+    }
+
+    @Override
+    public <C> Collection<C> getByClass(Class<C> classe) {
+        return getAll().stream().filter(classe::isInstance).map(classe::cast).collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<Reparacao> getAll() {
+        ArrayList<Reparacao> r = new ArrayList<> ();
+        r.addAll(reparacoesConcluidas.values());
+        r.addAll(reparacoesArquivadas.values());
+        r.addAll(reparacoesProgramadasAtuais.values());
+        r.addAll(reparacoesExpressoAtuais.values());
+        return r;
+    }
 }
