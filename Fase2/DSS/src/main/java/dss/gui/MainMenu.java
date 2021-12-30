@@ -50,6 +50,9 @@ public class MainMenu implements Navigatable {
         Button aguardaAprovacaoButton = new Button("Reparações a aguardar aprovação");
         aguardaAprovacaoButton.setOnAction(s -> navigator.navigateTo(new AprovarRejeitarOrcamento(sgr, navigator)));
 
+        Button reparacoesEmCurso = new Button("Reprações em Curso");
+        reparacoesEmCurso.setOnAction(s -> navigator.navigateTo(new ReparacoesEmCurso(sgr, navigator)));
+
         Button listaReparacoesButton = new Button("Lista de Reparações");
         listaReparacoesButton.setOnAction(s -> navigator.navigateTo(new TodasReparacoes(sgr, navigator)));
 
@@ -76,7 +79,7 @@ public class MainMenu implements Navigatable {
         }));
 
         vbox.getChildren().addAll(newUserButton, allUsersButton, newClientButton, allClientsButton, criaReparacaoExpresso,
-                aguardarOrcamentoButton, aguardaAprovacaoButton, listaReparacoesButton, previewTabelaPasso,
+                aguardarOrcamentoButton, aguardaAprovacaoButton, reparacoesEmCurso, listaReparacoesButton, previewTabelaPasso,
                 estatisticasDasReparacoesDosTecnicos, estatisticasFuncionarios, intervencoesTecnicos);
 
         return vbox;
