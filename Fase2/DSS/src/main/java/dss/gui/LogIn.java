@@ -1,7 +1,6 @@
 package dss.gui;
 
-import dss.SGR;
-import dss.SGRInterface;
+import dss.business.SGRInterface;
 import dss.exceptions.CredenciasInvalidasException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

@@ -1,6 +1,6 @@
 package dss.gui;
 
-import dss.SGRInterface;
+import dss.business.SGRInterface;
 import dss.business.reparacoes.Reparacao;
 import dss.business.reparacoes.ReparacaoProgramada;
 import javafx.scene.Node;

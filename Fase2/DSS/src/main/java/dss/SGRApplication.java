@@ -1,9 +1,9 @@
 package dss;
 
+import dss.business.SGR;
+import dss.business.SGRInterface;
 import dss.gui.Frame;
-import dss.gui.LogIn;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 

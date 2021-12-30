@@ -1,9 +1,6 @@
 package dss.gui;
 
-import dss.SGR;
-import dss.SGRInterface;
-import dss.exceptions.ReparacaoJaExisteException;
-import dss.exceptions.UtilizadorJaExisteException;
+import dss.business.SGRInterface;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 

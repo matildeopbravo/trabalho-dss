@@ -1,11 +1,11 @@
 package dss.business.reparacoes;
 
-import dss.Intervencao;
+import dss.business.Intervencao;
 import dss.business.equipamentos.Componente;
 import dss.business.equipamentos.Equipamento;
 import dss.business.equipamentos.Fase;
-import dss.Orcamento;
-import dss.PlanoReparacao;
+import dss.business.Orcamento;
+import dss.business.PlanoReparacao;
 import dss.exceptions.NaoPodeSerReparadoAgoraException;
 
 import java.io.Serializable;

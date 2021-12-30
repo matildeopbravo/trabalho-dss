@@ -1,7 +1,6 @@
 package dss.gui;
 
-import dss.SGR;
-import dss.SGRInterface;
+import dss.business.SGRInterface;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;

@@ -1,7 +1,7 @@
 
 package dss.business.reparacoes;
 
-import dss.Intervencao;
+import dss.business.Intervencao;
 import dss.business.equipamentos.Fase;
 
 import java.io.Serializable;

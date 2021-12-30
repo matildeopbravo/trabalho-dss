@@ -1,7 +1,7 @@
 package dss.business.reparacoes;
 
-import dss.Intervencao;
-import dss.ServicoExpressoTabelado;
+import dss.business.Intervencao;
+import dss.business.ServicoExpressoTabelado;
 
 import java.io.Serializable;
 import java.time.Duration;

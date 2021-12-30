@@ -1,7 +1,6 @@
 package dss.gui;
 
-import dss.SGR;
-import dss.SGRInterface;
+import dss.business.SGRInterface;
 import dss.gui.components.TabelaReparacoes;
 import javafx.scene.Node;
 

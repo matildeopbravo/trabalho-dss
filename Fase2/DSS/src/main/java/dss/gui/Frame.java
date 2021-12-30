@@ -1,7 +1,6 @@
 package dss.gui;
 
-import dss.SGR;
-import dss.SGRInterface;
+import dss.business.SGRInterface;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
