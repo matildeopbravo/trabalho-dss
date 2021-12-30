@@ -3,11 +3,12 @@ package dss.business.reparacao;
 import dss.business.auxiliar.Pair;
 import dss.business.equipamento.Componente;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class Orcamento {
+public class Orcamento implements Serializable {
     // vai ser dado pela soma dos custos
     private final float custoTotal;
     private final List<Componente> componentesNecessarios;

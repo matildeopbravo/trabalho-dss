@@ -101,5 +101,6 @@ public abstract class Reparacao implements Serializable {
 
     public void marcaComoNotificado() {
         this.notificado = true;
+        this.fase = Fase.AEsperaResposta;
     }
 }

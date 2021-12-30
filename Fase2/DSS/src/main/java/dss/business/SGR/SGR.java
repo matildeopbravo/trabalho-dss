@@ -97,6 +97,16 @@ public class SGR implements SGRInterface {
     @Override
     public void marcaOrcamentoComoRecusado(ReparacaoProgramada r) {
         r.setFase(Fase.Recusada);
+        try {
+            Cliente c = clientes.get(r.getIdCliente());
+            if (c.getEmail() != null && !c.getEmail().isBlank()) {
+                email.enviaMail(c.getEmail(), "Orçamento recusado", "Caro " + c.getNome() + ",\n\n" +
+                        "Como recusou o seu orçamento, o seu equipamento pode ser levantado na loja.\n\n" +
+                        "Atenciosamente,\nLoja de Reparações do Grupo 54");
+            }
+        } catch (NaoExisteException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -108,7 +118,7 @@ public class SGR implements SGRInterface {
     public boolean marcaComoImpossivelReparar(ReparacaoProgramada reparacao) throws NaoExisteException {
         reparacao.setFase(Fase.NaoPodeSerReparado);
         Cliente c = clientes.get(reparacao.getIdCliente());
-        if (c.getEmail() == null)
+        if (c.getEmail() == null || c.getEmail().isBlank())
             return false;
         email.enviaMail(c.getEmail(), "Equipamento Não Pode ser Reparado",
                 "Após uma análise do estado do equipamento, concluímos que a sua" +
@@ -129,7 +139,7 @@ public class SGR implements SGRInterface {
         reparacao.realizaOrcamento(utilizadorAutenticado.getId());
         reparacao.setDataEnvioOrcamento(LocalDateTime.now());
         reparacao.setFase(Fase.AEsperaResposta);
-        if (c.getEmail() == null)
+        if (c.getEmail() == null || c.getEmail().isBlank())
             return false;
         email.enviaMail(c.getEmail(), "Orçamento",
                 reparacao.getOrcamentoMail(c.getNome()));
@@ -153,7 +163,7 @@ public class SGR implements SGRInterface {
         Cliente c = null;
         try {
             c = getCliente(reparacaoProgramada.getIdCliente());
-            if (excede && c.getEmail() != null) {
+            if (excede && c.getEmail() != null && !c.getEmail().isBlank()) {
                 enviaMailOrcamentoUltrapassado(reparacaoProgramada, c);
                 reparacaoProgramada.setFase(Fase.AEsperaResposta);
                 return new Pair<>(true, true);
@@ -166,7 +176,7 @@ public class SGR implements SGRInterface {
 
     @Override
     public boolean enviaMailReparacaoConcluida(Reparacao r, Cliente cliente) {
-        if (cliente.getEmail() == null)
+        if (cliente.getEmail() == null || cliente.getEmail().isBlank())
             return false;
         email.enviaMail(cliente.getEmail(), "Reparacao Concluida", "Caro " + cliente.getNome() +
                 ", a sua encomenda está completa. Por favor levante o seu equipamento na loja.\n");
@@ -464,6 +474,11 @@ public class SGR implements SGRInterface {
         return equipamentos.getComponentes().stream()
                 .filter(comp -> List.of(comp.getDescricao()).containsAll(searchTokens))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ReparacaoProgramada> reparacoesAguardarAprovacao() {
+        return reparacoes.getReparacoesProgramadasAtuais().stream().filter(r -> r.getFase() == Fase.AEsperaResposta).toList();
     }
 
     public Componente getComponenteByDescricao(String descricao) {

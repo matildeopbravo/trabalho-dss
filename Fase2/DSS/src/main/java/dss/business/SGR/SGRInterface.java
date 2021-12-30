@@ -125,4 +125,6 @@ public interface SGRInterface {
     Componente getComponente(Integer id) throws EquipamentoNaoExisteException; // devolve null se não existir
 
     Collection<Componente> pesquisaComponentes(String stringPesquisa);
+
+    List<ReparacaoProgramada> reparacoesAguardarAprovacao();
 }
