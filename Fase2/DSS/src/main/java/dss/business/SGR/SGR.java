@@ -1,6 +1,7 @@
-package dss.business;
+package dss.business.SGR;
 
 
+import dss.business.Email.Email;
 import dss.business.cliente.Cliente;
 import dss.data.*;
 import dss.data.IClientes;

@@ -1,7 +1,7 @@
 package dss;
 
-import dss.business.SGR;
-import dss.business.SGRInterface;
+import dss.business.SGR.SGR;
+import dss.business.SGR.SGRInterface;
 import dss.gui.Frame;
 import javafx.application.Application;
 import javafx.scene.Scene;

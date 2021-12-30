@@ -1,4 +1,4 @@
-package dss.business;
+package dss.business.Email;
 
 import net.sargue.mailgun.Configuration;
 import net.sargue.mailgun.Mail;

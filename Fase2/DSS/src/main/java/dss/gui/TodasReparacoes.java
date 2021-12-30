@@ -1,9 +1,8 @@
 package dss.gui;
 
-import dss.business.SGRInterface;
+import dss.business.SGR.SGRInterface;
 import dss.gui.components.TabelaReparacoes;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 
 public class TodasReparacoes implements Navigatable {
     private SGRInterface sgr;

@@ -1,6 +1,6 @@
 package dss.gui.components;
 
-import dss.business.SGRInterface;
+import dss.business.SGR.SGRInterface;
 import dss.business.cliente.Cliente;
 import dss.exceptions.NaoExisteException;
 import dss.business.reparacao.Reparacao;

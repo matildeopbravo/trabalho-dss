@@ -1,11 +1,10 @@
 package dss.gui;
 
-import dss.business.SGRInterface;
+import dss.business.SGR.SGRInterface;
 import dss.business.cliente.Cliente;
 import dss.exceptions.NaoExisteException;
 import dss.gui.components.TabelaClientes;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;

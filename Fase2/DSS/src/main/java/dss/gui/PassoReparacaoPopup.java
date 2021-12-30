@@ -1,10 +1,9 @@
 package dss.gui;
 
-import dss.business.SGRInterface;
+import dss.business.SGR.SGRInterface;
 import dss.business.equipamento.Componente;
 import dss.business.reparacao.PassoReparacao;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -14,7 +13,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 public class PassoReparacaoPopup extends PopUp<PassoReparacao> {
     private final SGRInterface sgr;

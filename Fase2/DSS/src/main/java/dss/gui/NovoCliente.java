@@ -1,12 +1,9 @@
 package dss.gui;
 
-import dss.business.SGRInterface;
+import dss.business.SGR.SGRInterface;
 import dss.exceptions.JaExisteException;
-import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
 
 import java.util.LinkedHashMap;
 import java.util.List;

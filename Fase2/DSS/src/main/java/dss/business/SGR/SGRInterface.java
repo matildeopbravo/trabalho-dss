@@ -1,4 +1,4 @@
-package dss.business;
+package dss.business.SGR;
 
 import dss.business.cliente.Cliente;
 import dss.business.equipamento.Componente;

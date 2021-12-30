@@ -1,6 +1,5 @@
 package dss.gui.components;
 
-import dss.business.SGRInterface;
 import dss.business.reparacao.PassoReparacao;
 import dss.business.reparacao.PlanoReparacao;
 import javafx.scene.Node;
@@ -10,7 +9,6 @@ import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 
 import java.time.Duration;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 

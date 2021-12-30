@@ -51,4 +51,9 @@ public class Componente {
     public Componente clone () {
         return new Componente(this);
     }
+
+    @Override
+    public String toString() {
+        return descricao + " - " + String.format("%.2f€",preco);
+    }
 }

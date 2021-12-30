@@ -1,6 +1,6 @@
 package dss.gui;
 
-import dss.business.SGRInterface;
+import dss.business.SGR.SGRInterface;
 import dss.business.utilizador.Tecnico;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
