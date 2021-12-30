@@ -11,7 +11,7 @@ public class SGRApplication extends Application {
     // Estamos a usar JavaFX, portanto este é o método principal da aplicação
     @Override
     public void start(Stage stage) throws Exception {
-        SGR sgr = new SGR();
+        SGRInterface sgr = new SGR();
         Frame frame = new Frame(sgr);
         frame.setStage(stage);
         Scene mainScene = frame.getScene();

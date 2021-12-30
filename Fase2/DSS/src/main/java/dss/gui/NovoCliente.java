@@ -1,6 +1,7 @@
 package dss.gui;
 
 import dss.SGR;
+import dss.SGRInterface;
 import dss.exceptions.JaExisteException;
 import dss.exceptions.UtilizadorJaExisteException;
 import javafx.scene.Node;
@@ -10,7 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public class NovoCliente extends Form implements Navigatable {
-    private SGR sgr;
+    private SGRInterface sgr;
     private Navigator navigator;
 
     protected TextField nome;
@@ -18,7 +19,7 @@ public class NovoCliente extends Form implements Navigatable {
     protected TextField email;
     protected TextField telemovel;
 
-    public NovoCliente(SGR sgr, Navigator frame) {
+    public NovoCliente(SGRInterface sgr, Navigator frame) {
         this.sgr = sgr;
         this.navigator = frame;
 

@@ -1,6 +1,7 @@
 package dss.gui;
 
 import dss.SGR;
+import dss.SGRInterface;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -41,10 +42,10 @@ public class Frame implements Initializable, Navigator {
     private Button backButton;
 
     private FXMLLoader frameLoader;
-    private SGR sgr;
+    private SGRInterface sgr;
     private Stack<Navigatable> navigationStack;
 
-    public Frame(SGR sgr) {
+    public Frame(SGRInterface sgr) {
         this.sgr = sgr;
         this.navigationStack = new Stack<>();
         frameLoader = new FXMLLoader(getClass().getResource("/dss/gui/Frame.fxml"));

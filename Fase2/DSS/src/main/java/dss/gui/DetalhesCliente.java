@@ -1,6 +1,7 @@
 package dss.gui;
 
 import dss.SGR;
+import dss.SGRInterface;
 import dss.clientes.Cliente;
 import javafx.scene.Node;
 
@@ -8,7 +9,7 @@ import java.util.List;
 
 public class DetalhesCliente implements Navigatable {
     private class UpdateForm extends NovoCliente {
-        public UpdateForm(SGR sgr, Navigator navigator, Cliente cliente) {
+        public UpdateForm(SGRInterface sgr, Navigator navigator, Cliente cliente) {
             super(sgr, navigator);
             this.title = "Editar cliente";
             this.buttonText = " Guardar alterações";
@@ -35,12 +36,12 @@ public class DetalhesCliente implements Navigatable {
         }
     }
 
-    private final SGR sgr;
+    private final SGRInterface sgr;
     private final Navigator navigator;
     private final Form updateForm;
     private final Cliente cliente;
 
-    public DetalhesCliente(SGR sgr, Navigator navigator, Cliente cliente) {
+    public DetalhesCliente(SGRInterface sgr, Navigator navigator, Cliente cliente) {
         this.sgr = sgr;
         this.navigator = navigator;
         this.cliente = cliente;

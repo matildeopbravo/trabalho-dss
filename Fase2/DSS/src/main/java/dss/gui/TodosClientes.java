@@ -1,6 +1,7 @@
 package dss.gui;
 
 import dss.SGR;
+import dss.SGRInterface;
 import dss.clientes.Cliente;
 import dss.exceptions.ClienteNaoExisteException;
 import dss.exceptions.NaoExisteException;
@@ -27,10 +28,10 @@ public class TodosClientes implements Navigatable {
     private Cliente selected;
 
     private final Collection<Cliente> listaClientes;
-    private final SGR sgr;
+    private final SGRInterface sgr;
     private final Navigator navigator;
 
-    public TodosClientes(SGR sgr, Navigator navigator) {
+    public TodosClientes(SGRInterface sgr, Navigator navigator) {
         listaClientes = sgr.getClientes();
         this.sgr = sgr;
         this.navigator = navigator;

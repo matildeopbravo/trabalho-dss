@@ -1,6 +1,7 @@
 package dss.gui;
 
 import dss.SGR;
+import dss.SGRInterface;
 import dss.exceptions.ReparacaoJaExisteException;
 import dss.exceptions.UtilizadorJaExisteException;
 import javafx.scene.Node;
@@ -11,12 +12,12 @@ import java.util.List;
 
 public class NovaReparacaoProgramada extends  Form implements Navigatable {
 
-    SGR sgr;
+    SGRInterface sgr;
     Navigator navigator;
     private TextField idCliente;
     private TextField descricao;
 
-    public NovaReparacaoProgramada(SGR sgr, Navigator frame) {
+    public NovaReparacaoProgramada(SGRInterface sgr, Navigator frame) {
         this.sgr = sgr;
         this.navigator = frame;
 

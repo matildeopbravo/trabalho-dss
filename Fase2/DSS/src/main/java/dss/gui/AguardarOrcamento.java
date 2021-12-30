@@ -1,6 +1,7 @@
 package dss.gui;
 
 import dss.SGR;
+import dss.SGRInterface;
 import dss.reparacoes.Reparacao;
 import dss.reparacoes.ReparacaoProgramada;
 import javafx.scene.Node;
@@ -13,7 +14,7 @@ import java.util.Collection;
 public class AguardarOrcamento implements Navigatable {
 
     private Collection<ReparacaoProgramada> lista ;
-    public AguardarOrcamento(SGR sgr, Navigator navigator) {
+    public AguardarOrcamento(SGRInterface sgr, Navigator navigator) {
         lista = sgr.getReparacoesAguardarOrcamento();
     }
 

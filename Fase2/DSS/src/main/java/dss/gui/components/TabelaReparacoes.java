@@ -1,6 +1,7 @@
 package dss.gui.components;
 
 import dss.SGR;
+import dss.SGRInterface;
 import dss.clientes.Cliente;
 import dss.exceptions.NaoExisteException;
 import dss.exceptions.UtilizadorJaExisteException;
@@ -12,9 +13,9 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
 public class TabelaReparacoes extends TableView<Reparacao> {
-    private SGR sgr;
+    private SGRInterface sgr;
 
-    public TabelaReparacoes(SGR sgr) {
+    public TabelaReparacoes(SGRInterface sgr) {
         super();
 
         this.sgr = sgr;

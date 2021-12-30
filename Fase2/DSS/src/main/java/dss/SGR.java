@@ -75,7 +75,7 @@ public class SGR implements SGRInterface {
     //####MÉTODOS####
 
 
-    public void criaReparacaoExpresso(int idServico, String idCliente, String idTecnico , String descricao) throws ReparacaoJaExisteException {
+    public void criaReparacaoExpresso(int idServico, String idCliente, String idTecnico , String descricao) {
         ReparacaoExpresso r = new ReparacaoExpresso(servicoExpresso.get(idServico), idCliente,
                 utilizadorAutenticado.getId(), idTecnico, descricao);
         reparacoes.adicionaReparacaoExpressoAtual(r);

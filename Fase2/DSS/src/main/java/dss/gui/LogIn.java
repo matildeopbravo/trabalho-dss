@@ -1,6 +1,7 @@
 package dss.gui;
 
 import dss.SGR;
+import dss.SGRInterface;
 import dss.exceptions.CredenciasInvalidasException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -27,10 +28,10 @@ public class LogIn implements Initializable {
     @FXML
     private Pane errors;
 
-    private SGR sgr;
+    private SGRInterface sgr;
     private Frame frame;
 
-    public LogIn(SGR sgr, Frame frame) {
+    public LogIn(SGRInterface sgr, Frame frame) {
         this.sgr = sgr;
         this.frame = frame;
     }

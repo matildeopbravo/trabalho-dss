@@ -1,6 +1,7 @@
 package dss.gui;
 
 import dss.SGR;
+import dss.SGRInterface;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -8,10 +9,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
 public class MainMenu implements Navigatable {
-    private SGR sgr;
+    private SGRInterface sgr;
     private Navigator navigator;
 
-    public MainMenu(SGR sgr, Navigator navigator) {
+    public MainMenu(SGRInterface sgr, Navigator navigator) {
         this.sgr = sgr;
         this.navigator = navigator;
     }
