@@ -57,8 +57,7 @@ public class TodosUtilizadores implements Navigatable {
                         System.err.println("Por implementar");
                         try {
                             sgr.apagaUtilizador(selected.getId());
-                        } catch (NaoExisteException e) {
-                            e.printStackTrace();
+                        } catch (NaoExisteException ignored) {
                         }
                         tabelaUtilizadores.getItems().setAll(sgr.getUtilizadores());
                     }

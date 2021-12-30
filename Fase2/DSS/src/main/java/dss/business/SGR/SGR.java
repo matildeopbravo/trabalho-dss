@@ -492,6 +492,12 @@ public class SGR implements SGRInterface {
     }
 
     @Override
+    public void marcaComoEntregueConluida(String idCliente) throws ReparacaoNaoExisteException {
+        Reparacao r =  getReparacoesAtuais().stream().filter(re -> re.getIdCliente().equals(idCliente)).findFirst().orElseThrow(ReparacaoNaoExisteException::new);
+        marcaComoEntregueConluida(r);
+    }
+
+    @Override
     public List<ReparacaoProgramada> getReparacoesProgramadasEmCurso() {
         return reparacoes.getReparacoesProgramadasAtuais().stream().filter(ReparacaoProgramada::podeSerReparadaAgora).toList();
     }

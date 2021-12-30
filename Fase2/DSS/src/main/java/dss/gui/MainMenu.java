@@ -63,8 +63,11 @@ public class MainMenu implements Navigatable {
         Button listaReparacoesTabeladasButton = new Button("Serviços Expresso Tabelados");
         listaReparacoesTabeladasButton.setOnAction(e -> navigator.navigateTo(new ReparacoesTabeladas(sgr)));
 
+        Button concluirServicoButton = new Button("Concluir Serviço");
+        listaReparacoesTabeladasButton.setOnAction(e -> navigator.navigateTo(new ConcluirServico(sgr,navigator)));
+
         vbox.getChildren().addAll(allUsersButton, allClientsButton, listaReparacoesTabeladasButton,
-                aguardarOrcamentoButton, aguardaAprovacaoButton, reparacoesEmCurso, listaReparacoesButton,
+                aguardarOrcamentoButton, aguardaAprovacaoButton, reparacoesEmCurso, listaReparacoesButton, concluirServicoButton,
                 estatisticasDasReparacoesDosTecnicos, estatisticasFuncionarios, intervencoesTecnicos);
 
         return vbox;

@@ -133,4 +133,6 @@ public interface SGRInterface {
     List<Tecnico> getTecnicosDisponveis();
 
     Collection<ServicoExpressoTabelado> getServicosTabelados();
+
+    void marcaComoEntregueConluida(String text) throws ReparacaoNaoExisteException;
 }

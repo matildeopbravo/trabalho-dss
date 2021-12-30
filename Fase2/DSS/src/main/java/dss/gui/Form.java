@@ -1,5 +1,6 @@
 package dss.gui;
 
+import dss.exceptions.ReparacaoNaoExisteException;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -40,7 +41,7 @@ public abstract class Form {
     }
 
     protected abstract boolean validateSubmit();
-    protected abstract List<String> submit(); // Devolve lista de erros
+    protected abstract List<String> submit() ; // Devolve lista de erros
 
     public Node getScene() {
         HBox hcontainer = new HBox();
