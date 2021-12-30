@@ -52,6 +52,8 @@ public class ReparacoesEmCurso implements Navigatable {
         VBox.setVgrow(this.tabela, Priority.ALWAYS);
         this.tabela.setMaxHeight(Double.MAX_VALUE);
 
+        this.tabela.getItems().setAll(sgr.getReparacoesProgramadasEmCurso());
+
         vbox.setSpacing(5);
         vbox.getChildren().addAll(tabela, reparar);
 

@@ -127,4 +127,6 @@ public interface SGRInterface {
     Collection<Componente> pesquisaComponentes(String stringPesquisa);
 
     List<ReparacaoProgramada> reparacoesAguardarAprovacao();
+
+    List<ReparacaoProgramada> getReparacoesProgramadasEmCurso();
 }
