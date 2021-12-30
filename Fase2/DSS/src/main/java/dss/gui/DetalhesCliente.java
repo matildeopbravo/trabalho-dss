@@ -35,6 +35,11 @@ public class DetalhesCliente implements Navigatable {
             navigator.navigateBack("Cliente alterado com sucesso!");
             return List.of();
         }
+        @Override
+        protected boolean validateSubmit() {
+            return !this.nome.getText().isEmpty() && !this.nif.getText().isEmpty();
+        }
+
     }
 
     private final SGRInterface sgr;

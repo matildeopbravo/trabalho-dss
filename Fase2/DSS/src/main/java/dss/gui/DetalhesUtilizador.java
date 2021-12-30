@@ -26,10 +26,16 @@ public class DetalhesUtilizador implements Navigatable {
         @Override
         protected List<String> submit() {
             utilizador.setNome(nome.getText());
-            utilizador.changePassword(password.getText());
+            if(password.getText() != null)
+                utilizador.changePassword(password.getText());
             navigator.navigateBack("Utilizador alterado com sucesso!");
             return List.of();
         }
+        @Override
+        protected boolean validateSubmit() {
+            return !this.nome.getText().isEmpty() && !this.nif.getText().isEmpty();
+        }
+
     }
 
     private final SGRInterface sgr;

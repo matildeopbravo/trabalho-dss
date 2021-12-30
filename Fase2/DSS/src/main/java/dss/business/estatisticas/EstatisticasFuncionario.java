@@ -10,4 +10,16 @@ public class EstatisticasFuncionario {
         this.rececoes = rececoes;
         this.entregas = entregas;
     }
+
+    public String getIdFuncionario() {
+        return idFuncionario;
+    }
+
+    public int getRececoes() {
+        return rececoes;
+    }
+
+    public int getEntregas() {
+        return entregas;
+    }
 }
