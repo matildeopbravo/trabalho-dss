@@ -335,11 +335,12 @@ public class SGR implements SGRInterface {
     //#REPARACAO#
     //###########
     @Override
-    public void criaReparacaoProgramada(String nifCliente, String descricao) throws NaoExisteException {
+    public ReparacaoProgramada criaReparacaoProgramada(String nifCliente, String descricao) throws NaoExisteException {
         if (clientes.get(nifCliente) == null)
             throw new ClienteNaoExisteException();
         ReparacaoProgramada reparacao = new ReparacaoProgramada(nifCliente, utilizadorAutenticado.getId(), descricao);
         reparacoes.adicionaReparacaoProgramadaAtual(reparacao);
+        return reparacao;
     }
 
     @Override

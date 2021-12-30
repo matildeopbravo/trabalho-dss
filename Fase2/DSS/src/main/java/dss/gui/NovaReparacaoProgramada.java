@@ -1,6 +1,7 @@
 package dss.gui;
 
 import dss.business.SGR.SGRInterface;
+import dss.business.reparacao.ReparacaoProgramada;
 import dss.exceptions.NaoExisteException;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
@@ -8,7 +9,7 @@ import javafx.scene.control.TextField;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class NovaReparacaoProgramada extends  Form implements Navigatable {
+public class NovaReparacaoProgramada extends Form implements Navigatable {
 
     SGRInterface sgr;
     Navigator navigator;
@@ -39,13 +40,11 @@ public class NovaReparacaoProgramada extends  Form implements Navigatable {
     protected List<String> submit() {
         if (validateSubmit()) {
             try {
-                sgr.criaReparacaoProgramada(idCliente.getText(),descricao.getText() );
-                navigator.navigateBack("Ficha de Reparação do Cliente " + idCliente.getText() + " criada!");
+                ReparacaoProgramada rp = sgr.criaReparacaoProgramada(idCliente.getText(), descricao.getText());
+                navigator.navigateBack("Código do equipamento é #" + rp.getEquipamentoAReparar().getIdEquipamento() + ".");
                 return List.of();
             } catch (NaoExisteException e) {
-                // TODO
-                e.printStackTrace();
-                return null;
+                return List.of(e.getMessage());
             }
         } else {
             // Isto não deve acontecer!

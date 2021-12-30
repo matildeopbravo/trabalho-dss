@@ -206,6 +206,7 @@ public class Frame implements Initializable, Navigator {
                 alert.showAndWait();
             }
         }
+        onExit();
     }
 
     @FXML

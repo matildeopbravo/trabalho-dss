@@ -13,7 +13,6 @@ import dss.business.utilizador.Utilizador;
 import dss.exceptions.*;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +25,7 @@ public interface SGRInterface {
 
     void writeToFile(String objectFile) throws IOException;
 
-    void criaReparacaoProgramada(String nifCliente, String descricao) throws NaoExisteException;
+    ReparacaoProgramada criaReparacaoProgramada(String nifCliente, String descricao) throws NaoExisteException;
 
     void criaReparacaoExpresso(int idServico, String idCliente, String idTecnico, String descricao);
 

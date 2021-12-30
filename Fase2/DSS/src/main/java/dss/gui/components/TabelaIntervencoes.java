@@ -1,7 +1,6 @@
 package dss.gui.components;
 
 
-import dss.business.estatisticas.EstatisticasReparacoesTecnico;
 import dss.business.reparacao.Intervencao;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.TableColumn;
