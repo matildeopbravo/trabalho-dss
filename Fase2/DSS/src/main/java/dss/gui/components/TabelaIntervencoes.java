@@ -2,32 +2,62 @@ package dss.gui.components;
 
 
 import dss.business.estatisticas.EstatisticasReparacoesTecnico;
+import dss.business.reparacao.Intervencao;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-public class TabelaIntervencoes extends TableView<EstatisticasReparacoesTecnico> {
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
 
+// Record é como uma classe mas gera os getters automaticamente
+record LinhaIntervencao(String getTecnicoId, String getDescricao, Duration getDuracaoReal, Duration getDuracaoPrevista,
+                        float getCustoTotalPrevisto, float getCustoTotalReal) {
+}
+
+public class TabelaIntervencoes extends TableView<LinhaIntervencao> {
     public TabelaIntervencoes() {
         super();
 
-        TableColumn<EstatisticasReparacoesTecnico,String> nif = new TableColumn<>("Id Técnico");
+        TableColumn<LinhaIntervencao, String> nif = new TableColumn<>("Id Técnico");
         nif.setCellValueFactory(new PropertyValueFactory<>("idTecnico"));
 
-        TableColumn<EstatisticasReparacoesTecnico,String> expresso = new TableColumn<>("Expresso");
-        expresso.setCellValueFactory(new PropertyValueFactory<>("numReparacoesExpresso"));
+        TableColumn<LinhaIntervencao, String> descricao = new TableColumn<>("Descrição");
+        descricao.setCellValueFactory(new PropertyValueFactory<>("descricao"));
 
-        TableColumn<EstatisticasReparacoesTecnico,String> programadas = new TableColumn<>("Programadas");
-        programadas.setCellValueFactory(new PropertyValueFactory<>("numReparacoesProgramadas"));
+        TableColumn<LinhaIntervencao, String> duracaoReal = new TableColumn<>("Duração Real");
+        duracaoReal.setCellValueFactory(cellData -> {
+            Duration d = cellData.getValue().getDuracaoReal();
+            if (d != null) {
+                return new SimpleStringProperty(d.toSeconds() / 60 + " minutos");
+            } else {
+                return new SimpleStringProperty("N/A");
+            }
+        });
 
-        TableColumn<EstatisticasReparacoesTecnico,String> duracao = new TableColumn<>("Duracao Media");
-        duracao.setCellValueFactory(new PropertyValueFactory<>("duracaoMedia"));
+        TableColumn<LinhaIntervencao, String> duracaoPrevista = new TableColumn<>("Duracao Prevista");
+        duracaoPrevista.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDuracaoPrevista().toSeconds() / 60 + ""));
 
-        TableColumn<EstatisticasReparacoesTecnico,String> desvio = new TableColumn<>("Media Desvio Duracao");
-        desvio.setCellValueFactory(new PropertyValueFactory<>("mediaDesvioDuracao"));
+        TableColumn<LinhaIntervencao, String> custoTotalPrevisto = new TableColumn<>("Custo Total Previsto");
+        custoTotalPrevisto.setCellValueFactory(new PropertyValueFactory<>("custoTotalPrevisto"));
 
-        this.getColumns().addAll(nif, expresso, programadas,duracao,desvio);
+        TableColumn<LinhaIntervencao, String> custoTotalReal = new TableColumn<>("Custo Total Real");
+        custoTotalReal.setCellValueFactory(new PropertyValueFactory<>("custoTotalReal"));
+
+        this.getColumns().addAll(nif, descricao, duracaoReal, duracaoPrevista, custoTotalPrevisto, custoTotalReal);
         this.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
 
+    public void setIntervencoes(Map<String, List<Intervencao>> intervencoesTecnicos) {
+        for (var intervencoes : intervencoesTecnicos.entrySet()) {
+            String tecnico = intervencoes.getKey();
+            for (var intervencao : intervencoes.getValue()) {
+                LinhaIntervencao l = new LinhaIntervencao(tecnico, intervencao.getDescricao(), intervencao.getDuracaoReal(),
+                        intervencao.getDuracaoPrevista(), intervencao.getCustoTotalPrevisto(), intervencao.getCustoTotalReal());
+                this.getItems().add(l);
+            }
+        }
+    }
 }
