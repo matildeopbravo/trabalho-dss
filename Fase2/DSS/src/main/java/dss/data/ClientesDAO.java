@@ -1,7 +1,6 @@
 package dss.data;
 
-import dss.business.clientes.Cliente;
-import dss.business.clientes.IClientes;
+import dss.business.cliente.Cliente;
 import dss.exceptions.ClienteJaExisteException;
 import dss.exceptions.ClienteNaoExisteException;
 

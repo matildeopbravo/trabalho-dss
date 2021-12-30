@@ -1,7 +1,7 @@
-package dss.business;
+package dss.business.reparacao;
 
 import dss.business.auxiliar.Pair;
-import dss.business.equipamentos.Componente;
+import dss.business.equipamento.Componente;
 
 import java.time.Duration;
 import java.util.ArrayList;

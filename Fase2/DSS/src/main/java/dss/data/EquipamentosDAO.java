@@ -1,13 +1,11 @@
 package dss.data;
 
-import dss.business.equipamentos.Componente;
-import dss.business.equipamentos.Equipamento;
-import dss.business.equipamentos.IEquipamentos;
+import dss.business.equipamento.Componente;
+import dss.business.equipamento.Equipamento;
 import dss.exceptions.EquipamentoJaExisteException;
 import dss.exceptions.EquipamentoNaoExisteException;
 import dss.exceptions.JaExisteException;
 import dss.exceptions.NaoExisteException;
-import dss.business.reparacoes.IReparacoes;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -90,18 +88,21 @@ public class EquipamentosDAO implements IEquipamentos, Serializable{
     }
 
     @Override
-    public void atualizaEquipamentoAbandonado(IReparacoes reparacoes) {
+    public List<Equipamento> atualizaEquipamentoAbandonado() {
+        List<Equipamento> l = new ArrayList<>();
         Iterator<Map.Entry<Integer, Equipamento>> it = equipamentoById.entrySet().iterator();
         LocalDateTime today = LocalDateTime.now();
 
         while (it.hasNext()) {
             Equipamento equipamento = it.next().getValue();
             if (today.isAfter(equipamento.getDataEntrega().plusDays(90))) {
-                reparacoes.arquivaReparacoesDeEquipamento(equipamento.getIdEquipamento());
+                l.add(equipamento);
+                //reparacoes.arquivaReparacoesDeEquipamento(equipamento.getIdEquipamento());
                 it.remove();
                 this.equipamentoAbandonado.put(equipamento.getIdEquipamento(), equipamento);
             }
         }
+        return l;
     }
 
 

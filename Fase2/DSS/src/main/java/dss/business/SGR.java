@@ -1,16 +1,13 @@
 package dss.business;
 
 
-import dss.business.clientes.Cliente;
-import dss.data.ClientesDAO;
-import dss.business.clientes.IClientes;
-import dss.data.EquipamentosDAO;
-import dss.data.ReparacoesDAO;
-import dss.data.UtilizadoresDAO;
-import dss.business.equipamentos.*;
+import dss.business.cliente.Cliente;
+import dss.data.*;
+import dss.data.IClientes;
+import dss.business.equipamento.*;
 import dss.business.estatisticas.*;
 import dss.exceptions.*;
-import dss.business.reparacoes.*;
+import dss.business.reparacao.*;
 import dss.business.utilizador.*;
 
 import java.io.*;
@@ -51,9 +48,13 @@ public class SGR implements SGRInterface {
         } catch (JaExisteException e) {
             e.printStackTrace();
         }
-
-        equipamentos.atualizaEquipamentoAbandonado(reparacoes);
+        atualizaEquipamentoAbandonado();
         reparacoes.arquivaReparacoesAntigas();
+    }
+
+    private void atualizaEquipamentoAbandonado() {
+        List<Equipamento> abandonados = equipamentos.atualizaEquipamentoAbandonado();
+        abandonados.forEach(e -> reparacoes.arquivaReparacoesDeEquipamento(e.getIdEquipamento()));
     }
 
     // TODO

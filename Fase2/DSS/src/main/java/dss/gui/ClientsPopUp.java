@@ -1,6 +1,6 @@
 package dss.gui;
 
-import dss.business.clientes.Cliente;
+import dss.business.cliente.Cliente;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 

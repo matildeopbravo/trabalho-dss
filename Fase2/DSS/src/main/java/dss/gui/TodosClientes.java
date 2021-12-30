@@ -1,7 +1,7 @@
 package dss.gui;
 
 import dss.business.SGRInterface;
-import dss.business.clientes.Cliente;
+import dss.business.cliente.Cliente;
 import dss.exceptions.NaoExisteException;
 import dss.gui.components.TabelaClientes;
 import javafx.scene.Node;

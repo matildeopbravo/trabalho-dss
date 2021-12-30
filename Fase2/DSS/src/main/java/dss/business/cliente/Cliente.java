@@ -1,4 +1,4 @@
-package dss.business.clientes;
+package dss.business.cliente;
 
 import java.io.Serializable;
 

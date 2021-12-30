@@ -1,13 +1,11 @@
 package dss.business;
 
-import dss.business.clientes.Cliente;
-import dss.business.equipamentos.Componente;
-import dss.business.equipamentos.Equipamento;
+import dss.business.cliente.Cliente;
+import dss.business.equipamento.Componente;
+import dss.business.equipamento.Equipamento;
 import dss.business.estatisticas.EstatisticasFuncionario;
 import dss.business.estatisticas.EstatisticasReparacoesTecnico;
-import dss.business.reparacoes.Reparacao;
-import dss.business.reparacoes.ReparacaoExpresso;
-import dss.business.reparacoes.ReparacaoProgramada;
+import dss.business.reparacao.*;
 import dss.business.utilizador.Funcionario;
 import dss.business.utilizador.Tecnico;
 import dss.business.utilizador.Utilizador;

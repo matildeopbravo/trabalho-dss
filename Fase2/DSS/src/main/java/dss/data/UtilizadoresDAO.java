@@ -5,7 +5,6 @@ import dss.exceptions.CredenciasInvalidasException;
 import dss.exceptions.UtilizadorJaExisteException;
 import dss.exceptions.UtilizadorNaoExisteException;
 import dss.business.utilizador.Funcionario;
-import dss.business.utilizador.IUtilizadores;
 import dss.business.utilizador.Tecnico;
 import dss.business.utilizador.Utilizador;
 

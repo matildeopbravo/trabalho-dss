@@ -1,9 +1,9 @@
 package dss.gui.components;
 
 import dss.business.SGRInterface;
-import dss.business.clientes.Cliente;
+import dss.business.cliente.Cliente;
 import dss.exceptions.NaoExisteException;
-import dss.business.reparacoes.Reparacao;
+import dss.business.reparacao.Reparacao;
 import dss.business.utilizador.Utilizador;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.TableColumn;

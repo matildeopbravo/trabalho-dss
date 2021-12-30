@@ -1,4 +1,4 @@
-package dss.business;
+package dss.business.reparacao;
 
 import java.time.Duration;
 

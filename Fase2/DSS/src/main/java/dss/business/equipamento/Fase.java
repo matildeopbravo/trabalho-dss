@@ -1,4 +1,4 @@
-package dss.business.equipamentos;
+package dss.business.equipamento;
 
 public enum Fase {
     NaoIniciada,

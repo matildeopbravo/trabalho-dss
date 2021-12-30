@@ -1,5 +1,8 @@
-package dss.business.utilizador;
+package dss.data;
 
+import dss.business.utilizador.Funcionario;
+import dss.business.utilizador.Tecnico;
+import dss.business.utilizador.Utilizador;
 import dss.data.IDAO;
 import dss.exceptions.CredenciasInvalidasException;
 import dss.exceptions.UtilizadorJaExisteException;

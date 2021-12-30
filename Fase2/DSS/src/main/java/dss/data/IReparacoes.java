@@ -1,8 +1,10 @@
-package dss.business.reparacoes;
+package dss.data;
 
-import dss.data.IDAO;
+import dss.business.reparacao.Reparacao;
+import dss.business.reparacao.ReparacaoExpresso;
+import dss.business.reparacao.ReparacaoProgramada;
 import dss.exceptions.ReparacaoNaoExisteException;
-import dss.business.equipamentos.Fase;
+import dss.business.equipamento.Fase;
 import java.util.Collection;
 import java.time.Duration;
 

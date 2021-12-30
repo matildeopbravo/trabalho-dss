@@ -1,11 +1,13 @@
-package dss.business.equipamentos;
+package dss.data;
 
-import dss.data.IDAO;
+import dss.business.equipamento.Componente;
+import dss.business.equipamento.Equipamento;
 import dss.exceptions.EquipamentoJaExisteException;
 import dss.exceptions.EquipamentoNaoExisteException;
-import java.util.Collection;
 
-import dss.business.reparacoes.IReparacoes;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public interface IEquipamentos extends IDAO<Equipamento,Integer> {
 
@@ -21,6 +23,5 @@ public interface IEquipamentos extends IDAO<Equipamento,Integer> {
 
     public Componente getComponente(Integer componenteID) throws EquipamentoNaoExisteException;
 
-    //TODO Mudar
-    public void atualizaEquipamentoAbandonado(IReparacoes reparacoes);
+    public List<Equipamento> atualizaEquipamentoAbandonado();
 }
