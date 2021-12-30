@@ -20,6 +20,7 @@ public class TodosClientes implements Navigatable {
     private Button addButton;
     private Button detailsButton;
     private Button reparacaoProgramadaButton;
+    private Button reparacoesExpressoButton;
     private TabelaClientes tabelaClientes;
     private Cliente selected;
 
@@ -36,10 +37,12 @@ public class TodosClientes implements Navigatable {
         detailsButton = new Button("Detalhes");
         addButton = new Button("Novo cliente");
         reparacaoProgramadaButton = new Button("Nova reparação programada");
+        reparacoesExpressoButton = new Button("Nova reparação expresso");
         tabelaClientes = new TabelaClientes();
 
         addButton.setOnAction(e -> navigator.navigateTo(new NovoCliente(sgr, navigator)));
 
+        reparacoesExpressoButton.setDisable(true);
         reparacaoProgramadaButton.setDisable(true);
         deleteButton.setDisable(true);
         deleteButton.setStyle("-fx-background-color: rgba(255,1,1,0.86)");
@@ -76,6 +79,7 @@ public class TodosClientes implements Navigatable {
             }
         });
         reparacaoProgramadaButton.setOnAction(e -> navigator.navigateTo(new NovaReparacaoProgramada(sgr, navigator, selected.getNIF())));
+        reparacoesExpressoButton.setOnAction(e -> navigator.navigateTo(new NovaReparacaoExpresso(sgr, navigator, selected.getNIF())));
 
         tabelaClientes.getSelectionModel().selectedItemProperty().addListener((observableValue, old, cliente) -> {
             selected = cliente;
@@ -83,6 +87,7 @@ public class TodosClientes implements Navigatable {
             deleteButton.setDisable(selected == null);
             detailsButton.setDisable(selected == null);
             reparacaoProgramadaButton.setDisable(selected == null);
+            reparacoesExpressoButton.setDisable(selected == null);
         });
     }
 
@@ -96,7 +101,7 @@ public class TodosClientes implements Navigatable {
         HBox buttons = new HBox();
         buttons.setSpacing(5.0);
 
-        buttons.getChildren().addAll(addButton, detailsButton, reparacaoProgramadaButton, deleteButton);
+        buttons.getChildren().addAll(addButton, detailsButton, reparacaoProgramadaButton, reparacoesExpressoButton, deleteButton);
 
         vbox.getChildren().addAll(tabelaClientes, buttons);
 

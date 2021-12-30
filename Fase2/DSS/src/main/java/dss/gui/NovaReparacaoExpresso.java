@@ -24,10 +24,11 @@ public class NovaReparacaoExpresso extends Form implements Navigatable {
     private TextField descricao;
     private ComboBox<Tecnico> tecnicos;
 
-    public NovaReparacaoExpresso(SGRInterface sgr, Navigator navigator) {
+    public NovaReparacaoExpresso(SGRInterface sgr, Navigator navigator, String nif) {
         this.sgr = sgr;
         this.navigator = navigator;
         this.idCliente = new TextField();
+        this.idCliente.setText(nif);
         this.descricao = new TextField();
         this.servicosExpresso = new ComboBox<>();
         this.tecnicos = new ComboBox<>();

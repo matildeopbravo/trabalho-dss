@@ -41,9 +41,6 @@ public class MainMenu implements Navigatable {
         Button allClientsButton = new Button("Mostra Clientes");
         allClientsButton.setOnAction(e -> navigator.navigateTo(new TodosClientes(sgr, navigator)));
 
-        Button criaReparacaoExpresso = new Button("Cria Reparação Expresso");
-        criaReparacaoExpresso.setOnAction(e -> navigator.navigateTo(new NovaReparacaoExpresso(sgr, navigator)));
-
         Button aguardarOrcamentoButton = new Button("Reparações a aguardar Orçamento");
         aguardarOrcamentoButton.setOnAction(s -> navigator.navigateTo(new AguardarOrcamento(sgr, navigator)));
 
@@ -64,7 +61,7 @@ public class MainMenu implements Navigatable {
         estatisticasDasReparacoesDosTecnicos.setOnAction(e -> navigator.navigateTo(new EstatisticasTecnico(sgr)));
 
 
-        vbox.getChildren().addAll(newUserButton, allUsersButton, newClientButton, allClientsButton, criaReparacaoExpresso,
+        vbox.getChildren().addAll(newUserButton, allUsersButton, newClientButton, allClientsButton,
                 aguardarOrcamentoButton, aguardaAprovacaoButton, reparacoesEmCurso, listaReparacoesButton,
                 estatisticasDasReparacoesDosTecnicos, estatisticasFuncionarios, intervencoesTecnicos);
 
