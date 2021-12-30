@@ -22,10 +22,16 @@ public class MainMenu implements Navigatable {
         title.setFont(new Font(24.0));
         vbox.getChildren().add(title);
 
+
+        Button newUserButton = new Button("Novo Utilizador");
+        newUserButton.setOnAction(e -> navigator.navigateTo(new NovoUtilizador(sgr, navigator)));
+
+        Button allUsersButton = new Button("Mostra Utilizadores");
+        allUsersButton.setOnAction(e -> navigator.navigateTo(new TodosUtilizadores(sgr, navigator)));
+
         Button newClientButton = new Button("Novo cliente");
         newClientButton.setOnAction(e -> navigator.navigateTo(new NovoCliente(sgr, navigator)));
 
-        // for testing purposes
         Button allClientsButton = new Button("Mostra Clientes");
         allClientsButton.setOnAction(e -> navigator.navigateTo(new TodosClientes(sgr, navigator)));
 
@@ -43,7 +49,8 @@ public class MainMenu implements Navigatable {
         Button listaReparacoesButton = new Button("Lista de Reparações");
         listaReparacoesButton.setOnAction(s -> navigator.navigateTo(new TodasReparacoes(sgr, navigator)));
 
-        vbox.getChildren().addAll(newClientButton, allClientsButton,criaReparacaoProgramada,criaReparacaoExpresso, aguardarOrcamentoButton, listaReparacoesButton, testPopUp);
+
+        vbox.getChildren().addAll(newUserButton,allUsersButton, newClientButton, allClientsButton,criaReparacaoProgramada,criaReparacaoExpresso, aguardarOrcamentoButton, listaReparacoesButton, testPopUp);
 
         return vbox;
     }

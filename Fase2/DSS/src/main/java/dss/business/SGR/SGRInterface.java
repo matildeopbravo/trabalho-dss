@@ -8,6 +8,7 @@ import dss.business.estatisticas.EstatisticasReparacoesTecnico;
 import dss.business.reparacao.*;
 import dss.business.utilizador.Funcionario;
 import dss.business.utilizador.Tecnico;
+import dss.business.utilizador.TipoUtilizador;
 import dss.business.utilizador.Utilizador;
 import dss.exceptions.*;
 
@@ -68,6 +69,7 @@ import java.util.Map;
                             String funcionarioCriador) throws JaExisteException;
 
 
+    public void registaUtilizador(String nome, String id, String password, TipoUtilizador t) throws JaExisteException;
     void registaUtilizador (Utilizador utilizador) throws JaExisteException;
     void removeUtilizador (String idUtilizador) throws NaoExisteException;
 

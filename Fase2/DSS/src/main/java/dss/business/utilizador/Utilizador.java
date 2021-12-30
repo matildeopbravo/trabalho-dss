@@ -1,6 +1,8 @@
 package dss.business.utilizador;
 
+import dss.business.BCrypt.BCrypt;
 import dss.data.UtilizadoresDAO;
+import jdk.jshell.execution.Util;
 
 import java.io.Serializable;
 
@@ -35,9 +37,10 @@ public abstract class Utilizador implements Serializable  {
         return passwordHash;
     }
 
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
+    public void changePassword(String password) {
+        this.passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
     }
+
 
     @Override
     public String toString() {
@@ -47,4 +50,5 @@ public abstract class Utilizador implements Serializable  {
                 ", passwordHash='" + passwordHash + '\'' +
                 '}';
     }
+
 }

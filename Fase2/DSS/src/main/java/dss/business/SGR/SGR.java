@@ -136,13 +136,9 @@ public class SGR implements SGRInterface {
     }
 
 
-
-
     public void marcaReparacaoCompleta(Reparacao reparacao) {
         reparacao.setFase(Fase.Reparado);
     }
-
-
     /**
      * Executa passo ou subpasso seguinte da reparação
       */
@@ -213,6 +209,16 @@ public class SGR implements SGRInterface {
         utilizadores.add(utilizador);
     }
 
+    public void registaUtilizador(String nome, String id, String password, TipoUtilizador tipo) throws JaExisteException {
+        Utilizador user;
+        switch (tipo){
+            case  Tecnico -> user = new Tecnico(nome,id,password);
+            case Funcionario -> user = new Funcionario(nome,id,password);
+            default -> user = new Gestor(nome,id,password);
+        }
+        registaUtilizador(user);
+        System.out.println("Utilizador Registado");
+    }
     public void removeUtilizador(String utilizadorID) throws NaoExisteException {
         utilizadores.remove(utilizadorID);
     }

@@ -18,6 +18,7 @@ public class DetalhesCliente implements Navigatable {
         public Node getScene() {
             Node n = super.getScene();
             this.nif.setText(cliente.getNIF());
+            this.nif.setEditable(false);
             this.email.setText(cliente.getEmail());
             this.telemovel.setText(cliente.getNumeroTelemovel());
             this.nome.setText(cliente.getNome());
@@ -28,9 +29,10 @@ public class DetalhesCliente implements Navigatable {
         @Override
         protected List<String> submit() {
             cliente.setEmail(email.getText());
-            cliente.setNIF(nif.getText());
+            //cliente.setNIF(nif.getText());
             cliente.setNome(nome.getText());
             cliente.setNumeroTelemovel(telemovel.getText());
+            navigator.navigateBack("Cliente alterado com sucesso!");
             return List.of();
         }
     }

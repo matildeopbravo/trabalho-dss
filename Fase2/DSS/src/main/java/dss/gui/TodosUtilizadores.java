@@ -2,8 +2,10 @@ package dss.gui;
 
 import dss.business.SGR.SGRInterface;
 import dss.business.cliente.Cliente;
+import dss.business.utilizador.Utilizador;
 import dss.exceptions.NaoExisteException;
 import dss.gui.components.TabelaClientes;
+import dss.gui.components.TabelaUtilizadores;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -15,37 +17,37 @@ import javafx.scene.layout.VBox;
 import java.util.Collection;
 import java.util.Optional;
 
-public class TodosClientes implements Navigatable {
+public class TodosUtilizadores implements Navigatable {
     private Button deleteButton;
     private Button addButton;
     private Button detailsButton;
-    private TabelaClientes tabelaClientes;
-    private Cliente selected;
+    private TabelaUtilizadores tabelaUtilizadores;
+    private Utilizador selected;
 
-    private final Collection<Cliente> listaClientes;
+    private final Collection<Utilizador> listaUtilizadores;
     private final SGRInterface sgr;
     private final Navigator navigator;
 
-    public TodosClientes(SGRInterface sgr, Navigator navigator) {
-        listaClientes = sgr.getClientes();
+    public TodosUtilizadores(SGRInterface sgr, Navigator navigator) {
+        listaUtilizadores = sgr.getUtilizadores();
         this.sgr = sgr;
         this.navigator = navigator;
 
         deleteButton = new Button("Apagar");
         detailsButton = new Button("Detalhes");
-        addButton = new Button("Novo cliente");
-        tabelaClientes = new TabelaClientes();
+        addButton = new Button("Novo Utilizador");
+        tabelaUtilizadores = new TabelaUtilizadores();
 
-        addButton.setOnAction(e -> navigator.navigateTo(new NovoCliente(sgr, navigator)));
+        addButton.setOnAction(e -> navigator.navigateTo(new NovoUtilizador(sgr, navigator)));
 
         deleteButton.setDisable(true);
-        deleteButton.setStyle("-fx-background-color: rgba(255,1,1,0.86)");
+        deleteButton.setStyle("-fx-background-color: rgba(255,1,1,0.91)");
 
         deleteButton.setOnAction(ev -> {
             if (selected != null) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Apagar cliente");
-                alert.setHeaderText("Apagar cliente " + selected.getNome() + "?");
+                alert.setTitle("Apagar Utilizador");
+                alert.setHeaderText("Apagar utilizador " + selected.getNome() + "?");
                 Optional<ButtonType> result = alert.showAndWait();
 
                 result.ifPresent(b -> {
@@ -53,27 +55,27 @@ public class TodosClientes implements Navigatable {
                         // TODO: Implementar a funcionalidade de apagar clientes
                         System.err.println("Por implementar");
                         try {
-                            sgr.apagaCliente(selected.getNIF());
+                            sgr.apagaUtilizador(selected.getId());
                         } catch (NaoExisteException e) {
                             e.printStackTrace();
                         }
-                        tabelaClientes.getItems().setAll(sgr.getClientes());
+                        tabelaUtilizadores.getItems().setAll(sgr.getUtilizadores());
                     }
                 });
             }
         });
 
         detailsButton.setDisable(true);
-        detailsButton.setOnAction(e -> navigator.navigateTo(new DetalhesCliente(sgr, navigator, selected)));
-        tabelaClientes.setOnDoubleClick(new TabelaClientes.ClienteCallback() {
+        detailsButton.setOnAction(e -> navigator.navigateTo(new DetalhesUtilizador(sgr, navigator, selected)));
+        tabelaUtilizadores.setOnDoubleClick(new TabelaUtilizadores.UtilizadorCallback() {
             // Não entendo porque é que aqui não me deixa usar uma lambda...
             @Override
-            public void run(Cliente cliente) {
-                navigator.navigateTo(new DetalhesCliente(sgr, navigator, cliente));
+            public void run(Utilizador user) {
+                navigator.navigateTo(new DetalhesUtilizador(sgr, navigator, user));
             }
         });
 
-        tabelaClientes.getSelectionModel().selectedItemProperty().addListener((observableValue, old, cliente) -> {
+        tabelaUtilizadores.getSelectionModel().selectedItemProperty().addListener((observableValue, old, cliente) -> {
             System.out.println("Selected " + cliente);
             selected = cliente;
 
@@ -86,15 +88,15 @@ public class TodosClientes implements Navigatable {
         VBox vbox = new VBox();
         vbox.setSpacing(10.0);
         
-        VBox.setVgrow(tabelaClientes, Priority.ALWAYS);
-        tabelaClientes.getItems().setAll(listaClientes);
+        VBox.setVgrow(tabelaUtilizadores, Priority.ALWAYS);
+        tabelaUtilizadores.getItems().setAll(listaUtilizadores);
 
         HBox buttons = new HBox();
         buttons.setSpacing(5.0);
 
         buttons.getChildren().addAll(addButton, detailsButton, deleteButton);
 
-        vbox.getChildren().addAll(tabelaClientes, buttons);
+        vbox.getChildren().addAll(tabelaUtilizadores, buttons);
 
         return vbox;
     }
