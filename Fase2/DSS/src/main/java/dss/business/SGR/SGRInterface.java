@@ -129,4 +129,8 @@ public interface SGRInterface {
     List<ReparacaoProgramada> reparacoesAguardarAprovacao();
 
     List<ReparacaoProgramada> getReparacoesProgramadasEmCurso();
+    
+    List<Tecnico> getTecnicosDisponveis();
+
+    Collection<ServicoExpressoTabelado> getServicosTabelados();
 }

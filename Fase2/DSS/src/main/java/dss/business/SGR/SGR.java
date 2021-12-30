@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SGR implements SGRInterface {
-    private final Map<Integer, ServicoExpressoTabelado> servicoExpresso;
+    private final HashMap<Integer, ServicoExpressoTabelado> servicoExpresso;
     private final Email email;
     private IUtilizadores utilizadores;
     private IReparacoes reparacoes;
@@ -478,7 +478,17 @@ public class SGR implements SGRInterface {
 
     @Override
     public List<ReparacaoProgramada> reparacoesAguardarAprovacao() {
-        return reparacoes.getReparacoesProgramadasAtuais().stream().filter(r -> r.getFase() == Fase.AEsperaResposta).toList();
+        return reparacoes.getReparacoesProgramadasAtuais().stream().filter(r -> r.getFase() == Fase.AEsperaResposta)
+                .toList();
+    }
+    public List<Tecnico> getTecnicosDisponveis() {
+        return getTecnicos().stream().filter(t -> !t.estaOcupado()).collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<ServicoExpressoTabelado> getServicosTabelados() {
+        return servicoExpresso.values();
+
     }
 
     @Override

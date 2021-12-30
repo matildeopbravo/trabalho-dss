@@ -24,7 +24,7 @@ public class ServicoExpressoTabelado {
         this.duracaoPrevista = servicoExpressoTabelado.duracaoPrevista;
     }
 
-    public static Map<Integer, ServicoExpressoTabelado> populate() {
+    public static HashMap<Integer, ServicoExpressoTabelado> populate() {
         HashMap<Integer,ServicoExpressoTabelado> l = new HashMap<>();
         l.put(0, new ServicoExpressoTabelado(0,"Substituir Ecra Iphone XS", 150,Duration.ofMinutes(30)));
         l.put(1, new ServicoExpressoTabelado(0,"Formatar PC ", 50,Duration.ofMinutes(20)));
@@ -50,5 +50,10 @@ public class ServicoExpressoTabelado {
 
     public Duration getDuracaoPrevista() {
         return this.duracaoPrevista;
+    }
+
+    @Override
+    public String toString() {
+        return descricao + " " + String.format("%.2f€",custo);
     }
 }
