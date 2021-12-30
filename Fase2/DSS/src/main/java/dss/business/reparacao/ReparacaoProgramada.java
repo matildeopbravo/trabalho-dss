@@ -72,18 +72,6 @@ public class ReparacaoProgramada extends Reparacao implements Serializable {
         return fase.equals(Fase.EmReparacao) && pausado;
     }
 
-    // marca como realizado um passo ou subpasso, indicando o custo e o tempo que gastou na realidade
-    public boolean efetuaReparacao(String id, int custoMaoDeObraReal, Duration tempoReal
-            , Collection<Componente> componentesReais) throws NaoPodeSerReparadoAgoraException {
-        if (!this.podeSerReparadoAgora()) {
-            throw new NaoPodeSerReparadoAgoraException();
-        }
-        if (!tecnicosQueRepararam.contains(id))
-            tecnicosQueRepararam.add(id);
-
-        return this.planoReparacao.repara(custoMaoDeObraReal, tempoReal, componentesReais);
-    }
-
     public void realizaOrcamento(String idTecnico) {
         // TODO Verifica que nao pode ser reparado e notififca
         this.tecnicosQueRepararam.add(idTecnico);

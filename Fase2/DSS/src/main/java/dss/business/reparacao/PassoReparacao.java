@@ -8,136 +8,164 @@ import java.util.Collection;
 import java.util.List;
 
 public class PassoReparacao implements Intervencao {
-  String descricao;
-  private DuracaoCusto duracaoCusto;
+    String descricao;
+    private DuracaoCusto duracaoCusto;
 
-  private List<PassoReparacao> subPassosPorExecutar;
-  private List<PassoReparacao> subpassosExecutados;
+    private boolean executado = false;
 
-  private List<Componente> componentesPrevistos = null;
-  private List<Componente> componentesReais = null;
+    private List<Componente> componentesPrevistos;
+    private List<Componente> componentesReais;
 
-  public PassoReparacao(String descricao, Duration duracao, float custo) {
-    this.subpassosExecutados = null;
-    this.subPassosPorExecutar = null;
-    this.descricao = descricao;
-    this.duracaoCusto = new DuracaoCusto(duracao,custo);
-  }
+    private List<PassoReparacao> subpassos;
 
-  public List<Componente> getComponentesPrevistos(){
-    return new ArrayList<>(componentesPrevistos);
-  }
+    public PassoReparacao(String descricao, Duration duracao, float custo, List<Componente> componentesPrevistos) {
+        this.descricao = descricao;
+        this.duracaoCusto = new DuracaoCusto(duracao, custo);
+        this.componentesPrevistos = componentesPrevistos;
+        this.subpassos = new ArrayList<>();
 
-  public List<Componente> getComponentesReais() { return new ArrayList<>(componentesReais);}
-
-  /**
-   * Método que associa um dado componente a um passo de reparação.
-   * @param e Componente a adicionar
-   */
-  public void addComponenteReal(Componente e){
-    if(componentesReais == null)  {
-      this.componentesReais = new ArrayList<>();
+        componentesReais = new ArrayList<>();
     }
-    // TODO clones averiguar
-    this.componentesReais.add(e.clone());
-  }
-  public void addComponentePrevisto(Componente e) {
-    if(componentesPrevistos == null)  {
-      this.componentesPrevistos = new ArrayList<>();
+
+    public List<Componente> getComponentesPrevistos() {
+        List<Componente> previstos = new ArrayList<>(componentesPrevistos);
+        for (PassoReparacao subpasso : subpassos) {
+            previstos.addAll(subpasso.getComponentesPrevistos());
+        }
+
+        return previstos;
     }
-    // TODO clones averiguar
-    this.componentesPrevistos.add(e.clone());
-  }
 
+    public List<Componente> getComponentesReais() {
+        List<Componente> reais = new ArrayList<>(componentesReais);
+        for (PassoReparacao subpasso : subpassos) {
+            reais.addAll(subpasso.getComponentesReais());
+        }
 
-  // clone ??
-
-  /**
-   * Método que adiciona um sub-passo ao passo de reparação
-   * @param p Sub-passo a ser adicionado
-   */
-  public void addSubpasso(PassoReparacao p)  {
-    if(this.subPassosPorExecutar == null) {
-      this.subPassosPorExecutar = new ArrayList<>();
-      this.subpassosExecutados = new ArrayList<>();
+        return reais;
     }
-    duracaoCusto.aumentaCustoPrevisto(p.getCustoMaoDeObraPrevisto());
-    duracaoCusto.aumentaDuracaoPrevista(p.getDuracaoPrevista());
-    this.subPassosPorExecutar.add(p);
-    this.componentesPrevistos.addAll(p.getComponentesPrevistos());
-    this.componentesReais.addAll(p.getComponentesReais());
-  }
 
-
-  /**
-   * Método que realiza um subpasso (caso exista) ou o passo.
-   * @return True se o passo (incluindo os seus subpassos) se encontrarem completos.
-   */
-  public boolean executaPassoOuSubpasso(float custoRealMaoDeObra, Duration duracaoReal
-          , Collection<Componente> componentesReais) {
-    // TODO Acrescentar os componentes usados nos subpassoss
-    // quer seja passo ou subpasso, vamos aumentar o custo e duracao real
-    this.duracaoCusto.aumentaCustoRealMaoDeObra(custoRealMaoDeObra);
-    this.duracaoCusto.aumentaDuracaoReal(duracaoReal);
-    for (Componente componente: componentesReais)
-      addComponenteReal(componente);
-
-    // Tem subpassos por executar
-    if (subPassosPorExecutar.size() > 0){
-      PassoReparacao subPasso = this.subPassosPorExecutar.remove(subPassosPorExecutar.size() - 1);
-      subPasso.duracaoCusto.setCustoMaoDeObraReal(custoRealMaoDeObra);
-      subPasso.duracaoCusto.setDuracaoReal(duracaoReal);
-      for (Componente componente: componentesReais)
-        subPasso.addComponenteReal(componente);
-      this.subpassosExecutados.add(subPasso);
-
-      // atualizar custo e duracao real com os reais dos subpassos
-      // se foi o ultimo subpasso, entao o passo inteiro esta completo
-      return subPassosPorExecutar.size() == 0 ;
+    public List<PassoReparacao> getSubpassos() {
+        return this.subpassos;
     }
-    // nao tinha subpassos e executou o passo em si
-      return true;
+
+    /**
+     * Método que associa um dado componente a um passo de reparação.
+     *
+     * @param e Componente a adicionar
+     */
+    public void addComponenteReal(Componente e) {
+        if (componentesReais == null) {
+            this.componentesReais = new ArrayList<>();
+        }
+        // TODO clones averiguar
+        this.componentesReais.add(e.clone());
     }
-  public Duration getDuracaoReal() {
-    return duracaoCusto.getDuracaoReal();
-  }
 
-  @Override
-  public Duration getDuracaoPrevista() {
-    return duracaoCusto.getDuracaoPrevista();
-  }
+    public void addComponentePrevisto(Componente e) {
+        if (componentesPrevistos == null) {
+            this.componentesPrevistos = new ArrayList<>();
+        }
+        // TODO clones averiguar
+        this.componentesPrevistos.add(e.clone());
+    }
 
-  public float getCustoMaoDeObraReal() {
-    return duracaoCusto.getCustoMaoDeObraReal();
-  }
+    // clone ??
 
-  public float getCustoMaoDeObraPrevisto() {
-    return duracaoCusto.getCustoMaoDeObraPrevisto();
-  }
+    /**
+     * Método que adiciona um sub-passo ao passo de reparação
+     *
+     * @param p Sub-passo a ser adicionado
+     */
+    public void addSubpasso(PassoReparacao p) {
+        this.subpassos.add(p);
+    }
 
-  @Override
-  public String getDescricao() {
-    return descricao;
-  }
+    /**
+     * Método que realiza o passo atual
+     *
+     * @return True se o passo se encontrar completo. Se tiver subpassos, devolve falso.
+     */
+    public boolean executa(float custoRealMaoDeObra, Duration duracaoReal
+            , Collection<Componente> componentesReais) {
+        if (this.subpassos.size() > 0)
+            return false;
 
-  @Override
-  public float getCustoTotalReal() {
-    float total = duracaoCusto.getCustoMaoDeObraReal();
-    for (Componente componente: componentesReais)
-      total += componente.getPreco();
-    return total;
-  }
+        this.duracaoCusto.setDuracaoReal(duracaoReal);
+        this.duracaoCusto.setCustoMaoDeObraReal(custoRealMaoDeObra);
+        this.componentesReais = new ArrayList<>(componentesReais);
+        this.executado = true;
+        return true;
+    }
 
-  @Override
-  public float getCustoTotalPrevisto() {
-    float total = duracaoCusto.getCustoMaoDeObraPrevisto();
-    for (Componente componente: componentesPrevistos)
-      total += componente.getPreco();
-    return total;
-  }
+    public Duration getDuracaoReal() {
+        Duration d = duracaoCusto.getDuracaoReal();
+        for (PassoReparacao subpasso : subpassos) {
+            Duration tmp = subpasso.getDuracaoReal();
+            if (tmp != null) {
+                if (d == null)
+                    d = tmp;
+                else
+                    d = tmp.plus(d);
+            }
+        }
+        return d;
+    }
 
-  public List<PassoReparacao> getSubPassosPorExecutar() {
-    return new ArrayList<>(subPassosPorExecutar);
-  }
+    @Override
+    public Duration getDuracaoPrevista() {
+        Duration d = duracaoCusto.getDuracaoPrevista();
+        for (PassoReparacao subpasso : subpassos) {
+            d = subpasso.getDuracaoPrevista().plus(d);
+        }
+        return d;
+    }
+
+    public float getCustoMaoDeObraReal() {
+        return duracaoCusto.getCustoMaoDeObraReal() + subpassos.stream()
+                .map(PassoReparacao::getCustoMaoDeObraReal).reduce(0f, Float::sum);
+    }
+
+    public float getCustoMaoDeObraPrevisto() {
+        return duracaoCusto.getCustoMaoDeObraPrevisto() + subpassos.stream()
+                .map(PassoReparacao::getCustoMaoDeObraPrevisto).reduce(0f, Float::sum);
+    }
+
+    public float getCustoComponentesReal() {
+        return componentesReais.stream().map(Componente::getPreco).reduce(0f, Float::sum)
+                + subpassos.stream().map(PassoReparacao::getCustoComponentesReal).reduce(0f, Float::sum);
+    }
+
+    public float getCustoComponentesPrevisto() {
+        return componentesReais.stream().map(Componente::getPreco).reduce(0f, Float::sum)
+                + subpassos.stream().map(PassoReparacao::getCustoComponentesPrevisto).reduce(0f, Float::sum);
+    }
+
+    public boolean getExecutado() {
+        if (subpassos.size() > 0) {
+            return subpassos.stream().allMatch(PassoReparacao::getExecutado);
+        } else {
+            return executado;
+        }
+    }
+
+    @Override
+    public String getDescricao() {
+        return descricao;
+    }
+
+    @Override
+    public float getCustoTotalReal() {
+        return getCustoComponentesReal() + getCustoMaoDeObraReal();
+    }
+
+    @Override
+    public float getCustoTotalPrevisto() {
+        return getCustoComponentesPrevisto() + getCustoMaoDeObraPrevisto();
+    }
+
+    public List<PassoReparacao> getSubPassosPorExecutar() {
+        return subpassos.stream().filter(p -> !p.getExecutado()).toList();
+    }
 
 }
