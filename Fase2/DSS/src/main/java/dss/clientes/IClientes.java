@@ -1,6 +1,6 @@
 package dss.clientes;
 
-import dss.IDAO;
+import dss.data.IDAO;
 import dss.exceptions.ClienteJaExisteException;
 import dss.exceptions.ClienteNaoExisteException;
 import java.util.Collection;

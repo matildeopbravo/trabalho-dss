@@ -1,6 +1,6 @@
 package dss.utilizador;
 
-import dss.IDAO;
+import dss.data.IDAO;
 import dss.exceptions.CredenciasInvalidasException;
 import dss.exceptions.UtilizadorJaExisteException;
 import dss.exceptions.UtilizadorNaoExisteException;

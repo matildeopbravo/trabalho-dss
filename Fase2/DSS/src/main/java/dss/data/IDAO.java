@@ -1,4 +1,4 @@
-package dss;
+package dss.data;
 
 import dss.exceptions.*;
 

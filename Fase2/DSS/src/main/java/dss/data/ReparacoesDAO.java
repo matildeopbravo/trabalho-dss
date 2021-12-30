@@ -1,10 +1,13 @@
-package dss.reparacoes;
+package dss.data;
 
-import dss.IDAO;
 import dss.equipamentos.Fase;
 import dss.exceptions.JaExisteException;
 import dss.exceptions.NaoExisteException;
 import dss.exceptions.ReparacaoNaoExisteException;
+import dss.reparacoes.IReparacoes;
+import dss.reparacoes.Reparacao;
+import dss.reparacoes.ReparacaoExpresso;
+import dss.reparacoes.ReparacaoProgramada;
 
 import java.io.*;
 import java.time.Duration;

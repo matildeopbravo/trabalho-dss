@@ -1,6 +1,6 @@
 package dss.reparacoes;
 
-import dss.IDAO;
+import dss.data.IDAO;
 import dss.exceptions.ReparacaoNaoExisteException;
 import dss.equipamentos.Fase;
 import java.util.Collection;

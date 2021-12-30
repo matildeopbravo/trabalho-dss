@@ -1,6 +1,7 @@
-package dss.clientes;
+package dss.data;
 
-import dss.IDAO;
+import dss.clientes.Cliente;
+import dss.clientes.IClientes;
 import dss.exceptions.ClienteJaExisteException;
 import dss.exceptions.ClienteNaoExisteException;
 

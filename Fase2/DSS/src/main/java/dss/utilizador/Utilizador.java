@@ -1,5 +1,7 @@
 package dss.utilizador;
 
+import dss.data.UtilizadoresDAO;
+
 import java.io.Serializable;
 
 public abstract class Utilizador implements Serializable  {

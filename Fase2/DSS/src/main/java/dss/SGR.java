@@ -2,8 +2,11 @@ package dss;
 
 
 import dss.clientes.Cliente;
-import dss.clientes.ClientesDAO;
+import dss.data.ClientesDAO;
 import dss.clientes.IClientes;
+import dss.data.EquipamentosDAO;
+import dss.data.ReparacoesDAO;
+import dss.data.UtilizadoresDAO;
 import dss.equipamentos.*;
 import dss.estatisticas.*;
 import dss.exceptions.*;
