@@ -31,14 +31,14 @@ public class NovaReparacaoProgramada extends Form implements Navigatable {
 
         this.idCliente = new javafx.scene.control.TextField();
         inputs.put("NIF Cliente", this.idCliente);
-        inputs.put("Descricao ", this.descricao);
+        inputs.put("Descrição ", this.descricao);
 
         init("Nova Reparação Programada", inputs, "Criar Reparação Programada");
     }
 
     @Override
     protected boolean validateSubmit() {
-        return !this.idCliente.getText().isEmpty();
+        return !this.idCliente.getText().isEmpty() && !this.descricao.getText().isBlank();
     }
 
     @Override
@@ -49,7 +49,7 @@ public class NovaReparacaoProgramada extends Form implements Navigatable {
                 navigator.navigateBack("Código do equipamento é #" + rp.getEquipamentoAReparar().getIdEquipamento() + ".");
                 return List.of();
             } catch (NaoExisteException e) {
-                return List.of(e.getMessage());
+                return List.of("Cliente não existe");
             }
         } else {
             // Isto não deve acontecer!

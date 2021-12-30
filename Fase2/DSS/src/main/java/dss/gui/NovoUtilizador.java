@@ -60,8 +60,7 @@ public class NovoUtilizador extends Form implements Navigatable {
                 navigator.navigateBack("Utilizador " + nome.getText() + " criado!");
                 return List.of();
             } catch (JaExisteException e) {
-                // TODO
-                return null;
+                return List.of("Utilizador já existe");
             }
         } else {
             // Isto não deve acontecer!

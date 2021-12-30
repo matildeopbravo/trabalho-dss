@@ -1,9 +1,10 @@
 package dss.business.equipamento;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Componente {
+public class Componente implements Serializable {
     private static int lastId = -1;
 
     private int id;

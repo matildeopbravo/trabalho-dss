@@ -2,6 +2,7 @@ package dss.gui;
 
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -70,9 +71,17 @@ public abstract class Form {
 
         vcontainer.getChildren().add(grid);
 
-        this.button = new Button(this.buttonText);
         this.button.setMaxWidth(Double.MAX_VALUE);
-        this.button.setOnAction(ev -> submit());
+        this.button.setOnAction(ev -> {
+            List<String> errors = submit();
+            if (errors.size() > 0) {
+                Alert erros = new Alert(Alert.AlertType.ERROR);
+                erros.setHeaderText("Foram encontrados erros ao submeter:");
+                erros.setTitle("Erro");
+                erros.setContentText(errors.stream().map(s -> " - " + s + "\n").reduce("", (a, b) -> a + b));
+                erros.showAndWait();
+            }
+        });
         this.button.setDisable(!validateSubmit());
 
         vcontainer.getChildren().add(this.button);
