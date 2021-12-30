@@ -40,6 +40,7 @@ public class TodosUtilizadores implements Navigatable {
 
         addButton.setOnAction(e -> navigator.navigateTo(new NovoUtilizador(sgr, navigator)));
 
+        addButton.setDisable(false);
         deleteButton.setDisable(true);
         deleteButton.setStyle("-fx-background-color: rgba(255,1,1,0.91)");
 

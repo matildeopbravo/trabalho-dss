@@ -29,16 +29,16 @@ public class MainMenu implements Navigatable {
         vbox.getChildren().add(title);
 
 
-        Button newUserButton = new Button("Novo Utilizador");
-        newUserButton.setOnAction(e -> navigator.navigateTo(new NovoUtilizador(sgr, navigator)));
+        //Button newUserButton = new Button("Novo Utilizador");
+        //newUserButton.setOnAction(e -> navigator.navigateTo(new NovoUtilizador(sgr, navigator)));
 
-        Button allUsersButton = new Button("Mostra Utilizadores");
+        Button allUsersButton = new Button("Utilizadores");
         allUsersButton.setOnAction(e -> navigator.navigateTo(new TodosUtilizadores(sgr, navigator)));
 
-        Button newClientButton = new Button("Novo cliente");
-        newClientButton.setOnAction(e -> navigator.navigateTo(new NovoCliente(sgr, navigator)));
+        //Button newClientButton = new Button("Novo cliente");
+        //newClientButton.setOnAction(e -> navigator.navigateTo(new NovoCliente(sgr, navigator)));
 
-        Button allClientsButton = new Button("Mostra Clientes");
+        Button allClientsButton = new Button("Clientes");
         allClientsButton.setOnAction(e -> navigator.navigateTo(new TodosClientes(sgr, navigator)));
 
         Button aguardarOrcamentoButton = new Button("Reparações a aguardar Orçamento");
@@ -63,7 +63,7 @@ public class MainMenu implements Navigatable {
         Button listaReparacoesTabeladasButton = new Button("Serviços Expresso Tabelados");
         listaReparacoesTabeladasButton.setOnAction(e -> navigator.navigateTo(new ReparacoesTabeladas(sgr)));
 
-        vbox.getChildren().addAll(newUserButton, allUsersButton, newClientButton, allClientsButton, listaReparacoesTabeladasButton,
+        vbox.getChildren().addAll(allUsersButton, allClientsButton, listaReparacoesTabeladasButton,
                 aguardarOrcamentoButton, aguardaAprovacaoButton, reparacoesEmCurso, listaReparacoesButton,
                 estatisticasDasReparacoesDosTecnicos, estatisticasFuncionarios, intervencoesTecnicos);
 
