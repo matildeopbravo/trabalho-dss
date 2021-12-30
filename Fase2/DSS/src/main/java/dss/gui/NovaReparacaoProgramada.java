@@ -16,6 +16,11 @@ public class NovaReparacaoProgramada extends Form implements Navigatable {
     private TextField idCliente;
     private TextField descricao;
 
+    public NovaReparacaoProgramada(SGRInterface sgr, Navigator frame, String idCliente) {
+        this(sgr, frame);
+        this.idCliente.setText(idCliente);
+    }
+
     public NovaReparacaoProgramada(SGRInterface sgr, Navigator frame) {
         this.sgr = sgr;
         this.navigator = frame;
@@ -25,7 +30,7 @@ public class NovaReparacaoProgramada extends Form implements Navigatable {
         LinkedHashMap<String, Node> inputs = new LinkedHashMap<>();
 
         this.idCliente = new javafx.scene.control.TextField();
-        inputs.put("Id Cliente", this.idCliente);
+        inputs.put("NIF Cliente", this.idCliente);
         inputs.put("Descricao ", this.descricao);
 
         init("Nova Reparação Programada", inputs, "Criar Reparação Programada");

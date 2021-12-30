@@ -2,7 +2,6 @@ package dss.gui;
 
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -17,7 +16,7 @@ import java.util.Map;
 public abstract class Form {
     private Map<String, Node> inputs;
     protected String title;
-    protected String buttonText;
+    private String buttonText;
     private Button button;
 
     protected void init(String title, Map<String, Node> inputs, String button) {
@@ -25,12 +24,19 @@ public abstract class Form {
         this.inputs = inputs;
         this.buttonText = button;
 
+        this.button = new Button(buttonText);
+
         for (Node value : this.inputs.values()) {
             if (value instanceof TextField field) {
                 field.textProperty().addListener(ev -> this.button.setDisable(!this.validateSubmit()));
                 field.setOnAction(ev -> this.submit());
             }
         }
+    }
+
+    public void setButtonText(String buttonText) {
+        this.buttonText = buttonText;
+        this.button.setText(buttonText);
     }
 
     protected abstract boolean validateSubmit();

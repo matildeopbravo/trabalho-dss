@@ -19,6 +19,7 @@ public class TodosClientes implements Navigatable {
     private Button deleteButton;
     private Button addButton;
     private Button detailsButton;
+    private Button reparacaoProgramadaButton;
     private TabelaClientes tabelaClientes;
     private Cliente selected;
 
@@ -34,10 +35,12 @@ public class TodosClientes implements Navigatable {
         deleteButton = new Button("Apagar");
         detailsButton = new Button("Detalhes");
         addButton = new Button("Novo cliente");
+        reparacaoProgramadaButton = new Button("Nova reparação programada");
         tabelaClientes = new TabelaClientes();
 
         addButton.setOnAction(e -> navigator.navigateTo(new NovoCliente(sgr, navigator)));
 
+        reparacaoProgramadaButton.setDisable(true);
         deleteButton.setDisable(true);
         deleteButton.setStyle("-fx-background-color: rgba(255,1,1,0.86)");
 
@@ -72,6 +75,7 @@ public class TodosClientes implements Navigatable {
                 navigator.navigateTo(new DetalhesCliente(sgr, navigator, cliente));
             }
         });
+        reparacaoProgramadaButton.setOnAction(e -> navigator.navigateTo(new NovaReparacaoProgramada(sgr, navigator, selected.getNIF())));
 
         tabelaClientes.getSelectionModel().selectedItemProperty().addListener((observableValue, old, cliente) -> {
             System.out.println("Selected " + cliente);
@@ -79,6 +83,7 @@ public class TodosClientes implements Navigatable {
 
             deleteButton.setDisable(selected == null);
             detailsButton.setDisable(selected == null);
+            reparacaoProgramadaButton.setDisable(selected == null);
         });
     }
 
@@ -92,7 +97,7 @@ public class TodosClientes implements Navigatable {
         HBox buttons = new HBox();
         buttons.setSpacing(5.0);
 
-        buttons.getChildren().addAll(addButton, detailsButton, deleteButton);
+        buttons.getChildren().addAll(addButton, detailsButton, reparacaoProgramadaButton, deleteButton);
 
         vbox.getChildren().addAll(tabelaClientes, buttons);
 

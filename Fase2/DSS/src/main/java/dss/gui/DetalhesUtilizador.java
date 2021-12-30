@@ -11,7 +11,7 @@ public class DetalhesUtilizador implements Navigatable {
         public UpdateForm(SGRInterface sgr, Navigator navigator, Utilizador utilizador) {
             super(sgr, navigator);
             this.title = "Editar utilizador";
-            this.buttonText = " Guardar alterações";
+            setButtonText("Guardar alterações");
         }
 
         @Override
