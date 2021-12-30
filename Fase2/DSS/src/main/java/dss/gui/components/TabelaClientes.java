@@ -1,7 +1,7 @@
 package dss.gui.components;
 
 
-import dss.clientes.Cliente;
+import dss.business.clientes.Cliente;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;

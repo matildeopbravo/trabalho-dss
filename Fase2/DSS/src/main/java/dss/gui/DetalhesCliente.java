@@ -1,8 +1,7 @@
 package dss.gui;
 
-import dss.SGR;
 import dss.SGRInterface;
-import dss.clientes.Cliente;
+import dss.business.clientes.Cliente;
 import javafx.scene.Node;
 
 import java.util.List;

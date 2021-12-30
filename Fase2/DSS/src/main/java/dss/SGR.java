@@ -1,17 +1,17 @@
 package dss;
 
 
-import dss.clientes.Cliente;
+import dss.business.clientes.Cliente;
 import dss.data.ClientesDAO;
-import dss.clientes.IClientes;
+import dss.business.clientes.IClientes;
 import dss.data.EquipamentosDAO;
 import dss.data.ReparacoesDAO;
 import dss.data.UtilizadoresDAO;
-import dss.equipamentos.*;
-import dss.estatisticas.*;
+import dss.business.equipamentos.*;
+import dss.business.estatisticas.*;
 import dss.exceptions.*;
-import dss.reparacoes.*;
-import dss.utilizador.*;
+import dss.business.reparacoes.*;
+import dss.business.utilizador.*;
 
 import java.io.*;
 import java.time.Duration;

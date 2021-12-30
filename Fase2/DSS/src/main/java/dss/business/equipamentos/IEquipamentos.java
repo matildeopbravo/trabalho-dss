@@ -1,11 +1,11 @@
-package dss.equipamentos;
+package dss.business.equipamentos;
 
 import dss.data.IDAO;
 import dss.exceptions.EquipamentoJaExisteException;
 import dss.exceptions.EquipamentoNaoExisteException;
 import java.util.Collection;
 
-import dss.reparacoes.IReparacoes;
+import dss.business.reparacoes.IReparacoes;
 
 public interface IEquipamentos extends IDAO<Equipamento,Integer> {
 

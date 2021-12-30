@@ -1,4 +1,4 @@
-package dss.utilizador;
+package dss.business.utilizador;
 
 import dss.data.IDAO;
 import dss.exceptions.CredenciasInvalidasException;

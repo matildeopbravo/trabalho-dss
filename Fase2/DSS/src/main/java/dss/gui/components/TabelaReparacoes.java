@@ -1,13 +1,10 @@
 package dss.gui.components;
 
-import dss.SGR;
 import dss.SGRInterface;
-import dss.clientes.Cliente;
+import dss.business.clientes.Cliente;
 import dss.exceptions.NaoExisteException;
-import dss.exceptions.UtilizadorJaExisteException;
-import dss.exceptions.UtilizadorNaoExisteException;
-import dss.reparacoes.Reparacao;
-import dss.utilizador.Utilizador;
+import dss.business.reparacoes.Reparacao;
+import dss.business.utilizador.Utilizador;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;

@@ -1,18 +1,15 @@
-package dss.reparacoes;
+package dss.business.reparacoes;
 
-import dss.DuracaoCusto;
 import dss.Intervencao;
-import dss.equipamentos.Componente;
-import dss.equipamentos.Equipamento;
-import dss.equipamentos.Fase;
+import dss.business.equipamentos.Componente;
+import dss.business.equipamentos.Equipamento;
+import dss.business.equipamentos.Fase;
 import dss.Orcamento;
 import dss.PlanoReparacao;
 import dss.exceptions.NaoPodeSerReparadoAgoraException;
-import dss.exceptions.NaoPodeSerReparadoException;
 
 import java.io.Serializable;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;

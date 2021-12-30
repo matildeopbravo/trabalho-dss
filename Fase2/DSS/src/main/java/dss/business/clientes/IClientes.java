@@ -1,4 +1,4 @@
-package dss.clientes;
+package dss.business.clientes;
 
 import dss.data.IDAO;
 import dss.exceptions.ClienteJaExisteException;

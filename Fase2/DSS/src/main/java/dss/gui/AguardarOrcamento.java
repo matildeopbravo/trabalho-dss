@@ -1,9 +1,8 @@
 package dss.gui;
 
-import dss.SGR;
 import dss.SGRInterface;
-import dss.reparacoes.Reparacao;
-import dss.reparacoes.ReparacaoProgramada;
+import dss.business.reparacoes.Reparacao;
+import dss.business.reparacoes.ReparacaoProgramada;
 import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;

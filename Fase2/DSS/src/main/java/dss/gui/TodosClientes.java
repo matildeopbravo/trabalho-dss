@@ -1,14 +1,9 @@
 package dss.gui;
 
-import dss.SGR;
 import dss.SGRInterface;
-import dss.clientes.Cliente;
-import dss.exceptions.ClienteNaoExisteException;
+import dss.business.clientes.Cliente;
 import dss.exceptions.NaoExisteException;
-import dss.exceptions.UtilizadorNaoExisteException;
 import dss.gui.components.TabelaClientes;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;

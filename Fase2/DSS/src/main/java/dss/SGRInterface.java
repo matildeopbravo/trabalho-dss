@@ -1,16 +1,16 @@
 package dss;
 
-import dss.clientes.Cliente;
-import dss.equipamentos.Componente;
-import dss.equipamentos.Equipamento;
-import dss.estatisticas.EstatisticasFuncionario;
-import dss.estatisticas.EstatisticasReparacoesTecnico;
-import dss.reparacoes.Reparacao;
-import dss.reparacoes.ReparacaoExpresso;
-import dss.reparacoes.ReparacaoProgramada;
-import dss.utilizador.Funcionario;
-import dss.utilizador.Tecnico;
-import dss.utilizador.Utilizador;
+import dss.business.clientes.Cliente;
+import dss.business.equipamentos.Componente;
+import dss.business.equipamentos.Equipamento;
+import dss.business.estatisticas.EstatisticasFuncionario;
+import dss.business.estatisticas.EstatisticasReparacoesTecnico;
+import dss.business.reparacoes.Reparacao;
+import dss.business.reparacoes.ReparacaoExpresso;
+import dss.business.reparacoes.ReparacaoProgramada;
+import dss.business.utilizador.Funcionario;
+import dss.business.utilizador.Tecnico;
+import dss.business.utilizador.Utilizador;
 import dss.exceptions.*;
 
 import java.io.IOException;

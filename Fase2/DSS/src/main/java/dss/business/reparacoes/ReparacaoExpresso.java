@@ -1,4 +1,4 @@
-package dss.reparacoes;
+package dss.business.reparacoes;
 
 import dss.Intervencao;
 import dss.ServicoExpressoTabelado;

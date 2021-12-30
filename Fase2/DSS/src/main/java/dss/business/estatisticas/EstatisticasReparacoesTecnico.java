@@ -1,6 +1,4 @@
-package dss.estatisticas;
-
-import java.time.Duration;
+package dss.business.estatisticas;
 
 public class EstatisticasReparacoesTecnico {
     private int numReparacoesExpresso;

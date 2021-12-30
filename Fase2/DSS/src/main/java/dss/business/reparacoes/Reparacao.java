@@ -1,9 +1,8 @@
 
-package dss.reparacoes;
+package dss.business.reparacoes;
 
-import dss.DuracaoCusto;
 import dss.Intervencao;
-import dss.equipamentos.Fase;
+import dss.business.equipamentos.Fase;
 
 import java.io.Serializable;
 import java.time.Duration;

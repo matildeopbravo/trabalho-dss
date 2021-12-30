@@ -1,13 +1,13 @@
 package dss.data;
 
-import dss.BCrypt.BCrypt;
+import dss.business.BCrypt.BCrypt;
 import dss.exceptions.CredenciasInvalidasException;
 import dss.exceptions.UtilizadorJaExisteException;
 import dss.exceptions.UtilizadorNaoExisteException;
-import dss.utilizador.Funcionario;
-import dss.utilizador.IUtilizadores;
-import dss.utilizador.Tecnico;
-import dss.utilizador.Utilizador;
+import dss.business.utilizador.Funcionario;
+import dss.business.utilizador.IUtilizadores;
+import dss.business.utilizador.Tecnico;
+import dss.business.utilizador.Utilizador;
 
 import java.io.*;
 import java.util.Collection;

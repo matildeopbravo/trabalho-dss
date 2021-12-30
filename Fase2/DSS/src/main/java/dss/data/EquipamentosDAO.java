@@ -1,13 +1,13 @@
 package dss.data;
 
-import dss.equipamentos.Componente;
-import dss.equipamentos.Equipamento;
-import dss.equipamentos.IEquipamentos;
+import dss.business.equipamentos.Componente;
+import dss.business.equipamentos.Equipamento;
+import dss.business.equipamentos.IEquipamentos;
 import dss.exceptions.EquipamentoJaExisteException;
 import dss.exceptions.EquipamentoNaoExisteException;
 import dss.exceptions.JaExisteException;
 import dss.exceptions.NaoExisteException;
-import dss.reparacoes.IReparacoes;
+import dss.business.reparacoes.IReparacoes;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

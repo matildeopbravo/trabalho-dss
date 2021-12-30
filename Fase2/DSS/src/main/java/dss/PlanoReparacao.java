@@ -1,9 +1,8 @@
 package dss;
 
-import dss.auxiliar.Pair;
-import dss.equipamentos.Componente;
+import dss.business.auxiliar.Pair;
+import dss.business.equipamentos.Componente;
 
-import javax.swing.*;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;

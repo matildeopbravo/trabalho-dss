@@ -1,6 +1,6 @@
 package dss;
 
-import dss.equipamentos.Componente;
+import dss.business.equipamentos.Componente;
 
 import java.time.Duration;
 import java.util.ArrayList;
