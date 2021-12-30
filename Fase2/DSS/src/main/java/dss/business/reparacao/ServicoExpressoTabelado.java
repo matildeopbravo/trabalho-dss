@@ -1,6 +1,8 @@
 package dss.business.reparacao;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ServicoExpressoTabelado {
     private int id;
@@ -20,6 +22,14 @@ public class ServicoExpressoTabelado {
         this.descricao = servicoExpressoTabelado.descricao;
         this.custo = servicoExpressoTabelado.custo;
         this.duracaoPrevista = servicoExpressoTabelado.duracaoPrevista;
+    }
+
+    public static Map<Integer, ServicoExpressoTabelado> populate() {
+        HashMap<Integer,ServicoExpressoTabelado> l = new HashMap<>();
+        l.put(0, new ServicoExpressoTabelado(0,"Substituir Ecra Iphone XS", 150,Duration.ofMinutes(30)));
+        l.put(1, new ServicoExpressoTabelado(0,"Formatar PC ", 50,Duration.ofMinutes(20)));
+        l.put(2, new ServicoExpressoTabelado(0,"Substituir Ecra Samsung Galaxy S10", 150,Duration.ofMinutes(30)));
+        return l;
     }
 
     public int getId() {

@@ -35,7 +35,7 @@ public class SGR implements SGRInterface {
 
         this.utilizadorAutenticado = null;
         // populate this
-        this.servicoExpresso = new HashMap<>();
+        this.servicoExpresso = ServicoExpressoTabelado.populate();
         this.email = new Email();
         utilizadores = new UtilizadoresDAO();
         reparacoes = new ReparacoesDAO();
