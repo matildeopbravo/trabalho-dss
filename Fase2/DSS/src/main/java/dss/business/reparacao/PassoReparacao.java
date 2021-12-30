@@ -137,7 +137,7 @@ public class PassoReparacao implements Intervencao {
     }
 
     public float getCustoComponentesPrevisto() {
-        return componentesReais.stream().map(Componente::getPreco).reduce(0f, Float::sum)
+        return componentesPrevistos.stream().map(Componente::getPreco).reduce(0f, Float::sum)
                 + subpassos.stream().map(PassoReparacao::getCustoComponentesPrevisto).reduce(0f, Float::sum);
     }
 

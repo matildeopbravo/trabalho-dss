@@ -36,7 +36,7 @@ public class PassoReparacaoPopup extends PopUp<PassoReparacao> {
         descricaoComponente.setCellValueFactory(new PropertyValueFactory<>("descricao"));
 
         TableColumn<Componente, String> precoComponente = new TableColumn<>("Preço");
-        precoComponente.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("%.2f", cellData.getValue().getPreco())));
+        precoComponente.setCellValueFactory(cellData -> new SimpleStringProperty(String.format("%.2f €", cellData.getValue().getPreco())));
 
         componenteTableView.getColumns().addAll(descricaoComponente, precoComponente);
 

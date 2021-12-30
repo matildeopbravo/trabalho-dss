@@ -78,7 +78,6 @@ public class TodosClientes implements Navigatable {
         reparacaoProgramadaButton.setOnAction(e -> navigator.navigateTo(new NovaReparacaoProgramada(sgr, navigator, selected.getNIF())));
 
         tabelaClientes.getSelectionModel().selectedItemProperty().addListener((observableValue, old, cliente) -> {
-            System.out.println("Selected " + cliente);
             selected = cliente;
 
             deleteButton.setDisable(selected == null);

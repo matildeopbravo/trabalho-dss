@@ -59,17 +59,19 @@ public class TabelaPlanoReparacao extends TreeTableView<PassoReparacao> {
             this.getColumns().addAll(descricaoColumn, maoDeObraPrevistoColumn, maoDeObraRealColumn, componentesPrevisto, componentesReal, totalPrevisto, totalReal, duracaoPrevista, duracaoReal);
         } else {
             TreeTableColumn<PassoReparacao, String> maoDeObraPrevistoColumn = new TreeTableColumn<>("Custo de mão de obra");
-            maoDeObraPrevistoColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("custoMaoDeObraPrevisto"));
+            maoDeObraPrevistoColumn.setCellValueFactory(c -> new SimpleStringProperty(String.format("%.2f €", c.getValue().getValue().getCustoMaoDeObraPrevisto())));
             TreeTableColumn<PassoReparacao, String> componentesPrevisto = new TreeTableColumn<>("Custo de componentes");
-            componentesPrevisto.setCellValueFactory(new TreeItemPropertyValueFactory<>("custoComponentesPrevisto"));
+            componentesPrevisto.setCellValueFactory(c -> new SimpleStringProperty(String.format("%.2f €", c.getValue().getValue().getCustoComponentesPrevisto())));
             TreeTableColumn<PassoReparacao, String> totalPrevisto = new TreeTableColumn<>("Custo total");
-            totalPrevisto.setCellValueFactory(new TreeItemPropertyValueFactory<>("custoTotalPrevisto"));
+            totalPrevisto.setCellValueFactory(c -> new SimpleStringProperty(String.format("%.2f €", c.getValue().getValue().getCustoTotalPrevisto())));
 
             TreeTableColumn<PassoReparacao, String> duracaoPrevista = new TreeTableColumn<>("Duração");
             duracaoPrevista.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getValue().getDuracaoPrevista().getSeconds() / 60 + " minutos"));
 
             this.getColumns().addAll(descricaoColumn, maoDeObraPrevistoColumn, componentesPrevisto, totalPrevisto, duracaoPrevista);
         }
+
+        this.setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
     }
 
     private TreeItem<PassoReparacao> toTreeItem(PassoReparacao passo) {
