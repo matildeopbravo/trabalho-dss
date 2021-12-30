@@ -58,8 +58,8 @@ import java.util.Map;
 
     //Devolve a lista das estatísticas de atendimentos de cada funcionário
     //de balcão
-    Map<String, EstatisticasFuncionario> estatisticasFuncionarios();
-     Map<String, EstatisticasReparacoesTecnico> estatisticasReparacoesTecnicos();
+    List<EstatisticasFuncionario> estatisticasFuncionarios();
+     List<EstatisticasReparacoesTecnico> estatisticasReparacoesTecnicos();
 
     //Devolve a lista de total de intervenções realizadas por cada técnico
     Map<String, List<Intervencao>> intervencoesTecnicos();

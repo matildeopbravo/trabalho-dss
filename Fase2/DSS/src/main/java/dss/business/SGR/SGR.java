@@ -16,6 +16,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -240,39 +241,41 @@ public class SGR implements SGRInterface {
     }
 
     private EstatisticasReparacoesTecnico estatisticasReparacoesByTecnico(Tecnico t) {
-        Stream<Reparacao> reparacoesConcluidas = reparacoes.getReparacoesConcluidas()
+        Supplier<Stream<Reparacao>> supplierConcluidas = () -> reparacoes.getReparacoesConcluidas()
                 .stream()
                 .filter(r -> r.getTecnicosQueRepararam().contains(t.getId()));
 
-        Stream<Reparacao> reparacoesProgramadas = reparacoesConcluidas
+        Supplier<Stream<Reparacao>> supplierProgramadas = () -> supplierConcluidas.get()
                 .filter(r -> r instanceof ReparacaoProgramada);
 
         int numReparacoesProgramadas = (int)
-                reparacoesProgramadas
+                supplierProgramadas.get()
                         .count();
-        int numReparacoesExpresso = (int) reparacoesConcluidas
+        int numReparacoesExpresso = (int) supplierConcluidas.get()
                 .filter(r -> r instanceof ReparacaoExpresso)
                 .count();
         //duracaoMediaDasReparacosProgramadas
-        double duracaoMedia = reparacoesProgramadas
+        double duracaoMedia = supplierProgramadas.get()
                 .map(Reparacao::getDuracaoReal)
                 .map(Duration::toSeconds)
                 .mapToLong(Long::longValue)
                 .average()
                 .orElse(Double.NaN);
 
-        double desvioMedio = reparacoesProgramadas
+        double desvioMedio = supplierProgramadas.get()
                 .map(r -> Math.abs(r.getDuracaoPrevista().getSeconds() - r.getDuracaoReal().getSeconds()))
                 .mapToDouble(Long::doubleValue)
                 .average()
                 .orElse(Double.NaN);
 
-        return new EstatisticasReparacoesTecnico(numReparacoesExpresso,numReparacoesProgramadas, duracaoMedia, desvioMedio);
+        return new EstatisticasReparacoesTecnico(t.getId(),numReparacoesExpresso,numReparacoesProgramadas, duracaoMedia, desvioMedio);
     }
 
-    public Map<String, EstatisticasReparacoesTecnico> estatisticasReparacoesTecnicos() {
-        return utilizadores.getByClass(Tecnico.class).stream()
-                .collect(Collectors.toMap(Tecnico::getId, this::estatisticasReparacoesByTecnico));
+    public List<EstatisticasReparacoesTecnico> estatisticasReparacoesTecnicos() {
+        return utilizadores.getByClass(Tecnico.class)
+                .stream()
+                .map(this::estatisticasReparacoesByTecnico)
+                .collect(Collectors.toList());
     }
 
     private List<Intervencao> getIntervencoesByTecnico(Tecnico t) {
@@ -306,10 +309,11 @@ public class SGR implements SGRInterface {
                 .count();
     }
 
-    public Map<String, EstatisticasFuncionario> estatisticasFuncionarios() {
-        return utilizadores.getByClass(Funcionario.class).stream()
-                .collect(Collectors.toMap(Funcionario::getId,
-                        f -> new EstatisticasFuncionario(getNumRececoes(f), getNumEntregas(f))));
+    public List<EstatisticasFuncionario> estatisticasFuncionarios() {
+        return utilizadores.getByClass(Funcionario.class)
+                .stream()
+                .map(f -> new EstatisticasFuncionario(f.getId(),getNumRececoes(f), getNumEntregas(f)))
+                .collect(Collectors.toList());
     }
 
     public Tecnico getTecnicoDisponivel() throws NaoHaTecnicosDisponiveisException{

@@ -1,6 +1,8 @@
 package dss.gui;
 
 import dss.business.SGR.SGRInterface;
+import dss.business.utilizador.TipoUtilizador;
+import dss.business.utilizador.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -138,10 +140,24 @@ public class Frame implements Initializable, Navigator {
 
     public void login() {
         loggedInAs.setText("Autenticado como: " + sgr.getUtilizadorAutenticado().getNome());
-        MainMenu mainMenu = new MainMenu(sgr, this);
+        Navigatable menu;
+
+        Utilizador autenticado = sgr.getUtilizadorAutenticado();
+        if (autenticado instanceof  Gestor){
+            menu = new MainMenu(sgr, this);
+        }
+        else if(autenticado instanceof Tecnico) {
+            menu = new TecnicoMenu(sgr, this);
+        }
+        else {
+            //TOPO MUDAR
+            menu = new TecnicoMenu(sgr, this);
+        }
+
+        //MainMenu mainMenu = new MainMenu(sgr, this);
 
         this.exitButton.setVisible(true);
-        navigateTo(mainMenu);
+        navigateTo(menu);
     }
 
     @FXML
