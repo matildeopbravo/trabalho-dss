@@ -31,7 +31,7 @@ public class MainMenu implements Navigatable {
         allClientsButton.setOnAction(e -> navigator.navigateTo(new TodosClientes(sgr, navigator)));
 
         Button testPopUp = new Button("Testar popup");
-        testPopUp.setOnAction(s -> navigator.openPopup(new ClientsPopUp()));
+        testPopUp.setOnAction(s -> navigator.openPopup(new PassoReparacaoPopup(sgr)));
 
         Button criaReparacaoProgramada = new Button("Cria Reparação Programada");
         criaReparacaoProgramada.setOnAction(e -> navigator.navigateTo(new NovaReparacaoProgramada(sgr, navigator)));
