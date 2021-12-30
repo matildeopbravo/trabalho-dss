@@ -1,8 +1,9 @@
 package dss.business.reparacao;
 
+import java.io.Serializable;
 import java.time.Duration;
 
-public class DuracaoCusto {
+public class DuracaoCusto implements Serializable {
   private Duration duracaoReal;
   private Duration duracaoPrevista;
   private float custoMaoDeObraReal;

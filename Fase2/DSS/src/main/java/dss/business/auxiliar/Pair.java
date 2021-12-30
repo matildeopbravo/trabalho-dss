@@ -1,6 +1,8 @@
 package dss.business.auxiliar;
 
-public class Pair<T1,T2> {
+import java.io.Serializable;
+
+public class Pair<T1,T2> implements Serializable {
     private T1 x;
     private T2 y;
 

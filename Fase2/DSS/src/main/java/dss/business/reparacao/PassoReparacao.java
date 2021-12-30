@@ -2,12 +2,13 @@ package dss.business.reparacao;
 
 import dss.business.equipamento.Componente;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class PassoReparacao implements Intervencao {
+public class PassoReparacao implements Intervencao, Serializable {
     String descricao;
     private DuracaoCusto duracaoCusto;
 

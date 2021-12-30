@@ -3,13 +3,14 @@ package dss.business.reparacao;
 import dss.business.auxiliar.Pair;
 import dss.business.equipamento.Componente;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-public class PlanoReparacao {
+public class PlanoReparacao implements Serializable {
     // se for demasiado lente calcular o custo on demand, volta-se a meter isto
     //private float custoAteAgora = 0;
     private List<PassoReparacao> subpassos = new ArrayList<>();

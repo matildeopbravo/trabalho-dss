@@ -1,6 +1,8 @@
 package dss.business.equipamento;
 
-public enum Fase {
+import java.io.Serializable;
+
+public enum Fase implements Serializable {
     NaoIniciada,
     AEsperaOrcamento,
     AEsperaResposta,

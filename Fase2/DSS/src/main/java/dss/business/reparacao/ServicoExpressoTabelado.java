@@ -1,10 +1,11 @@
 package dss.business.reparacao;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ServicoExpressoTabelado {
+public class ServicoExpressoTabelado implements Serializable {
     private int id;
     private String descricao;
     private float custo ;
