@@ -127,4 +127,8 @@ public class ReparacaoProgramada extends Reparacao implements Serializable {
     public void marcaComoNaoNotificado() {
         this.notificado = false;
     }
+
+    public boolean reparado() {
+        return planoReparacao.reparado();
+    }
 }

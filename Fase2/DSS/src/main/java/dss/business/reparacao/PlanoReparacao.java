@@ -14,6 +14,10 @@ public class PlanoReparacao {
     //private float custoAteAgora = 0;
     private List<PassoReparacao> subpassos = new ArrayList<>();
 
+    public boolean reparado() {
+        return subpassos.stream().allMatch(PassoReparacao::getExecutado);
+    }
+
     public List<PassoReparacao> getPassosReparacaoConcluidos() {
         return subpassos.stream().filter(PassoReparacao::getExecutado).toList();
     }

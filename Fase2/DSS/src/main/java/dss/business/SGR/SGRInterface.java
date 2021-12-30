@@ -1,5 +1,6 @@
 package dss.business.SGR;
 
+import dss.business.auxiliar.Pair;
 import dss.business.cliente.Cliente;
 import dss.business.equipamento.Componente;
 import dss.business.equipamento.Equipamento;
@@ -35,19 +36,19 @@ public interface SGRInterface {
 
     void marcarOrcamentoComoArquivado(ReparacaoProgramada r);
 
-    void marcaComoImpossivelReparar(ReparacaoProgramada reparacao) throws NaoExisteException;
+    boolean marcaComoImpossivelReparar(ReparacaoProgramada reparacao) throws NaoExisteException;
 
     void marcaComoNotificado(Reparacao e);
 
-    void realizaOrcamento(ReparacaoProgramada reparacao) throws NaoExisteException;
+    boolean realizaOrcamento(ReparacaoProgramada reparacao) throws NaoExisteException;
 
     void togglePausaReparacao(ReparacaoProgramada reparacao);
 
     void marcaReparacaoCompleta(Reparacao reparacao);
 
-    boolean verificaExcedeOrcamento(float novoCusto, ReparacaoProgramada reparacaoProgramada);
+    Pair<Boolean, Boolean> verificaExcedeOrcamento(float novoCusto, ReparacaoProgramada reparacaoProgramada);
 
-    void enviaMailReparacaoConcluida(Reparacao r, Cliente cliente);
+    boolean enviaMailReparacaoConcluida(Reparacao r, Cliente cliente);
 
     void marcaComoEntregueConluida(Reparacao r);
 

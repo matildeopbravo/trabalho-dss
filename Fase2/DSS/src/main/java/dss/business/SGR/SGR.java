@@ -2,6 +2,7 @@ package dss.business.SGR;
 
 
 import dss.business.Email.Email;
+import dss.business.auxiliar.Pair;
 import dss.business.cliente.Cliente;
 import dss.data.*;
 import dss.data.IClientes;
@@ -102,13 +103,16 @@ public class SGR implements SGRInterface {
     }
 
     @Override
-    public void marcaComoImpossivelReparar(ReparacaoProgramada reparacao) throws NaoExisteException {
+    public boolean marcaComoImpossivelReparar(ReparacaoProgramada reparacao) throws NaoExisteException {
         reparacao.setFase(Fase.NaoPodeSerReparado);
         Cliente c = clientes.get(reparacao.getIdCliente());
+        if(c.getEmail() == null)
+            return false;
         email.enviaMail(c.getEmail(), "Equipamento Não Pode ser Reparado",
-                "Após uma análise do estado do equipamento, concluímos que a sua" +
-                        "reparação não será possível. Por favor levante o seu equipamento na loja.\n");
+                    "Após uma análise do estado do equipamento, concluímos que a sua" +
+                            "reparação não será possível. Por favor levante o seu equipamento na loja.\n");
         reparacao.marcaComoNotificado();
+        return true;
     }
 
     @Override
@@ -118,14 +122,17 @@ public class SGR implements SGRInterface {
 
     // tem que ter plano de reparacao para poder criar orcamento
     @Override
-    public void realizaOrcamento(ReparacaoProgramada reparacao) throws NaoExisteException {
+    public boolean realizaOrcamento(ReparacaoProgramada reparacao) throws NaoExisteException {
         Cliente c = clientes.get(reparacao.getIdCliente());
         reparacao.realizaOrcamento(utilizadorAutenticado.getId());
         reparacao.setDataEnvioOrcamento(LocalDateTime.now());
         reparacao.setFase(Fase.AEsperaResposta);
+        if(c.getEmail() == null)
+            return false;
         email.enviaMail(c.getEmail(), "Orçamento",
                 reparacao.getOrcamentoMail(c.getNome()));
         reparacao.marcaComoNotificado();
+        return true;
     }
 
     @Override
@@ -139,15 +146,32 @@ public class SGR implements SGRInterface {
     }
 
     @Override
-    public boolean verificaExcedeOrcamento(float novoCusto, ReparacaoProgramada reparacaoProgramada) {
-        return reparacaoProgramada.ultrapassouOrcamento(novoCusto);
+    public Pair<Boolean, Boolean> verificaExcedeOrcamento(float novoCusto, ReparacaoProgramada reparacaoProgramada) {
+        boolean excede = reparacaoProgramada.ultrapassouOrcamento(novoCusto);
+        Cliente c = null;
+        try {
+            c = getCliente(reparacaoProgramada.getIdCliente());
+            if(excede && c.getEmail() != null) {
+                enviaMailOrcamentoUltrapassado(reparacaoProgramada,c);
+                reparacaoProgramada.setFase(Fase.AEsperaResposta);
+                return new Pair<>(true,true);
+            }
+            else
+                return new Pair<>(excede,false);
+        }
+        catch (NaoExisteException ignored) {
+            return null;
+        }
     }
 
     @Override
-    public void enviaMailReparacaoConcluida(Reparacao r, Cliente cliente) {
+    public boolean enviaMailReparacaoConcluida(Reparacao r, Cliente cliente) {
+        if (cliente.getEmail() == null)
+            return false;
         email.enviaMail(cliente.getEmail(), "Reparacao Concluida", "Caro " + cliente.getNome() +
                 ", a sua encomenda está completa. Por favor levante o seu equipamento na loja.\n");
         r.marcaComoNotificado();
+        return true;
     }
 
     @Override
@@ -167,7 +191,6 @@ public class SGR implements SGRInterface {
                 "\n Atenciosamente, Centro de Reparações");
         r.marcaComoNotificado();
     }
-
 
     @Override
     public void iniciaReparacaoExpresso(ReparacaoExpresso r) throws TecnicoNaoAtribuidoException {
@@ -399,6 +422,23 @@ public class SGR implements SGRInterface {
         }
     }
 
+    public Pair<Boolean,Boolean> verificaSeCompleta(ReparacaoProgramada r) throws ClienteNaoExisteException {
+        Cliente c = clientes.getCliente(r.getIdCliente());
+        boolean sent = false;
+        if (r.reparado()){
+            if(c.getEmail() != null)  {
+                enviaMailReparacaoConcluida(r,c);
+                r.marcaComoNotificado();
+                r.setFase(Fase.Reparado);
+                sent = true;
+            }
+            return new Pair<>(true,sent);
+        }
+        else {
+            return new Pair<>(false,false);
+        }
+    }
+
     public Collection<Equipamento> getEquipamentos() {
         return equipamentos.getEquipamentos();
     }
@@ -442,4 +482,5 @@ public class SGR implements SGRInterface {
     public void apagaCliente(String idCliente) throws NaoExisteException {
         clientes.remove(idCliente);
     }
+
 }

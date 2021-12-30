@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class UtilizadoresDAO implements IDAO<Utilizador,String>, IUtilizadores, Serializable  {
+public class UtilizadoresDAO implements  IUtilizadores, Serializable  {
     private Map<String, Utilizador> utilizadoresPorID;
 
     public static UtilizadoresDAO lerUtilizadores(String ficheiro) {
