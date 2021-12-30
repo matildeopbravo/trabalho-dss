@@ -158,8 +158,8 @@ public class SGR implements SGRInterface {
     }
 
     @Override
-    public Pair<Boolean, Boolean> verificaExcedeOrcamento(float novoCusto, ReparacaoProgramada reparacaoProgramada) {
-        boolean excede = reparacaoProgramada.ultrapassouOrcamento(novoCusto);
+    public Pair<Boolean, Boolean> verificaExcedeOrcamento(float custoNovo, ReparacaoProgramada reparacaoProgramada) {
+        boolean excede = reparacaoProgramada.ultrapassouOrcamento(custoNovo);
         Cliente c = null;
         try {
             c = getCliente(reparacaoProgramada.getIdCliente());

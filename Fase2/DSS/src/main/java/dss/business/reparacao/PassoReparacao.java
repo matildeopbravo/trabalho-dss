@@ -123,8 +123,8 @@ public class PassoReparacao implements Intervencao, Serializable {
     }
 
     public float getCustoMaoDeObraReal() {
-        return duracaoCusto.getCustoMaoDeObraReal() + subpassos.stream()
-                .map(PassoReparacao::getCustoMaoDeObraReal).reduce(0f, Float::sum);
+        return Float.max(0, duracaoCusto.getCustoMaoDeObraReal()) + subpassos.stream()
+                .map(p -> Float.max(0f, p.getCustoMaoDeObraReal())).reduce(0f, Float::sum);
     }
 
     public float getCustoMaoDeObraPrevisto() {

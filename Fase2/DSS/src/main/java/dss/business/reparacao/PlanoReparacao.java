@@ -73,7 +73,8 @@ public class PlanoReparacao implements Serializable {
 
         for (PassoReparacao elem : subpassos) {
             custo += elem.getCustoTotalReal();
-            duracao = duracao.plus(elem.getDuracaoReal());
+            if (elem.getDuracaoReal() != null)
+                duracao = duracao.plus(elem.getDuracaoReal());
         }
         return new Pair<>(custo, duracao);
     }

@@ -85,9 +85,9 @@ public class ReparacaoProgramada extends Reparacao implements Serializable {
         this.fase = Fase.Recusada;
     }
 
-    public boolean ultrapassouOrcamento(float precoReal) {
+    public boolean ultrapassouOrcamento(float custoNovo) {
         //Não pode exceder orçamento aprovado por 120%
-        return precoReal > orcamento.getPreco() * 1.2;
+        return custoNovo > orcamento.getPreco() * 1.2;
     }
 
     public void togglePausarReparacao() {

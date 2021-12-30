@@ -46,7 +46,7 @@ public interface SGRInterface {
 
     void marcaReparacaoCompleta(Reparacao reparacao);
 
-    Pair<Boolean, Boolean> verificaExcedeOrcamento(float novoCusto, ReparacaoProgramada reparacaoProgramada);
+    Pair<Boolean, Boolean> verificaExcedeOrcamento(float custoNovo, ReparacaoProgramada reparacaoProgramada);
 
     boolean enviaMailReparacaoConcluida(Reparacao r, Cliente cliente);
 
