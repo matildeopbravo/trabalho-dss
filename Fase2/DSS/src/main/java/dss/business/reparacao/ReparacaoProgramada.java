@@ -30,7 +30,9 @@ public class ReparacaoProgramada extends Reparacao implements Serializable {
     }
 
     public String getOrcamentoMail(String nome) {
-        return "Caro " + nome + ",\n" + orcamento.toString() + "\nAtenciosamente,\n Loja Reparações";
+        return "Caro " + nome + ",\n\nO orçamento para a sua reparação está concluído:\n" + orcamento.toString() +
+                "\nPor favor responda dentro de 90 dias indicando se aprova ou não deste orçamento.\n\n" +
+                "Atenciosamente,\nLoja Reparações do Grupo 54";
     }
 
     @Override

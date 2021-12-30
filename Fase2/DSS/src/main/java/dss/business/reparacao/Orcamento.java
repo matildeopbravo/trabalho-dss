@@ -12,8 +12,10 @@ public class Orcamento {
     private final float custoTotal;
     private final List<Componente> componentesNecessarios;
     private final LocalDateTime prazoMaximo;
+    private PlanoReparacao planoReparacao;
 
     public Orcamento(PlanoReparacao p) {
+        this.planoReparacao = p;
         this.componentesNecessarios = p.getComponentesPrevistos().values().stream().map(Pair::getFirst).toList();
 
         Pair<Float, Duration> custoEDuracao = p.getCustoTotalEDuracaoPrevista();
@@ -28,10 +30,15 @@ public class Orcamento {
 
     @Override
     public String toString() {
-        return "Orcamento{" +
-                "custoTotal=" + custoTotal +
-                ", componentesNecessarios=" + componentesNecessarios +
-                ", prazoMaximo=" + prazoMaximo +
-                '}';
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("Custo total: %.2f€\n", custoTotal));
+        if (this.componentesNecessarios.size() > 0) {
+            sb.append(String.format("Serão necessários os seguintes componentes:\n"));
+            for (Componente componente : this.componentesNecessarios) {
+                sb.append(componente.toString()).append("\n");
+            }
+        }
+
+        return sb.toString();
     }
 }

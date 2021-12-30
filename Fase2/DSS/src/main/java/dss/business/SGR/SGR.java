@@ -4,13 +4,15 @@ package dss.business.SGR;
 import dss.business.Email.Email;
 import dss.business.auxiliar.Pair;
 import dss.business.cliente.Cliente;
-import dss.data.*;
-import dss.data.IClientes;
-import dss.business.equipamento.*;
-import dss.business.estatisticas.*;
-import dss.exceptions.*;
+import dss.business.equipamento.Componente;
+import dss.business.equipamento.Equipamento;
+import dss.business.equipamento.Fase;
+import dss.business.estatisticas.EstatisticasFuncionario;
+import dss.business.estatisticas.EstatisticasReparacoesTecnico;
 import dss.business.reparacao.*;
 import dss.business.utilizador.*;
+import dss.data.*;
+import dss.exceptions.*;
 
 import java.io.*;
 import java.time.Duration;
@@ -22,13 +24,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SGR implements SGRInterface {
+    private final Map<Integer, ServicoExpressoTabelado> servicoExpresso;
+    private final Email email;
     private IUtilizadores utilizadores;
     private IReparacoes reparacoes;
     private IEquipamentos equipamentos;
     private IClientes clientes;
     private Utilizador utilizadorAutenticado;
-    private final Map<Integer, ServicoExpressoTabelado> servicoExpresso;
-    private final Email email;
 
     //####CONSTRUTOR####
 
@@ -106,11 +108,11 @@ public class SGR implements SGRInterface {
     public boolean marcaComoImpossivelReparar(ReparacaoProgramada reparacao) throws NaoExisteException {
         reparacao.setFase(Fase.NaoPodeSerReparado);
         Cliente c = clientes.get(reparacao.getIdCliente());
-        if(c.getEmail() == null)
+        if (c.getEmail() == null)
             return false;
         email.enviaMail(c.getEmail(), "Equipamento Não Pode ser Reparado",
-                    "Após uma análise do estado do equipamento, concluímos que a sua" +
-                            "reparação não será possível. Por favor levante o seu equipamento na loja.\n");
+                "Após uma análise do estado do equipamento, concluímos que a sua" +
+                        "reparação não será possível. Por favor levante o seu equipamento na loja.\n");
         reparacao.marcaComoNotificado();
         return true;
     }
@@ -127,7 +129,7 @@ public class SGR implements SGRInterface {
         reparacao.realizaOrcamento(utilizadorAutenticado.getId());
         reparacao.setDataEnvioOrcamento(LocalDateTime.now());
         reparacao.setFase(Fase.AEsperaResposta);
-        if(c.getEmail() == null)
+        if (c.getEmail() == null)
             return false;
         email.enviaMail(c.getEmail(), "Orçamento",
                 reparacao.getOrcamentoMail(c.getNome()));
@@ -151,15 +153,13 @@ public class SGR implements SGRInterface {
         Cliente c = null;
         try {
             c = getCliente(reparacaoProgramada.getIdCliente());
-            if(excede && c.getEmail() != null) {
-                enviaMailOrcamentoUltrapassado(reparacaoProgramada,c);
+            if (excede && c.getEmail() != null) {
+                enviaMailOrcamentoUltrapassado(reparacaoProgramada, c);
                 reparacaoProgramada.setFase(Fase.AEsperaResposta);
-                return new Pair<>(true,true);
-            }
-            else
-                return new Pair<>(excede,false);
-        }
-        catch (NaoExisteException ignored) {
+                return new Pair<>(true, true);
+            } else
+                return new Pair<>(excede, false);
+        } catch (NaoExisteException ignored) {
             return null;
         }
     }
@@ -422,20 +422,19 @@ public class SGR implements SGRInterface {
         }
     }
 
-    public Pair<Boolean,Boolean> verificaSeCompleta(ReparacaoProgramada r) throws ClienteNaoExisteException {
+    public Pair<Boolean, Boolean> verificaSeCompleta(ReparacaoProgramada r) throws ClienteNaoExisteException {
         Cliente c = clientes.getCliente(r.getIdCliente());
         boolean sent = false;
-        if (r.reparado()){
-            if(c.getEmail() != null)  {
-                enviaMailReparacaoConcluida(r,c);
+        if (r.reparado()) {
+            if (c.getEmail() != null) {
+                enviaMailReparacaoConcluida(r, c);
                 r.marcaComoNotificado();
                 r.setFase(Fase.Reparado);
                 sent = true;
             }
-            return new Pair<>(true,sent);
-        }
-        else {
-            return new Pair<>(false,false);
+            return new Pair<>(true, sent);
+        } else {
+            return new Pair<>(false, false);
         }
     }
 
