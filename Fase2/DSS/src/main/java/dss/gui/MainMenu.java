@@ -1,7 +1,7 @@
 package dss.gui;
 
 import dss.business.SGRInterface;
-import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -16,7 +16,7 @@ public class MainMenu implements Navigatable {
         this.navigator = navigator;
     }
 
-    public Node getScene() {
+    public Scene getScene() {
         VBox vbox = new VBox();
         Label title = new Label("Menu inicial");
         title.setFont(new Font(24.0));

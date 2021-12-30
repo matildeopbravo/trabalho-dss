@@ -37,7 +37,6 @@ public class ReparacaoProgramada extends Reparacao implements Serializable {
         return "Caro " + nome + ",\n" + orcamento.toString() + "\nAtenciosamente,\n Loja Reparações";
     }
 
-
     @Override
     public Duration getDuracaoReal() {
         return planoReparacao.getCustoTotalEDuracaoReal().getSecond();

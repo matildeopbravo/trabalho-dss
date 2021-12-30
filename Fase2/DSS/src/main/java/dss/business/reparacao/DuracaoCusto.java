@@ -65,4 +65,14 @@ public class DuracaoCusto {
         }
         this.duracaoReal = this.duracaoReal.plus(duracaoReal);
     }
+
+    @Override
+    public String toString() {
+        return "DuracaoCusto{" +
+                "duracaoReal=" + duracaoReal +
+                ", duracaoPrevista=" + duracaoPrevista +
+                ", custoMaoDeObraReal=" + custoMaoDeObraReal +
+                ", custoMaoDeObraPrevisto=" + custoMaoDeObraPrevisto +
+                '}';
+    }
 }

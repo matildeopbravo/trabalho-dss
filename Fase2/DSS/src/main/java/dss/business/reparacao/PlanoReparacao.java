@@ -129,6 +129,10 @@ public class PlanoReparacao {
   public void addSubPasso(PassoReparacao passo, String descricao, Duration duracao, float custo) {
       passo.addSubpasso(new PassoReparacao(descricao,duracao,custo));
   }
+
+  public List<PassoReparacao> getPassosPorRealizar() {
+    return new ArrayList<>(passosReparacaoAExecutar);
+  }
 }
 
 

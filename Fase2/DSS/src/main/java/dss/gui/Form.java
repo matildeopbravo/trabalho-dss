@@ -2,6 +2,7 @@ package dss.gui;
 
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -35,7 +36,7 @@ public abstract class Form {
     protected abstract boolean validateSubmit();
     protected abstract List<String> submit(); // Devolve lista de erros
 
-    public Node getScene() {
+    public Scene getScene() {
         HBox hcontainer = new HBox();
         VBox vcontainer = new VBox();
 

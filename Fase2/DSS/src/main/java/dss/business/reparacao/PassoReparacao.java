@@ -135,4 +135,9 @@ public class PassoReparacao implements Intervencao {
       total += componente.getPreco();
     return total;
   }
+
+  public List<PassoReparacao> getSubPassosPorExecutar() {
+    return new ArrayList<>(subPassosPorExecutar);
+  }
+
 }

@@ -3,6 +3,7 @@ package dss.gui;
 import dss.business.SGRInterface;
 import dss.business.cliente.Cliente;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class DetalhesCliente implements Navigatable {
         }
 
         @Override
-        public Node getScene() {
+        public Scene getScene() {
             Node n = super.getScene();
             this.nif.setText(cliente.getNIF());
             this.email.setText(cliente.getEmail());
@@ -48,7 +49,7 @@ public class DetalhesCliente implements Navigatable {
     }
 
     @Override
-    public Node getScene() {
+    public Scene getScene() {
         return updateForm.getScene();
     }
 }
