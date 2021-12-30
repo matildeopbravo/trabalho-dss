@@ -23,7 +23,7 @@ import java.util.Map;
 
     void writeToFile(String objectFile) throws IOException;
 
-     void criaReparacaoProgramada(String nifCliente, String descricao);
+     void criaReparacaoProgramada(String nifCliente, String descricao) throws NaoExisteException;
     void criaReparacaoExpresso(int idServico, String idCliente, String idTecnico , String descricao);
 
      void marcaOrcamentoComoRecusado(ReparacaoProgramada r) ;

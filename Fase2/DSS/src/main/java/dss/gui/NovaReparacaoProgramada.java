@@ -1,6 +1,7 @@
 package dss.gui;
 
 import dss.business.SGRInterface;
+import dss.exceptions.NaoExisteException;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 
@@ -37,9 +38,15 @@ public class NovaReparacaoProgramada extends  Form implements Navigatable {
     @Override
     protected List<String> submit() {
         if (validateSubmit()) {
-            sgr.criaReparacaoProgramada(idCliente.getText(),descricao.getText() );
-            navigator.navigateBack("Ficha de Reparação do Cliente " + idCliente.getText() + " criada!");
-            return List.of();
+            try {
+                sgr.criaReparacaoProgramada(idCliente.getText(),descricao.getText() );
+                navigator.navigateBack("Ficha de Reparação do Cliente " + idCliente.getText() + " criada!");
+                return List.of();
+            } catch (NaoExisteException e) {
+                // TODO
+                e.printStackTrace();
+                return null;
+            }
         } else {
             // Isto não deve acontecer!
             return null;
