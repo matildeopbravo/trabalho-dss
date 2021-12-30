@@ -66,10 +66,6 @@ public class ReparacaoProgramada extends Reparacao implements Serializable {
         return dataEnvioOrcamento;
     }
 
-    public boolean podeSerReparadoAgora() {
-        return fase.equals(Fase.EmReparacao) && pausado;
-    }
-
     public void realizaOrcamento(String idTecnico) {
         // TODO Verifica que nao pode ser reparado e notififca
         this.tecnicosQueRepararam.add(idTecnico);

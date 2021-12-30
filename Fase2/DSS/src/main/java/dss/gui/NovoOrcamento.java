@@ -33,7 +33,7 @@ public class NovoOrcamento implements Navigatable {
         this.sgr = sgr;
         this.navigator = navigator;
         this.reparacao = (ReparacaoProgramada) reparacao;
-        this.tabela = new TabelaPlanoReparacao(false);
+        this.tabela = new TabelaPlanoReparacao(1);
         this.tabela.getSelectionModel().selectedItemProperty().addListener((observableValue, old, passoReparacaoTreeItem) -> {
             if (passoReparacaoTreeItem == this.tabela.getRoot() || passoReparacaoTreeItem == null) {
                 selected = null;

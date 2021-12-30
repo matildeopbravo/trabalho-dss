@@ -168,4 +168,14 @@ public class PassoReparacao implements Intervencao {
         return subpassos.stream().filter(p -> !p.getExecutado()).toList();
     }
 
+    public PassoReparacao getNextPasso() {
+        for (PassoReparacao passo : subpassos) {
+            if (!passo.getExecutado()) {
+                return passo.getNextPasso();
+            }
+        }
+        if (getExecutado())
+            return null;
+        return this;
+    }
 }

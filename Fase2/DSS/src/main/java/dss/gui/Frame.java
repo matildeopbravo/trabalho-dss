@@ -81,6 +81,7 @@ public class Frame implements Initializable, Navigator {
     }
 
     public void navigateBack() {
+        navigationStack.peek().onExit();
         navigationStack.pop();
         setContent(navigationStack.peek().getScene());
 

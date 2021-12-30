@@ -1,10 +1,9 @@
 package dss.gui.components;
 
-import com.sun.source.tree.Tree;
 import dss.business.reparacao.PassoReparacao;
 import dss.business.reparacao.PlanoReparacao;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
@@ -12,20 +11,18 @@ import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class TabelaPlanoReparacao extends TreeTableView<PassoReparacao> {
     PlanoReparacao plano;
 
-    public TabelaPlanoReparacao(boolean mostrarReal) {
+    public TabelaPlanoReparacao(int modo) {
         // dummy root
         super(new TreeItem<PassoReparacao>(new PassoReparacao("Passos", Duration.ZERO, 0, new ArrayList<>())));
 
         TreeTableColumn<PassoReparacao, String> descricaoColumn = new TreeTableColumn<>("Descrição");
         descricaoColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("descricao"));
 
-        if (mostrarReal) {
+        if (modo == 0) {
             TreeTableColumn<PassoReparacao, String> maoDeObraPrevistoColumn = new TreeTableColumn<>("Custo de mão de obra (previsto)");
             maoDeObraPrevistoColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("custoMaoDeObraPrevisto"));
             TreeTableColumn<PassoReparacao, String> maoDeObraRealColumn = new TreeTableColumn<>("Custo de mão de obra (real)");
@@ -57,7 +54,7 @@ public class TabelaPlanoReparacao extends TreeTableView<PassoReparacao> {
             });
 
             this.getColumns().addAll(descricaoColumn, maoDeObraPrevistoColumn, maoDeObraRealColumn, componentesPrevisto, componentesReal, totalPrevisto, totalReal, duracaoPrevista, duracaoReal);
-        } else {
+        } else if (modo == 1) {
             TreeTableColumn<PassoReparacao, String> maoDeObraPrevistoColumn = new TreeTableColumn<>("Custo de mão de obra");
             maoDeObraPrevistoColumn.setCellValueFactory(c -> new SimpleStringProperty(String.format("%.2f €", c.getValue().getValue().getCustoMaoDeObraPrevisto())));
             TreeTableColumn<PassoReparacao, String> componentesPrevisto = new TreeTableColumn<>("Custo de componentes");
@@ -69,6 +66,17 @@ public class TabelaPlanoReparacao extends TreeTableView<PassoReparacao> {
             duracaoPrevista.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getValue().getDuracaoPrevista().getSeconds() / 60 + " minutos"));
 
             this.getColumns().addAll(descricaoColumn, maoDeObraPrevistoColumn, componentesPrevisto, totalPrevisto, duracaoPrevista);
+        } else if (modo == 2) {
+            TreeTableColumn<PassoReparacao, String> isDone = new TreeTableColumn<>("Concluído?");
+            isDone.setCellValueFactory(c -> {
+                if (c.getValue().getValue().getExecutado()) {
+                    return new SimpleStringProperty("Sim");
+                } else {
+                    return new SimpleStringProperty("Não");
+                }
+            });
+            this.getColumns().addAll(descricaoColumn, isDone);
+            this.setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
         }
 
         this.setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);

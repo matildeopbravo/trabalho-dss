@@ -493,7 +493,7 @@ public class SGR implements SGRInterface {
 
     @Override
     public List<ReparacaoProgramada> getReparacoesProgramadasEmCurso() {
-        return reparacoes.getReparacoesProgramadasAtuais().stream().filter(r -> r.getFase() == Fase.EmReparacao).toList();
+        return reparacoes.getReparacoesProgramadasAtuais().stream().filter(ReparacaoProgramada::podeSerReparadaAgora).toList();
     }
 
     public Componente getComponenteByDescricao(String descricao) {

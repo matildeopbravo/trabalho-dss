@@ -5,4 +5,6 @@ import javafx.scene.Scene;
 
 public interface Navigatable {
     Node getScene();
+
+    default void onExit() {}
 }

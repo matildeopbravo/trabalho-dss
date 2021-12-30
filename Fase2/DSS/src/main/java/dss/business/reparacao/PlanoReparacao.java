@@ -113,6 +113,14 @@ public class PlanoReparacao {
         passo.addSubpasso(p);
         return p;
     }
+
+    public PassoReparacao getNextPasso() {
+        for (PassoReparacao passo : subpassos) {
+            if (!passo.getExecutado())
+                return passo.getNextPasso();
+        }
+        return null;
+    }
 }
 
 

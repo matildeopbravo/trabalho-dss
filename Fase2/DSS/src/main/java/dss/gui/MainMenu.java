@@ -63,23 +63,9 @@ public class MainMenu implements Navigatable {
         Button estatisticasDasReparacoesDosTecnicos = new Button("Estatísticas sobre as reparações dos Técnicos");
         estatisticasDasReparacoesDosTecnicos.setOnAction(e -> navigator.navigateTo(new EstatisticasTecnico(sgr)));
 
-        Button previewTabelaPasso = new Button("Experimentar tabela de passos");
-        previewTabelaPasso.setOnAction(s -> navigator.navigateTo(() -> {
-            PlanoReparacao plano = new PlanoReparacao();
-            plano.addPasso("Trocar motherboard", Duration.ofMinutes(5), 2, new ArrayList<>());
-            PassoReparacao p1 = plano.addPasso("Reparar câmara", Duration.ZERO, 0, new ArrayList<>());
-            plano.addSubPasso(p1, "Desmontar ecrã", Duration.ofMinutes(5), 5, new ArrayList<>());
-            plano.addSubPasso(p1, "Retirar câmara estragada", Duration.ofMinutes(1), 1, new ArrayList<>());
-            PassoReparacao p2 = plano.addSubPasso(p1, "Colocar nova câmara", Duration.ofMinutes(0), 0, new ArrayList<>());
-            plano.addSubPasso(p2, "Pegar na câmara", Duration.ofMinutes(1), 1, new ArrayList<>());
-            plano.addSubPasso(p2, "Colocar a câmara", Duration.ofMinutes(5), 5, new ArrayList<>());
-            TabelaPlanoReparacao tabelaPlanoReparacao = new TabelaPlanoReparacao(true);
-            tabelaPlanoReparacao.setPlano(plano);
-            return tabelaPlanoReparacao;
-        }));
 
         vbox.getChildren().addAll(newUserButton, allUsersButton, newClientButton, allClientsButton, criaReparacaoExpresso,
-                aguardarOrcamentoButton, aguardaAprovacaoButton, reparacoesEmCurso, listaReparacoesButton, previewTabelaPasso,
+                aguardarOrcamentoButton, aguardaAprovacaoButton, reparacoesEmCurso, listaReparacoesButton,
                 estatisticasDasReparacoesDosTecnicos, estatisticasFuncionarios, intervencoesTecnicos);
 
         return vbox;
