@@ -139,21 +139,6 @@ public class SGR implements SGRInterface {
     public void marcaReparacaoCompleta(Reparacao reparacao) {
         reparacao.setFase(Fase.Reparado);
     }
-    /**
-     * Executa passo ou subpasso seguinte da reparação
-      */
-    public void efetuaReparacaoProgramada(ReparacaoProgramada reparacao, int custoMaoDeObraReal, Duration duracaoReal
-                                            , Collection<Componente> componentesReais)
-            throws NaoPodeSerReparadoAgoraException, NaoExisteException {
-        //if (utilizadorAutenticado instanceof Tecnico) {
-                boolean completa = reparacao.efetuaReparacao(utilizadorAutenticado.getId(),
-                        custoMaoDeObraReal, duracaoReal, componentesReais);
-            if (completa) {
-                marcaReparacaoCompleta(reparacao);
-                enviaMailReparacaoConcluida(reparacao, clientes.get(reparacao.getIdCliente()));
-            }
-        //}
-    }
 
     public boolean verificaExcedeOrcamento(float novoCusto, ReparacaoProgramada reparacaoProgramada) {
         return reparacaoProgramada.ultrapassouOrcamento(novoCusto);
