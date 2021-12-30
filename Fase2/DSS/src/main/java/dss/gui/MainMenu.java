@@ -1,12 +1,17 @@
 package dss.gui;
 
 import dss.business.SGR.SGRInterface;
-import dss.business.estatisticas.EstatisticasReparacoesTecnico;
+import dss.business.reparacao.PassoReparacao;
+import dss.business.reparacao.PlanoReparacao;
+import dss.gui.components.TabelaPlanoReparacao;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+
+import java.time.Duration;
+import java.util.ArrayList;
 
 public class MainMenu implements Navigatable {
     private SGRInterface sgr;
@@ -57,9 +62,22 @@ public class MainMenu implements Navigatable {
         Button estatisticasDasReparacoesDosTecnicos = new Button("Estatísticas sobre as reparações dos Técnicos");
         estatisticasDasReparacoesDosTecnicos.setOnAction(e -> navigator.navigateTo(new EstatisticasTecnico(sgr)));
 
+        Button previewTabelaPasso = new Button("Experimentar tabela de passos");
+        previewTabelaPasso.setOnAction(s -> navigator.navigateTo(() -> {
+            PlanoReparacao plano = new PlanoReparacao();
+            plano.addPasso("Trocar motherboard", Duration.ofMinutes(5), 2, new ArrayList<>());
+            PassoReparacao p1 = plano.addPasso("Reparar câmara", Duration.ZERO, 0, new ArrayList<>());
+            plano.addSubPasso(p1, "Desmontar ecrã", Duration.ofMinutes(5), 5, new ArrayList<>());
+            plano.addSubPasso(p1, "Retirar câmara estragada", Duration.ofMinutes(1), 1, new ArrayList<>());
+            PassoReparacao p2 = plano.addSubPasso(p1, "Colocar nova câmara", Duration.ofMinutes(0), 0, new ArrayList<>());
+            plano.addSubPasso(p2, "Pegar na câmara", Duration.ofMinutes(1), 1, new ArrayList<>());
+            plano.addSubPasso(p2, "Colocar a câmara", Duration.ofMinutes(5), 5, new ArrayList<>());
+            TabelaPlanoReparacao tabelaPlanoReparacao = new TabelaPlanoReparacao(true);
+            tabelaPlanoReparacao.setPlano(plano);
+            return tabelaPlanoReparacao;
+        }));
 
-        vbox.getChildren().addAll(newUserButton,allUsersButton, newClientButton, allClientsButton,criaReparacaoProgramada
-                ,criaReparacaoExpresso, aguardarOrcamentoButton, listaReparacoesButton, testPopUp,estatisticasDasReparacoesDosTecnicos,estatisticasFuncionarios,intervencoesTecnicos);
+        vbox.getChildren().addAll(newUserButton,allUsersButton, newClientButton, allClientsButton,criaReparacaoProgramada,criaReparacaoExpresso, aguardarOrcamentoButton, listaReparacoesButton, testPopUp, previewTabelaPasso);
 
         return vbox;
     }

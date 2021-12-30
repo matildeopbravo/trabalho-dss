@@ -25,9 +25,9 @@ public class SGR implements SGRInterface {
     private IReparacoes reparacoes;
     private IEquipamentos equipamentos;
     private IClientes clientes;
-    private Utilizador utilizadorAutenticado ;
+    private Utilizador utilizadorAutenticado;
     private final Map<Integer, ServicoExpressoTabelado> servicoExpresso;
-    private final Email email ;
+    private final Email email;
 
     //####CONSTRUTOR####
 
@@ -59,11 +59,11 @@ public class SGR implements SGRInterface {
     // TODO
     public void loadFromFile(String objectFile) throws IOException, ClassNotFoundException {
         FileInputStream fi = new FileInputStream(new File(objectFile));
-        ObjectInputStream oi = new ObjectInputStream(fi) ;
-        this.utilizadores =  (UtilizadoresDAO) oi.readObject();
-        this.reparacoes =  (ReparacoesDAO) oi.readObject();
-        this.equipamentos =  (EquipamentosDAO) oi.readObject();
-        this.clientes =  (ClientesDAO) oi.readObject();
+        ObjectInputStream oi = new ObjectInputStream(fi);
+        this.utilizadores = (UtilizadoresDAO) oi.readObject();
+        this.reparacoes = (ReparacoesDAO) oi.readObject();
+        this.equipamentos = (EquipamentosDAO) oi.readObject();
+        this.clientes = (ClientesDAO) oi.readObject();
     }
 
     public void writeToFile(String objectFile) throws IOException {
@@ -76,45 +76,45 @@ public class SGR implements SGRInterface {
     }
 
     //####MÉTODOS####
-    public void criaReparacaoExpresso(int idServico, String idCliente, String idTecnico , String descricao) {
+    public void criaReparacaoExpresso(int idServico, String idCliente, String idTecnico, String descricao) {
         ReparacaoExpresso r = new ReparacaoExpresso(servicoExpresso.get(idServico), idCliente,
                 utilizadorAutenticado.getId(), idTecnico, descricao);
         reparacoes.adicionaReparacaoExpressoAtual(r);
     }
 
-   public void marcaOrcamentoComoAceite(ReparacaoProgramada r)  {
+    public void marcaOrcamentoComoAceite(ReparacaoProgramada r) {
         r.setFase(Fase.EmReparacao);
         r.marcaComoNaoNotificado();
-   }
+    }
 
     public void marcaOrcamentoComoRecusado(ReparacaoProgramada r) {
         r.setFase(Fase.Recusada);
     }
 
-    public void marcarOrcamentoComoArquivado(ReparacaoProgramada r){
+    public void marcarOrcamentoComoArquivado(ReparacaoProgramada r) {
         reparacoes.marcarOrcamentoComoArquivado(r);
     }
 
-    public void marcaComoImpossivelReparar (ReparacaoProgramada reparacao) throws NaoExisteException {
-       reparacao.setFase(Fase.NaoPodeSerReparado);
-       Cliente c = clientes.get(reparacao.getIdCliente());
-       email.enviaMail(c.getEmail(), "Equipamento Não Pode ser Reparado",
-               "Após uma análise do estado do equipamento, concluímos que a sua" +
-                       "reparação não será possível. Por favor levante o seu equipamento na loja.\n");
-       reparacao.marcaComoNotificado();
+    public void marcaComoImpossivelReparar(ReparacaoProgramada reparacao) throws NaoExisteException {
+        reparacao.setFase(Fase.NaoPodeSerReparado);
+        Cliente c = clientes.get(reparacao.getIdCliente());
+        email.enviaMail(c.getEmail(), "Equipamento Não Pode ser Reparado",
+                "Após uma análise do estado do equipamento, concluímos que a sua" +
+                        "reparação não será possível. Por favor levante o seu equipamento na loja.\n");
+        reparacao.marcaComoNotificado();
     }
 
     // so vai aparecer esta obção tendo criado um passo
     public void adicionaSubpassoPlano(PassoReparacao passo, String descricao, Duration duracao, float custo) {
-       passo.addSubpasso(new PassoReparacao(descricao,duracao,custo));
+        passo.addSubpasso(new PassoReparacao(descricao, duracao, custo, new ArrayList<>()));
     }
 
     public void adicionaPassoPlano(ReparacaoProgramada reparacao, String descricao, Duration duracao, float custo) {
         PlanoReparacao plano = reparacao.getPlanoReparacao();
         if (plano == null) {
             plano = reparacao.criaPlanoReparacao();
-       }
-       plano.addPasso(descricao,duracao,custo);
+        }
+        plano.addPasso(descricao, duracao, custo, new ArrayList<>());
     }
 
     public void marcaComoNotificado(Reparacao e) {
@@ -128,7 +128,7 @@ public class SGR implements SGRInterface {
         reparacao.setDataEnvioOrcamento(LocalDateTime.now());
         reparacao.setFase(Fase.AEsperaResposta);
         email.enviaMail(c.getEmail(), "Orçamento",
-        reparacao.getOrcamentoMail(c.getNome()));
+                reparacao.getOrcamentoMail(c.getNome()));
         reparacao.marcaComoNotificado();
     }
 
@@ -140,37 +140,22 @@ public class SGR implements SGRInterface {
     public void marcaReparacaoCompleta(Reparacao reparacao) {
         reparacao.setFase(Fase.Reparado);
     }
-    /**
-     * Executa passo ou subpasso seguinte da reparação
-      */
-    public void efetuaReparacaoProgramada(ReparacaoProgramada reparacao, int custoMaoDeObraReal, Duration duracaoReal
-                                            , Collection<Componente> componentesReais)
-            throws NaoPodeSerReparadoAgoraException, NaoExisteException {
-        //if (utilizadorAutenticado instanceof Tecnico) {
-                boolean completa = reparacao.efetuaReparacao(utilizadorAutenticado.getId(),
-                        custoMaoDeObraReal, duracaoReal, componentesReais);
-            if (completa) {
-                marcaReparacaoCompleta(reparacao);
-                enviaMailReparacaoConcluida(reparacao, clientes.get(reparacao.getIdCliente()));
-            }
-        //}
-    }
 
     public boolean verificaExcedeOrcamento(float novoCusto, ReparacaoProgramada reparacaoProgramada) {
         return reparacaoProgramada.ultrapassouOrcamento(novoCusto);
     }
 
-    private void enviaMailReparacaoConcluida(Reparacao r , Cliente cliente) {
-        email.enviaMail(cliente.getEmail(),"Reparacao Concluida", "Caro " + cliente.getNome() +
+    private void enviaMailReparacaoConcluida(Reparacao r, Cliente cliente) {
+        email.enviaMail(cliente.getEmail(), "Reparacao Concluida", "Caro " + cliente.getNome() +
                 " a sua encomenda está completa. Por favor levante o seu equipamento na loja.\n");
         r.marcaComoNotificado();
     }
 
-    private void marcaComoEntregueConluida(Reparacao r){
+    private void marcaComoEntregueConluida(Reparacao r) {
         r.marcaComoEntregueConcluida(utilizadorAutenticado.getId());
     }
 
-    private void marcaComoEntregueRecusada(Reparacao r){
+    private void marcaComoEntregueRecusada(Reparacao r) {
         r.marcaComoEntregueRecusada(utilizadorAutenticado.getId());
     }
 
@@ -183,16 +168,16 @@ public class SGR implements SGRInterface {
 
 
     public void iniciaReparacaoExpresso(ReparacaoExpresso r) throws TecnicoNaoAtribuidoException {
-        if(!r.getIdTecnicoReparou().equals(utilizadorAutenticado.getId()))
+        if (!r.getIdTecnicoReparou().equals(utilizadorAutenticado.getId()))
             throw new TecnicoNaoAtribuidoException();
         ((Tecnico) utilizadorAutenticado).ocupaTecnico();
     }
 
     public void concluiReparacaoExpresso(ReparacaoExpresso r, Duration duracaoReal) throws TecnicoNaoAtribuidoException, ReparacaoNaoExisteException {
-        if(!r.getIdTecnicoReparou().equals(utilizadorAutenticado.getId()))
+        if (!r.getIdTecnicoReparou().equals(utilizadorAutenticado.getId()))
             throw new TecnicoNaoAtribuidoException();
         ((Tecnico) utilizadorAutenticado).libertaTecnico();
-        reparacoes.concluiExpresso(r.getId(),duracaoReal);
+        reparacoes.concluiExpresso(r.getId(), duracaoReal);
 
     }
 
@@ -316,7 +301,7 @@ public class SGR implements SGRInterface {
                 .collect(Collectors.toList());
     }
 
-    public Tecnico getTecnicoDisponivel() throws NaoHaTecnicosDisponiveisException{
+    public Tecnico getTecnicoDisponivel() throws NaoHaTecnicosDisponiveisException {
         return utilizadores.getByClass(Tecnico.class).stream()
                 .filter(Predicate.not(Tecnico::estaOcupado))
                 .findFirst()
@@ -328,7 +313,7 @@ public class SGR implements SGRInterface {
     //#########
     public void criaCliente(String NIF, String nome, String email, String numeroTelemovel,
                             String funcionarioCriador) throws JaExisteException {
-        Cliente cliente = new Cliente(NIF,nome,email,numeroTelemovel,funcionarioCriador);
+        Cliente cliente = new Cliente(NIF, nome, email, numeroTelemovel, funcionarioCriador);
 
         clientes.add(cliente);
     }
@@ -345,7 +330,7 @@ public class SGR implements SGRInterface {
     //#REPARACAO#
     //###########
     public void criaReparacaoProgramada(String nifCliente, String descricao) throws NaoExisteException {
-        if(clientes.get(nifCliente) == null)
+        if (clientes.get(nifCliente) == null)
             throw new ClienteNaoExisteException();
         ReparacaoProgramada reparacao = new ReparacaoProgramada(nifCliente, utilizadorAutenticado.getId(), descricao);
         reparacoes.adicionaReparacaoProgramadaAtual(reparacao);
@@ -387,7 +372,7 @@ public class SGR implements SGRInterface {
     public Collection<ReparacaoProgramada> getReparacoesAguardarOrcamento() {
         return reparacoes.getReparacoesProgramadasAtuais().stream()
                 .filter(ReparacaoProgramada::estaPausado) // para garantir que nenhum tecnico esta a reparar
-                .filter( r -> r.getFase().equals(Fase.AEsperaOrcamento))
+                .filter(r -> r.getFase().equals(Fase.AEsperaOrcamento))
                 .collect(Collectors.toList());
     }
 
@@ -415,18 +400,18 @@ public class SGR implements SGRInterface {
         return equipamentos.getComponentes();
     }
 
-    public Componente getComponente(Integer id) throws EquipamentoNaoExisteException{
+    public Componente getComponente(Integer id) throws EquipamentoNaoExisteException {
         return equipamentos.getComponente(id);
     }
 
-    public Collection<Componente> pesquisaComponentes (String stringPesquisa) {
+    public Collection<Componente> pesquisaComponentes(String stringPesquisa) {
         List<String> searchTokens = Arrays.asList(stringPesquisa.split(" "));
         return equipamentos.getComponentes().stream()
                 .filter(comp -> List.of(comp.getDescricao()).containsAll(searchTokens))
                 .collect(Collectors.toList());
     }
 
-    public Componente getComponenteByDescricao (String descricao) {
+    public Componente getComponenteByDescricao(String descricao) {
         return equipamentos.getComponentes()
                 .stream()
                 .filter(e -> e.getDescricao().equals(descricao))
@@ -437,6 +422,7 @@ public class SGR implements SGRInterface {
     public void apagaUtilizador(String idUtilizador) throws NaoExisteException {
         utilizadores.remove(idUtilizador);
     }
+
     public void apagaCliente(String idCliente) throws NaoExisteException {
         clientes.remove(idCliente);
     }

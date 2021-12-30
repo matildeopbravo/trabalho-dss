@@ -4,7 +4,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public abstract class PopUp<T> implements Navigator {
+public abstract class PopUp<T> {
     class OnDone {
         public void run(T result, String message) {}
     }
@@ -15,21 +15,6 @@ public abstract class PopUp<T> implements Navigator {
     private OnDone onDone;
 
     protected abstract Scene getScene();
-
-    @Override
-    public void navigateTo(Navigatable node) {
-        // TODO: stack
-    }
-
-    @Override
-    public void navigateBack() {
-        // TODO: Do nothing?
-    }
-
-    @Override
-    public void navigateBack(String message) {
-
-    }
 
     public void setStage(Stage stage) {
         this.stage = stage;
