@@ -117,6 +117,18 @@ public class ReparacoesDAO implements IReparacoes, Serializable {
     }
 
     @Override
+    public void marcaComoEntregue(int idReparacao) throws ReparacaoNaoExisteException {
+        Reparacao re = reparacoesExpressoAtuais.remove(idReparacao);
+        if (re == null) {
+            re = reparacoesProgramadasAtuais.remove(idReparacao);
+        }
+        if( re == null) throw new ReparacaoNaoExisteException();
+        reparacoesConcluidas.put(re.getId(), re);
+
+
+    }
+
+    @Override
     public Reparacao get(Integer id) throws NaoExisteException {
         return getAll().stream().filter(c -> c.getId() == id).findAny().orElseThrow(NaoExisteException::new);
     }

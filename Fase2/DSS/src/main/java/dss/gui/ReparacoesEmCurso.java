@@ -1,11 +1,10 @@
 package dss.gui;
 
 import dss.business.SGR.SGRInterface;
-import dss.business.reparacao.Reparacao;
+import dss.business.equipamento.Fase;
 import dss.business.reparacao.Reparacao;
 import dss.business.reparacao.ReparacaoExpresso;
 import dss.business.reparacao.ReparacaoProgramada;
-import dss.business.utilizador.Utilizador;
 import dss.exceptions.NaoExisteException;
 import dss.exceptions.TecnicoNaoAtribuidoException;
 import javafx.beans.property.SimpleStringProperty;
@@ -18,6 +17,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -65,7 +65,6 @@ public class ReparacoesEmCurso implements Navigatable {
         idEquipamento.setCellValueFactory(cellData -> new SimpleStringProperty(sgr.getEquipamentoByIdCliente(cellData.getValue().getIdCliente()).toString()));
 
 
-
         this.reparar.setDisable(true);
         this.concluir.setDisable(true);
         this.pausar.setDisable(true);
@@ -73,7 +72,7 @@ public class ReparacoesEmCurso implements Navigatable {
             selected = reparacao;
             boolean isNull = selected == null;
 
-            this.reparar.setDisable(isNull);
+            this.reparar.setDisable(isNull || selected.getFase().equals(Fase.EmReparacao));
             this.concluir.setDisable(isNull);
             this.pausar.setDisable(isNull);
 
@@ -106,12 +105,15 @@ public class ReparacoesEmCurso implements Navigatable {
             });
             this.concluir.setOnAction(ev -> {
                 if (selected != null) {
-                    try {
-                        sgr.concluiReparacao(selected);
-                    } catch (NaoExisteException e) {
-                        e.printStackTrace();
-                    }
-                    navigator.navigateBack("Reparação Expresso Concluida");
+                        DuracaoPopUp pop = new DuracaoPopUp(navigator);
+                        pop.setOnDone((dur,des) -> {
+                            try {
+                                sgr.concluiReparacao((ReparacaoExpresso) selected, dur);
+                            } catch (NaoExisteException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                        navigator.openPopup(pop);
                 }
             });
 

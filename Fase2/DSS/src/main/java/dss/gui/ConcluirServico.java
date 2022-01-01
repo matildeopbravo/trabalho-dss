@@ -1,6 +1,7 @@
 package dss.gui;
 
 import dss.business.SGR.SGRInterface;
+import dss.business.equipamento.Fase;
 import dss.exceptions.NaoExisteException;
 import dss.exceptions.ReparacaoNaoExisteException;
 import javafx.scene.Node;
@@ -40,14 +41,12 @@ public class ConcluirServico extends  Form implements Navigatable {
     @Override
     protected List<String> submit() {
         if (validateSubmit()) {
-                // TODO popup a pedir a actual Duracao
             try {
-                sgr.marcaComoEntregueConcluida(idCliente.getText(), Duration.ZERO);
+                sgr.marcaComoEntregue(Fase.EntregueConcluida, idCliente.getText(), Integer.parseInt(idEquipamento.getText()));
             } catch (NaoExisteException e) {
-                // TODO
                 e.printStackTrace();
             }
-            navigator.navigateBack("Reparação Concluída!");
+            navigator.navigateBack("Serviço Concluída!");
                 return List.of();
         } else {
             // Isto não deve acontecer!

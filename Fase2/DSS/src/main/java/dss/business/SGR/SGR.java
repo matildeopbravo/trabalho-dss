@@ -188,18 +188,6 @@ public class SGR implements SGRInterface {
         return true;
     }
 
-    @Override
-    public void marcaComoEntregueConcluida(Reparacao r) {
-        r.marcaComoEntregueConcluida(utilizadorAutenticado.getId());
-    }
-
-    public void marcaComoEntregueConluida(ReparacaoExpresso r, Duration d) {
-        r.marcaComoEntregueConcluida(utilizadorAutenticado.getId());
-        try {
-            reparacoes.concluiExpresso(r.getId(),d);
-        } catch (ReparacaoNaoExisteException ignored) {
-        }
-    }
 
     @Override
     public void marcaComoEntregueRecusada(Reparacao r) {
@@ -246,7 +234,6 @@ public class SGR implements SGRInterface {
             default -> user = new Gestor(nome, id, password);
         }
         registaUtilizador(user);
-        System.out.println("Utilizador Registado");
     }
 
     @Override
@@ -441,6 +428,13 @@ public class SGR implements SGRInterface {
                 reparacao.setFase(Fase.Reparado);
     }
 
+    @Override
+    public void concluiReparacao(ReparacaoExpresso reparacao, Duration d) throws NaoExisteException {
+        concluiReparacao(reparacao);
+        reparacao.setDuracaoReal(d);
+    }
+
+
     public Pair<Boolean, Boolean> verificaSeCompleta(ReparacaoProgramada r) throws ClienteNaoExisteException {
         Cliente c = clientes.getCliente(r.getIdCliente());
         boolean sent = false;
@@ -496,29 +490,28 @@ public class SGR implements SGRInterface {
     @Override
     public Collection<ServicoExpressoTabelado> getServicosTabelados() {
         return servicoExpresso.values();
-
     }
 
-    @Override
-    public void marcaComoEntregueConcluida(String idCliente) throws ReparacaoNaoExisteException {
-        Reparacao r =  getReparacoesAtuais().stream().filter(re -> re.getIdCliente().equals(idCliente)).findFirst().orElseThrow(ReparacaoNaoExisteException::new);
-        marcaComoEntregueConcluida(r);
+    public void marcaComoEntregue(Fase f, String idCliente, int idEquipamento ) throws NaoExisteException {
+        Reparacao r =  getReparacoesAtuais()
+                .stream()
+                .filter(re -> re.getIdCliente().equals(idCliente))
+                .findFirst()
+                .orElseThrow(ReparacaoNaoExisteException::new);
+        if(f.equals(Fase.EntregueConcluida)) {
+            r.marcaComoEntregueConcluida(utilizadorAutenticado.getId());
+        }
+        else {
+            r.marcaComoEntregueRecusada(utilizadorAutenticado.getId());
+        }
+        // remove da lista das atuais e move para as concluiads
+        reparacoes.marcaComoEntregue(r.getId());
+        equipamentos.remove(idEquipamento);
     }
 
     @Override
     public Equipamento getEquipamentoByIdCliente(String idCliente) {
-        System.out.println("Cliente: " + idCliente);
         return equipamentos.getEquipamnetoByIdCliente(idCliente);
-    }
-
-    @Override
-    public void marcaComoEntregueConcluida(String idCliente, Duration duracao) throws NaoExisteException {
-        Reparacao re = getReparacoesAtuais().stream().filter(r -> r.getIdCliente().equals(idCliente)).findFirst()
-                .orElseThrow(NaoExisteException::new);
-       marcaComoEntregueConcluida(re);
-       reparacoes.concluiExpresso(re.getId() ,duracao);
-
-
     }
 
     @Override

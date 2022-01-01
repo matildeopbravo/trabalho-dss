@@ -41,7 +41,7 @@ public class MainMenu implements Navigatable {
             Button aguardaAprovacaoButton = new Button("Reparações a aguardar aprovação");
             aguardaAprovacaoButton.setOnAction(s -> navigator.navigateTo(new AprovarRejeitarOrcamento(sgr, navigator)));
 
-            Button listaReparacoesButton = new Button("Todas as Reparações");
+            Button listaReparacoesButton = new Button("Todas as Reparaçõe Em Curso");
             listaReparacoesButton.setOnAction(s -> navigator.navigateTo(new TodasReparacoes(sgr, navigator)));
 
             Button listaReparacoesTabeladasButton = new Button("Serviços Expresso Tabelados");

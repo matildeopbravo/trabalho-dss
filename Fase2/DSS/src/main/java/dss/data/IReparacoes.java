@@ -3,6 +3,7 @@ package dss.data;
 import dss.business.reparacao.Reparacao;
 import dss.business.reparacao.ReparacaoExpresso;
 import dss.business.reparacao.ReparacaoProgramada;
+import dss.exceptions.NaoExisteException;
 import dss.exceptions.ReparacaoNaoExisteException;
 import dss.business.equipamento.Fase;
 import java.util.Collection;
@@ -19,4 +20,8 @@ public interface IReparacoes extends IDAO<Reparacao,Integer> {
     void arquivaReparacoesDeEquipamento(int idEquipamento);
     void marcarOrcamentoComoArquivado(ReparacaoProgramada reparacao);
     void arquivaReparacoesAntigas();
-}
+
+    void marcaComoEntregue(int idReparacao) throws ReparacaoNaoExisteException;
+
+
+    }
