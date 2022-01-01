@@ -1,16 +1,12 @@
 package dss.gui;
 
 import dss.business.SGR.SGRInterface;
-import dss.business.utilizador.TipoUtilizador;
-import dss.exceptions.JaExisteException;
+import dss.exceptions.NaoExisteException;
 import dss.exceptions.ReparacaoNaoExisteException;
-import javafx.collections.FXCollections;
 import javafx.scene.Node;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
-import java.util.ArrayList;
+import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -44,9 +40,11 @@ public class ConcluirServico extends  Form implements Navigatable {
     @Override
     protected List<String> submit() {
         if (validateSubmit()) {
+                // TODO popup a pedir a actual Duracao
             try {
-                sgr.marcaComoEntregueConluida(idCliente.getText());
-            } catch (ReparacaoNaoExisteException e) {
+                sgr.marcaComoEntregueConcluida(idCliente.getText(), Duration.ZERO);
+            } catch (NaoExisteException e) {
+                // TODO
                 e.printStackTrace();
             }
             navigator.navigateBack("Reparação Concluída!");

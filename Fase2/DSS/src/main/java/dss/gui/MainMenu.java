@@ -3,6 +3,8 @@ package dss.gui;
 import dss.business.SGR.SGR;
 import dss.business.SGR.SGRInterface;
 import dss.business.reparacao.Reparacao;
+import dss.business.reparacao.ReparacaoExpresso;
+import dss.business.reparacao.ReparacaoProgramada;
 import dss.business.utilizador.Funcionario;
 import dss.business.utilizador.Gestor;
 import dss.business.utilizador.Tecnico;
@@ -39,7 +41,7 @@ public class MainMenu implements Navigatable {
             Button aguardaAprovacaoButton = new Button("Reparações a aguardar aprovação");
             aguardaAprovacaoButton.setOnAction(s -> navigator.navigateTo(new AprovarRejeitarOrcamento(sgr, navigator)));
 
-            Button listaReparacoesButton = new Button("Lista de Reparações");
+            Button listaReparacoesButton = new Button("Todas as Reparações");
             listaReparacoesButton.setOnAction(s -> navigator.navigateTo(new TodasReparacoes(sgr, navigator)));
 
             Button listaReparacoesTabeladasButton = new Button("Serviços Expresso Tabelados");
@@ -54,7 +56,8 @@ public class MainMenu implements Navigatable {
             Button aguardarOrcamentoButton = new Button("Reparações a aguardar Orçamento");
             aguardarOrcamentoButton.setOnAction(s -> navigator.navigateTo(new AguardarOrcamento(sgr, navigator)));
 
-            Button reparacoesEmCurso = new Button("Reparações em Curso");
+            // ainda nao foram entregues
+            Button reparacoesEmCurso = new Button("Reparações Programadas Atuais");
             reparacoesEmCurso.setOnAction(s -> navigator.navigateTo(new ReparacoesEmCurso(sgr, navigator,
                     () -> sgr.getReparacoesProgramadasEmCurso()
                             .stream()
@@ -65,9 +68,9 @@ public class MainMenu implements Navigatable {
             Button reparacosEmCursoExpresso = new Button("Reparações Expresso Atuais");
             reparacosEmCursoExpresso.setOnAction(s -> {
                 navigator.navigateTo(new ReparacoesEmCurso(sgr, navigator,
-                        () -> sgr.getReparacoesExpresso()
+                        () -> sgr.getReparacoesAtuais()
                                 .stream()
-                                .map(Reparacao.class::cast)
+                                .filter(r -> r instanceof ReparacaoExpresso)
                                 .collect(Collectors.toList())
                         , false));
             });

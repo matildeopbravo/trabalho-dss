@@ -189,8 +189,16 @@ public class SGR implements SGRInterface {
     }
 
     @Override
-    public void marcaComoEntregueConluida(Reparacao r) {
+    public void marcaComoEntregueConcluida(Reparacao r) {
         r.marcaComoEntregueConcluida(utilizadorAutenticado.getId());
+    }
+
+    public void marcaComoEntregueConluida(ReparacaoExpresso r, Duration d) {
+        r.marcaComoEntregueConcluida(utilizadorAutenticado.getId());
+        try {
+            reparacoes.concluiExpresso(r.getId(),d);
+        } catch (ReparacaoNaoExisteException ignored) {
+        }
     }
 
     @Override
@@ -211,6 +219,7 @@ public class SGR implements SGRInterface {
         if (!r.getIdTecnicoReparou().equals(utilizadorAutenticado.getId()))
             throw new TecnicoNaoAtribuidoException();
         ((Tecnico) utilizadorAutenticado).ocupaTecnico();
+        r.setFase(Fase.EmReparacao);
     }
 
     @Override
@@ -424,16 +433,12 @@ public class SGR implements SGRInterface {
     }
 
     @Override
-    public void concluiReparacao(Reparacao reparacao) {
-        reparacao.setFase(Fase.EntregueConcluida);
-        if (reparacao instanceof ReparacaoExpresso e) {
-            try {
-                ((Tecnico) getUtilizador(e.getIdTecnicoReparou())).libertaTecnico();
-            } catch (NaoExisteException ex) {
-                // Não deve acontecer!
-                ex.printStackTrace();
-            }
-        }
+    public void concluiReparacao(Reparacao reparacao) throws NaoExisteException {
+                List<String> l = reparacao.getTecnicosQueRepararam();
+                // tecnico a conlcuir
+                ((Tecnico) getUtilizador(l.get(l.size() - 1))).libertaTecnico();
+                enviaMailReparacaoConcluida(reparacao,clientes.getCliente(reparacao.getIdCliente()));
+                reparacao.setFase(Fase.Reparado);
     }
 
     public Pair<Boolean, Boolean> verificaSeCompleta(ReparacaoProgramada r) throws ClienteNaoExisteException {
@@ -442,7 +447,6 @@ public class SGR implements SGRInterface {
         if (r.reparado()) {
             if (c.getEmail() != null) {
                 enviaMailReparacaoConcluida(r, c);
-                r.marcaComoNotificado();
                 r.setFase(Fase.Reparado);
                 sent = true;
             }
@@ -496,15 +500,25 @@ public class SGR implements SGRInterface {
     }
 
     @Override
-    public void marcaComoEntregueConluida(String idCliente) throws ReparacaoNaoExisteException {
+    public void marcaComoEntregueConcluida(String idCliente) throws ReparacaoNaoExisteException {
         Reparacao r =  getReparacoesAtuais().stream().filter(re -> re.getIdCliente().equals(idCliente)).findFirst().orElseThrow(ReparacaoNaoExisteException::new);
-        marcaComoEntregueConluida(r);
+        marcaComoEntregueConcluida(r);
     }
 
     @Override
     public Equipamento getEquipamentoByIdCliente(String idCliente) {
         System.out.println("Cliente: " + idCliente);
         return equipamentos.getEquipamnetoByIdCliente(idCliente);
+    }
+
+    @Override
+    public void marcaComoEntregueConcluida(String idCliente, Duration duracao) throws NaoExisteException {
+        Reparacao re = getReparacoesAtuais().stream().filter(r -> r.getIdCliente().equals(idCliente)).findFirst()
+                .orElseThrow(NaoExisteException::new);
+       marcaComoEntregueConcluida(re);
+       reparacoes.concluiExpresso(re.getId() ,duracao);
+
+
     }
 
     @Override

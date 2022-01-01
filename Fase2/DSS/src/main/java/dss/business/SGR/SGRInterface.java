@@ -14,6 +14,7 @@ import dss.business.utilizador.Utilizador;
 import dss.exceptions.*;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +51,7 @@ public interface SGRInterface {
 
     boolean enviaMailReparacaoConcluida(Reparacao r, Cliente cliente);
 
-    void marcaComoEntregueConluida(Reparacao r);
+    void marcaComoEntregueConcluida(Reparacao r);
 
     void marcaComoEntregueRecusada(Reparacao r);
 
@@ -60,7 +61,7 @@ public interface SGRInterface {
 
     void adicionaEquipamento(Equipamento equipamento) throws FichaDesteClienteJaExisteException;
 
-    void concluiReparacao(Reparacao reparacao);
+    void concluiReparacao(Reparacao reparacao) throws NaoExisteException;
 
     Utilizador getUtilizadorAutenticado();
 
@@ -134,7 +135,9 @@ public interface SGRInterface {
 
     Collection<ServicoExpressoTabelado> getServicosTabelados();
 
-    void marcaComoEntregueConluida(String text) throws ReparacaoNaoExisteException;
+    void marcaComoEntregueConcluida(String text) throws ReparacaoNaoExisteException;
 
     Equipamento getEquipamentoByIdCliente(String idCliente);
+
+    void marcaComoEntregueConcluida(String idCliente, Duration zero) throws NaoExisteException;
 }

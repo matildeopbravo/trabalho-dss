@@ -87,7 +87,11 @@ public class Reparar implements Navigatable {
                         updatePasso();
                     else {
                         navigator.navigateBack("Reparação concluída");
-                        sgr.concluiReparacao(reparacao);
+                        try {
+                            sgr.concluiReparacao(reparacao);
+                        } catch (NaoExisteException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }

@@ -76,7 +76,6 @@ public class TodosUtilizadores implements Navigatable {
         });
 
         tabelaUtilizadores.getSelectionModel().selectedItemProperty().addListener((observableValue, old, cliente) -> {
-            System.out.println("Selected " + cliente);
             selected = cliente;
 
             deleteButton.setDisable(selected == null);

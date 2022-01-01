@@ -14,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
@@ -25,6 +26,8 @@ public class ReparacoesEmCurso implements Navigatable {
     private Navigator navigator;
     private TableView<Reparacao> tabela;
     private Button reparar = new Button("Reparar");
+    private Button pausar =  new Button("Pausar/Retomar");
+    private Button concluir =new Button("Concluir");
     private Reparacao selected;
     private Supplier<List<Reparacao>> fun;
     private boolean isProgramada ;
@@ -62,13 +65,18 @@ public class ReparacoesEmCurso implements Navigatable {
         idEquipamento.setCellValueFactory(cellData -> new SimpleStringProperty(sgr.getEquipamentoByIdCliente(cellData.getValue().getIdCliente()).toString()));
 
 
-        this.tabela.getColumns().setAll(idReparacao,nifCliente, idEquipamento, fase, ultimoTecnicoAReparar, descricao);
 
         this.reparar.setDisable(true);
+        this.concluir.setDisable(true);
+        this.pausar.setDisable(true);
         this.tabela.getSelectionModel().selectedItemProperty().addListener((observableValue, old, reparacao) -> {
             selected = reparacao;
+            boolean isNull = selected == null;
 
-            this.reparar.setDisable(selected == null);
+            this.reparar.setDisable(isNull);
+            this.concluir.setDisable(isNull);
+            this.pausar.setDisable(isNull);
+
         });
         this.tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
@@ -78,18 +86,35 @@ public class ReparacoesEmCurso implements Navigatable {
                     navigator.navigateTo(new Reparar(sgr, navigator, (ReparacaoProgramada) selected));
                 }
             });
+            TableColumn<Reparacao, String> pausada = new TableColumn<>("pausada");
+            pausada.setCellValueFactory(cellData ->
+                    new SimpleStringProperty( Boolean.toString(((ReparacaoProgramada) cellData.getValue()).estaPausado())));
+            this.tabela.getColumns().setAll(idReparacao,nifCliente, idEquipamento, pausada, fase, ultimoTecnicoAReparar, descricao);
+
         }
         else {
+            this.tabela.getColumns().setAll(idReparacao,nifCliente, idEquipamento, fase, ultimoTecnicoAReparar, descricao);
             this.reparar.setOnAction(ev -> {
                 if (selected != null) {
-                    // TODO
                     try {
                         sgr.iniciaReparacaoExpresso((ReparacaoExpresso) selected);
+                        navigator.navigateBack("Reparação Expresso Iniciada");
                     } catch (TecnicoNaoAtribuidoException e) {
-                        // TODO
+                        // ESTA REPARACAO NAO ESTA ATRIBUIDA A ESTE TECNICO
                     }
                 }
             });
+            this.concluir.setOnAction(ev -> {
+                if (selected != null) {
+                    try {
+                        sgr.concluiReparacao(selected);
+                    } catch (NaoExisteException e) {
+                        e.printStackTrace();
+                    }
+                    navigator.navigateBack("Reparação Expresso Concluida");
+                }
+            });
+
 
         }
         this.fun = fun;
@@ -100,14 +125,24 @@ public class ReparacoesEmCurso implements Navigatable {
     @Override
     public Node getScene() {
         VBox vbox = new VBox();
+        vbox.setSpacing(10.0);
 
         VBox.setVgrow(this.tabela, Priority.ALWAYS);
         this.tabela.setMaxHeight(Double.MAX_VALUE);
 
         this.tabela.getItems().setAll(fun.get());
+        HBox buttons = new HBox();
+        buttons.setSpacing(5.0);
+
 
         vbox.setSpacing(5);
-        vbox.getChildren().addAll(tabela, reparar);
+        if(isProgramada) {
+            buttons.getChildren().addAll(reparar,pausar);
+        }
+        else {
+            buttons.getChildren().addAll(reparar,concluir);
+        }
+        vbox.getChildren().addAll(tabela, buttons );
 
         return vbox;
     }
