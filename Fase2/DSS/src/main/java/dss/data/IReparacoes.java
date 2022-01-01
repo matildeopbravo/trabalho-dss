@@ -16,6 +16,7 @@ public interface IReparacoes extends IDAO<Reparacao,Integer> {
     Collection<ReparacaoProgramada> getReparacoesProgramadasAtuais();
     Collection<ReparacaoExpresso> getReparacoesExpressoAtuais();
     void concluiExpresso(int id, Duration duracaoReal) throws ReparacaoNaoExisteException;
+    void marcarComoConcluido(Reparacao reparacao);
     void adicionaReparacaoExpressoAtual(ReparacaoExpresso reparacaoExpresso);
     void arquivaReparacoesDeEquipamento(int idEquipamento);
     void marcarOrcamentoComoArquivado(ReparacaoProgramada reparacao);

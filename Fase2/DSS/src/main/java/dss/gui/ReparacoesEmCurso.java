@@ -64,6 +64,7 @@ public class ReparacoesEmCurso implements Navigatable {
         TableColumn<Reparacao, String> idEquipamento = new TableColumn<>("Id Equipamento");
         idEquipamento.setCellValueFactory(cellData -> new SimpleStringProperty(sgr.getEquipamentoByIdCliente(cellData.getValue().getIdCliente()).toString()));
 
+        this.tabela.getColumns().setAll(idReparacao,nifCliente, idEquipamento, fase, ultimoTecnicoAReparar, descricao);
 
         this.reparar.setDisable(true);
         this.concluir.setDisable(true);
@@ -88,7 +89,6 @@ public class ReparacoesEmCurso implements Navigatable {
             TableColumn<Reparacao, String> pausada = new TableColumn<>("pausada");
             pausada.setCellValueFactory(cellData ->
                     new SimpleStringProperty( Boolean.toString(((ReparacaoProgramada) cellData.getValue()).estaPausado())));
-            this.tabela.getColumns().setAll(idReparacao,nifCliente, idEquipamento, pausada, fase, ultimoTecnicoAReparar, descricao);
 
         }
         else {

@@ -1,6 +1,0 @@
-# Copiar este ficheiro para resources/config/config.properties e colocar os valores corretos
-mailgun.apiUrl=https://api.eu.mailgun.net/v3
-mailgun.domain=dss.pta2002.com
-mailgun.email=reparacoes@dss.pta2002.com
-mailgun.from=Reparações DSS
-mailgun.key=key-XXXXXXXXXXXXXXXXXXXXXX

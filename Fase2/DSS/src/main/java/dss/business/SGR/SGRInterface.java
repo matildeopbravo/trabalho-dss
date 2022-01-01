@@ -53,8 +53,6 @@ public interface SGRInterface {
 
     boolean enviaMailReparacaoConcluida(Reparacao r, Cliente cliente);
 
-    void marcaComoEntregueRecusada(Reparacao r);
-
     void enviaMailOrcamentoUltrapassado(ReparacaoProgramada r, Cliente c);
 
     void iniciaReparacaoExpresso(ReparacaoExpresso r) throws TecnicoNaoAtribuidoException;

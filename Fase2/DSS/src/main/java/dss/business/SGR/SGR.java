@@ -188,12 +188,6 @@ public class SGR implements SGRInterface {
         return true;
     }
 
-
-    @Override
-    public void marcaComoEntregueRecusada(Reparacao r) {
-        r.marcaComoEntregueRecusada(utilizadorAutenticado.getId());
-    }
-
     @Override
     public void enviaMailOrcamentoUltrapassado(ReparacaoProgramada r, Cliente c) {
         email.enviaMail(c.getEmail(), "Orçamento Ultrapassado", "Caro " + c.getNome() +
@@ -373,6 +367,13 @@ public class SGR implements SGRInterface {
             throw new ClienteNaoExisteException();
         ReparacaoProgramada reparacao = new ReparacaoProgramada(nifCliente, utilizadorAutenticado.getId(), descricao);
         reparacoes.adicionaReparacaoProgramadaAtual(reparacao);
+        Equipamento e = reparacao.getEquipamentoAReparar();
+        try {
+            equipamentos.add(e);
+        } catch (JaExisteException ex) {
+            //TODO ver o q fazer
+            ex.printStackTrace();
+        }
         return reparacao;
     }
 
@@ -460,7 +461,10 @@ public class SGR implements SGRInterface {
 
     @Override
     public Equipamento getEquipamento(int id) throws EquipamentoNaoExisteException {
-        return equipamentos.getEquipamento(id);
+        Equipamento e = equipamentos.getEquipamento(id);
+        if( e == null)
+            throw new EquipamentoNaoExisteException();
+        return e;
     }
 
     public Collection<Componente> getComponentes() {
