@@ -44,8 +44,10 @@ public class SGR implements SGRInterface {
         clientes = new ClientesDAO();
 
         try {
-            utilizadores.add(new Gestor("Exemplo", "123456789", "password"));
-            utilizadores.add(new Gestor("Exemplo 2", "1", ""));
+            utilizadores.add(new Gestor("Exemplo Gestor", "123456789", "password"));
+            utilizadores.add(new Tecnico("Exemplo Técnico", "123456788", "password"));
+            utilizadores.add(new Funcionario("Exemplo Funcionário 1", "123456787", "password"));
+            utilizadores.add(new Funcionario("Exemplo Funcionário 2", "123456786", "password"));
         } catch (JaExisteException e) {
             e.printStackTrace();
         }
@@ -82,10 +84,12 @@ public class SGR implements SGRInterface {
     //####MÉTODOS####
 
     @Override
-    public void criaReparacaoExpresso(int idServico, String idCliente, String idTecnico, String descricao) {
+    public ReparacaoExpresso criaReparacaoExpresso(int idServico, String idCliente, String idTecnico, String descricao) throws FichaDesteClienteJaExisteException {
         ReparacaoExpresso r = new ReparacaoExpresso(servicoExpresso.get(idServico), idCliente,
                 utilizadorAutenticado.getId(), idTecnico, descricao);
+        adicionaEquipamento(new Equipamento(idCliente,LocalDateTime.now()));
         reparacoes.adicionaReparacaoExpressoAtual(r);
+        return r;
     }
 
     @Override
@@ -415,7 +419,7 @@ public class SGR implements SGRInterface {
     //#EQUIPAMENTO#
     //#############
     @Override
-    public void adicionaEquipamento(Equipamento equipamento) throws EquipamentoJaExisteException {
+    public void adicionaEquipamento(Equipamento equipamento) throws FichaDesteClienteJaExisteException {
         equipamentos.adicionaEquipamento(equipamento);
     }
 
@@ -495,6 +499,12 @@ public class SGR implements SGRInterface {
     public void marcaComoEntregueConluida(String idCliente) throws ReparacaoNaoExisteException {
         Reparacao r =  getReparacoesAtuais().stream().filter(re -> re.getIdCliente().equals(idCliente)).findFirst().orElseThrow(ReparacaoNaoExisteException::new);
         marcaComoEntregueConluida(r);
+    }
+
+    @Override
+    public Equipamento getEquipamentoByIdCliente(String idCliente) {
+        System.out.println("Cliente: " + idCliente);
+        return equipamentos.getEquipamnetoByIdCliente(idCliente);
     }
 
     @Override

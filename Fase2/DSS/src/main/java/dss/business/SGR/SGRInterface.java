@@ -28,7 +28,7 @@ public interface SGRInterface {
 
     ReparacaoProgramada criaReparacaoProgramada(String nifCliente, String descricao) throws NaoExisteException;
 
-    void criaReparacaoExpresso(int idServico, String idCliente, String idTecnico, String descricao);
+    ReparacaoExpresso criaReparacaoExpresso(int idServico, String idCliente, String idTecnico, String descricao) throws FichaDesteClienteJaExisteException;
 
     void marcaOrcamentoComoAceite(ReparacaoProgramada r);
 
@@ -58,7 +58,7 @@ public interface SGRInterface {
 
     void iniciaReparacaoExpresso(ReparacaoExpresso r) throws TecnicoNaoAtribuidoException;
 
-    void adicionaEquipamento(Equipamento equipamento) throws EquipamentoJaExisteException;
+    void adicionaEquipamento(Equipamento equipamento) throws FichaDesteClienteJaExisteException;
 
     void concluiReparacao(Reparacao reparacao);
 
@@ -135,4 +135,6 @@ public interface SGRInterface {
     Collection<ServicoExpressoTabelado> getServicosTabelados();
 
     void marcaComoEntregueConluida(String text) throws ReparacaoNaoExisteException;
+
+    Equipamento getEquipamentoByIdCliente(String idCliente);
 }

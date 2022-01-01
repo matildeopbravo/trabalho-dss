@@ -1,17 +1,15 @@
 package dss.gui;
 
 import dss.business.SGR.SGRInterface;
-import dss.business.reparacao.ReparacaoExpresso;
+import dss.business.reparacao.Reparacao;
 import dss.business.reparacao.ServicoExpressoTabelado;
 import dss.business.utilizador.Tecnico;
-import dss.business.utilizador.TipoUtilizador;
-import dss.exceptions.JaExisteException;
+import dss.exceptions.FichaDesteClienteJaExisteException;
 import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -54,8 +52,14 @@ public class NovaReparacaoExpresso extends Form implements Navigatable {
     @Override
     protected List<String> submit() {
         if (validateSubmit()) {
-                sgr.criaReparacaoExpresso(servicosExpresso.getValue().getId(),idCliente.getText(),tecnicos.getValue().getId(),descricao.getText());
-                navigator.navigateBack("Reparacao expresso criada!");
+            try {
+                Reparacao r =  sgr.criaReparacaoExpresso(servicosExpresso.getValue().getId(),idCliente.getText(),tecnicos.getValue().getId(),descricao.getText());
+                navigator.navigateBack("Código do equipamento é #" + sgr.getEquipamentoByIdCliente(r.getIdCliente()) + ".");
+
+            } catch (FichaDesteClienteJaExisteException e) {
+                // TODO
+            }
+            navigator.navigateBack("Reparacao expresso criada!");
                 return List.of();
         } else {
             // Isto não deve acontecer!

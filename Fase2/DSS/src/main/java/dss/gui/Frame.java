@@ -144,19 +144,7 @@ public class Frame implements Initializable, Navigator {
         Navigatable menu;
 
         Utilizador autenticado = sgr.getUtilizadorAutenticado();
-        if (autenticado instanceof  Gestor){
             menu = new MainMenu(sgr, this);
-        }
-        else if(autenticado instanceof Tecnico) {
-            menu = new TecnicoMenu(sgr, this);
-        }
-        else {
-            //TOPO MUDAR
-            menu = new TecnicoMenu(sgr, this);
-        }
-
-        //MainMenu mainMenu = new MainMenu(sgr, this);
-
         this.exitButton.setVisible(true);
         navigateTo(menu);
     }

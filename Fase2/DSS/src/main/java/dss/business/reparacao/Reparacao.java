@@ -26,7 +26,7 @@ public abstract class Reparacao implements Serializable {
         this.idCliente = idCliente;
         this.funcionarioCriador = funcionarioCriador;
         this.descricao = descricao;
-
+        this.fase = Fase.AEsperaOrcamento;
     }
 
     public Reparacao(String idCliente, String funcionarioCriador, String idTecnico, String descricao) {
@@ -73,6 +73,10 @@ public abstract class Reparacao implements Serializable {
 
     public void setFase(Fase fase) {
         this.fase = fase;
+    }
+
+    public Fase getFase() {
+        return this.fase;
     }
 
     public void setFuncionarioEntregou(String id) {

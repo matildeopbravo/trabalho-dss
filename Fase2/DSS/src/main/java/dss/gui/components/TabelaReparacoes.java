@@ -8,6 +8,7 @@ import dss.business.utilizador.Utilizador;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 public class TabelaReparacoes extends TableView<Reparacao> {
     private SGRInterface sgr;
@@ -16,6 +17,11 @@ public class TabelaReparacoes extends TableView<Reparacao> {
         super();
 
         this.sgr = sgr;
+        TableColumn<Reparacao, String> idReparacao = new TableColumn<>("ID");
+        idReparacao.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+        TableColumn<Reparacao, String> fase = new TableColumn<>("Fase");
+        fase.setCellValueFactory(new PropertyValueFactory<>("fase"));
 
         TableColumn<Reparacao, String> cliente = new TableColumn<>("Cliente");
         cliente.setCellValueFactory(cellData -> {
@@ -39,6 +45,6 @@ public class TabelaReparacoes extends TableView<Reparacao> {
             }
         });
 
-        this.getColumns().addAll(cliente, funcionarioCriador);
+        this.getColumns().addAll(idReparacao, fase, cliente, funcionarioCriador);
     }
 }

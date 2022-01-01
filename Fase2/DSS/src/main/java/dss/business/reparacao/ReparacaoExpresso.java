@@ -1,5 +1,7 @@
 package dss.business.reparacao;
 
+import dss.business.equipamento.Fase;
+
 import java.io.Serializable;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ public class ReparacaoExpresso extends Reparacao implements Intervencao, Seriali
 
     public ReparacaoExpresso(ServicoExpressoTabelado servicoTabelado, String idCliente, String utilizadorCriador, String idTecnico, String descricao ) {
         super(idCliente, utilizadorCriador,idTecnico, descricao);
+        this.fase = Fase.NaoIniciada;
         this.servicoTabelado = servicoTabelado;
     }
 

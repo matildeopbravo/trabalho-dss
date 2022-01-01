@@ -27,4 +27,8 @@ public class Equipamento implements Serializable  {
     public LocalDateTime getDataEntrega() {
         return dataEntrega;
     }
+
+    public String toString() {
+        return String.valueOf(idEquipamento);
+    }
 }

@@ -1,6 +1,8 @@
 package dss.gui;
 
+import dss.business.SGR.SGR;
 import dss.business.SGR.SGRInterface;
+import dss.business.reparacao.Reparacao;
 import dss.business.utilizador.Funcionario;
 import dss.business.utilizador.Gestor;
 import dss.business.utilizador.Tecnico;
@@ -9,6 +11,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class MainMenu implements Navigatable {
     private final SGRInterface sgr;
@@ -42,15 +48,34 @@ public class MainMenu implements Navigatable {
             Button concluirServicoButton = new Button("Concluir Serviço");
             concluirServicoButton.setOnAction(e -> navigator.navigateTo(new ConcluirServico(sgr, navigator)));
 
-            vbox.getChildren().addAll(allClientsButton, aguardaAprovacaoButton, listaReparacoesButton, listaReparacoesTabeladasButton, concluirServicoButton);
+            vbox.getChildren().addAll(allClientsButton, aguardaAprovacaoButton, listaReparacoesButton,
+                    listaReparacoesTabeladasButton, concluirServicoButton);
         } else if (sgr.getUtilizadorAutenticado() instanceof Tecnico) {
             Button aguardarOrcamentoButton = new Button("Reparações a aguardar Orçamento");
             aguardarOrcamentoButton.setOnAction(s -> navigator.navigateTo(new AguardarOrcamento(sgr, navigator)));
 
-            Button reparacoesEmCurso = new Button("Reprações em Curso");
-            reparacoesEmCurso.setOnAction(s -> navigator.navigateTo(new ReparacoesEmCurso(sgr, navigator)));
+            Button reparacoesEmCurso = new Button("Reparações em Curso");
+            reparacoesEmCurso.setOnAction(s -> navigator.navigateTo(new ReparacoesEmCurso(sgr, navigator,
+                    () -> sgr.getReparacoesProgramadasEmCurso()
+                            .stream()
+                            .map(Reparacao.class::cast)
+                            .collect(Collectors.toList()),true))
+            );
 
-            vbox.getChildren().addAll(aguardarOrcamentoButton, reparacoesEmCurso);
+            Button reparacosEmCursoExpresso = new Button("Reparações Expresso Atuais");
+            reparacosEmCursoExpresso.setOnAction(s -> {
+                navigator.navigateTo(new ReparacoesEmCurso(sgr, navigator,
+                        () -> sgr.getReparacoesExpresso()
+                                .stream()
+                                .map(Reparacao.class::cast)
+                                .collect(Collectors.toList())
+                        , false));
+            });
+
+            Button reparacoesExpressoButton = new Button ("Tabela de Serviços Expresso");
+            reparacoesExpressoButton.setOnAction(s -> navigator.navigateTo(new ReparacoesTabeladas(sgr)));
+
+            vbox.getChildren().addAll(aguardarOrcamentoButton, reparacoesEmCurso, reparacosEmCursoExpresso, reparacoesExpressoButton);
         } else if (sgr.getUtilizadorAutenticado() instanceof Gestor) {
             Button allUsersButton = new Button("Utilizadores");
             allUsersButton.setOnAction(e -> navigator.navigateTo(new TodosUtilizadores(sgr, navigator)));
@@ -60,7 +85,8 @@ public class MainMenu implements Navigatable {
             estatisticasFuncionarios.setOnAction(e -> navigator.navigateTo(new EstatisticasFuncionarios(sgr)));
             Button estatisticasDasReparacoesDosTecnicos = new Button("Estatísticas sobre as reparações dos Técnicos");
             estatisticasDasReparacoesDosTecnicos.setOnAction(e -> navigator.navigateTo(new EstatisticasTecnico(sgr)));
-            vbox.getChildren().addAll(allUsersButton, intervencoesTecnicos, estatisticasFuncionarios, estatisticasDasReparacoesDosTecnicos);
+            vbox.getChildren().addAll(allUsersButton, intervencoesTecnicos, estatisticasFuncionarios,
+                    estatisticasDasReparacoesDosTecnicos);
         }
 
         return vbox;

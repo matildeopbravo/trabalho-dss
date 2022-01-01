@@ -19,4 +19,5 @@ public class Tecnico extends Utilizador {
     public  void libertaTecnico() {
         ocupado = false;
     }
+
 }
