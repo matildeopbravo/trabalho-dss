@@ -42,7 +42,7 @@ public class ConcluirServico extends  Form implements Navigatable {
     protected List<String> submit() {
         if (validateSubmit()) {
             try {
-                sgr.marcaComoEntregue(Fase.EntregueConcluida, idCliente.getText(), Integer.parseInt(idEquipamento.getText()));
+                sgr.marcaComoEntregue(idCliente.getText(), Integer.parseInt(idEquipamento.getText()));
             } catch (NaoExisteException e) {
                 e.printStackTrace();
             }

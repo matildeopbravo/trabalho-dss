@@ -496,17 +496,17 @@ public class SGR implements SGRInterface {
         return servicoExpresso.values();
     }
 
-    public void marcaComoEntregue(Fase f, String idCliente, int idEquipamento ) throws NaoExisteException {
+    public void marcaComoEntregue(String idCliente, int idEquipamento ) throws NaoExisteException {
         Reparacao r =  getReparacoesAtuais()
                 .stream()
                 .filter(re -> re.getIdCliente().equals(idCliente))
                 .findFirst()
                 .orElseThrow(ReparacaoNaoExisteException::new);
-        if(f.equals(Fase.EntregueConcluida)) {
-            r.marcaComoEntregueConcluida(utilizadorAutenticado.getId());
+        if(r.getFase().equals(Fase.Recusada)) {
+            r.marcaComoEntregueRecusada(utilizadorAutenticado.getId());
         }
         else {
-            r.marcaComoEntregueRecusada(utilizadorAutenticado.getId());
+            r.marcaComoEntregueConcluida(utilizadorAutenticado.getId());
         }
         // remove da lista das atuais e move para as concluiads
         reparacoes.marcaComoEntregue(r.getId());

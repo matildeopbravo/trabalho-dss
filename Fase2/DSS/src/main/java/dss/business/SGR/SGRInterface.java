@@ -135,7 +135,7 @@ public interface SGRInterface {
 
     Equipamento getEquipamentoByIdCliente(String idCliente);
 
-    void marcaComoEntregue(Fase f, String idCliente, int idEquipamento ) throws NaoExisteException ;
+    void marcaComoEntregue(String idCliente, int idEquipamento ) throws NaoExisteException ;
 
     void concluiReparacao(ReparacaoExpresso reparacao, Duration d) throws NaoExisteException;
     }
