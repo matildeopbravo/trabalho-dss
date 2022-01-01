@@ -191,6 +191,7 @@ public class SGR implements SGRInterface {
     @Override
     public void marcaComoEntregueConcluida(Reparacao r) {
         r.marcaComoEntregueConcluida(utilizadorAutenticado.getId());
+        reparacoes.marcarComoConcluido(r);
     }
 
     public void marcaComoEntregueConluida(ReparacaoExpresso r, Duration d) {
@@ -386,6 +387,13 @@ public class SGR implements SGRInterface {
             throw new ClienteNaoExisteException();
         ReparacaoProgramada reparacao = new ReparacaoProgramada(nifCliente, utilizadorAutenticado.getId(), descricao);
         reparacoes.adicionaReparacaoProgramadaAtual(reparacao);
+        Equipamento e = reparacao.getEquipamentoAReparar();
+        try {
+            equipamentos.add(e);
+        } catch (JaExisteException ex) {
+            //TODO ver o q fazer
+            ex.printStackTrace();
+        }
         return reparacao;
     }
 
@@ -466,7 +474,10 @@ public class SGR implements SGRInterface {
 
     @Override
     public Equipamento getEquipamento(int id) throws EquipamentoNaoExisteException {
-        return equipamentos.getEquipamento(id);
+        Equipamento e = equipamentos.getEquipamento(id);
+        if( e == null)
+            throw new EquipamentoNaoExisteException();
+        return e;
     }
 
     public Collection<Componente> getComponentes() {
@@ -500,8 +511,15 @@ public class SGR implements SGRInterface {
     }
 
     @Override
-    public void marcaComoEntregueConcluida(String idCliente) throws ReparacaoNaoExisteException {
+    public void marcaComoEntregueConluida(String idCliente, String idEquipamento) throws ReparacaoNaoExisteException {
         Reparacao r =  getReparacoesAtuais().stream().filter(re -> re.getIdCliente().equals(idCliente)).findFirst().orElseThrow(ReparacaoNaoExisteException::new);
+        try {
+            Equipamento e = equipamentos.getEquipamento(Integer.valueOf(idEquipamento));
+            if(e.getIdCliente().equals(idCliente))
+                equipamentos.remove(Integer.valueOf(idEquipamento));
+        } catch (NaoExisteException ignored) {
+            throw  new ReparacaoNaoExisteException();
+        }
         marcaComoEntregueConcluida(r);
     }
 

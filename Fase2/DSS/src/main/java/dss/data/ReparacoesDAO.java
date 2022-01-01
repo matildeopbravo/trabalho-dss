@@ -99,6 +99,14 @@ public class ReparacoesDAO implements IReparacoes, Serializable {
         }
     }
 
+    public void marcarComoConcluido(Reparacao reparacao){
+        if (reparacao instanceof ReparacaoExpresso)
+            reparacoesExpressoAtuais.remove(reparacao.getId());
+        else
+            reparacoesProgramadasAtuais.remove(reparacao.getId());
+        reparacoesConcluidas.put(reparacao.getId(),reparacao);
+    }
+
     public void marcarOrcamentoComoArquivado(ReparacaoProgramada reparacao){
         reparacoesProgramadasAtuais.remove(reparacao.getId());
         reparacoesArquivadas.put(reparacao.getId(),reparacao);

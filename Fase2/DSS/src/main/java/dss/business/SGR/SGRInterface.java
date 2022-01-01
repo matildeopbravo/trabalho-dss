@@ -135,7 +135,7 @@ public interface SGRInterface {
 
     Collection<ServicoExpressoTabelado> getServicosTabelados();
 
-    void marcaComoEntregueConcluida(String text) throws ReparacaoNaoExisteException;
+    void marcaComoEntregueConluida(String text, String idEquipamento) throws ReparacaoNaoExisteException;
 
     Equipamento getEquipamentoByIdCliente(String idCliente);
 
