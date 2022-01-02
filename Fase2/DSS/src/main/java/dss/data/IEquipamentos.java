@@ -26,4 +26,5 @@ public interface IEquipamentos extends IDAO<Equipamento,Integer> {
 
     public Equipamento getEquipamnetoByIdCliente(String id) ;
 
-    }
+    void updateLastID();
+}

@@ -14,6 +14,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ReparacoesDAO implements IReparacoes, Serializable {
     private final HashMap<Integer, Reparacao> reparacoesConcluidas;
@@ -144,6 +145,14 @@ public class ReparacoesDAO implements IReparacoes, Serializable {
         reparacoesConcluidas.put(re.getId(), re);
 
 
+    }
+    @Override
+    public void updateLastID() {
+        int max = Stream.concat(reparacoesExpressoAtuais.keySet().stream(),
+                reparacoesProgramadasAtuais.keySet().stream())
+                .max(Comparator.naturalOrder())
+                .orElse(-1);
+        Reparacao.updateLastID(max);
     }
 
     @Override

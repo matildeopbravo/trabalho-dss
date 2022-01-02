@@ -69,7 +69,12 @@ public class SGR implements SGRInterface {
         this.reparacoes = (ReparacoesDAO) oi.readObject();
         this.equipamentos = (EquipamentosDAO) oi.readObject();
         this.clientes = (ClientesDAO) oi.readObject();
-        updateID(utilizadores,reparacoes,equipamentos,clientes);
+        updateLastID(reparacoes,equipamentos);
+    }
+
+    private void updateLastID(IReparacoes reparacoes, IEquipamentos equipamentos) {
+        reparacoes.updateLastID();
+        equipamentos.updateLastID();
     }
 
 
@@ -83,10 +88,6 @@ public class SGR implements SGRInterface {
         os.writeObject(this.clientes);
     }
 
-    private void updateID(IUtilizadores utilizadores, IReparacoes reparacoes, IEquipamentos equipamentos, IClientes clientes) {
-        System.out.println("Last ID: "  + Equipamento.lastId);
-
-    }
     //####MÉTODOS####
 
     @Override

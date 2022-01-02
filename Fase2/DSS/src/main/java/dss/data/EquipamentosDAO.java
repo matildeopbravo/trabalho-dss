@@ -2,6 +2,7 @@ package dss.data;
 
 import dss.business.equipamento.Componente;
 import dss.business.equipamento.Equipamento;
+import dss.business.reparacao.Reparacao;
 import dss.exceptions.ReparacaoDesteClienteJaExisteException;
 import dss.exceptions.EquipamentoNaoExisteException;
 import dss.exceptions.JaExisteException;
@@ -16,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class EquipamentosDAO implements IEquipamentos, Serializable{
     private final Map<Integer, Equipamento> equipamentoById;
@@ -93,6 +95,15 @@ public class EquipamentosDAO implements IEquipamentos, Serializable{
 
     public Equipamento getEquipamnetoByIdCliente(String id) {
         return equipamentoById.values().stream().filter(e -> e.getIdCliente().equals(id)).findAny().orElse(null);
+    }
+
+    @Override
+    public void updateLastID() {
+            int max = equipamentoById.keySet()
+                    .stream()
+                    .max(Comparator.naturalOrder())
+                    .orElse(-1);
+            Equipamento.updateLastID(max);
     }
 
     public Collection<Componente> getComponentes() {

@@ -26,4 +26,5 @@ public interface IReparacoes extends IDAO<Reparacao,Integer> {
     void marcaComoEntregue(int idReparacao) throws ReparacaoNaoExisteException;
 
 
-    }
+    void updateLastID();
+}

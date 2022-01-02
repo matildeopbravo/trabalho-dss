@@ -11,6 +11,9 @@ import dss.business.utilizador.Funcionario;
 import dss.business.utilizador.Tecnico;
 import dss.business.utilizador.TipoUtilizador;
 import dss.business.utilizador.Utilizador;
+import dss.data.IEquipamentos;
+import dss.data.IReparacoes;
+import dss.data.IUtilizadores;
 import dss.exceptions.*;
 
 import java.io.IOException;

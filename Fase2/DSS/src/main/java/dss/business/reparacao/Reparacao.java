@@ -34,6 +34,10 @@ public abstract class Reparacao implements Serializable {
         this.tecnicosQueRepararam.add(idTecnico);
     }
 
+    public static void updateLastID(int max) {
+        lastId = max;
+    }
+
 
     public abstract Duration getDuracaoReal();
 
