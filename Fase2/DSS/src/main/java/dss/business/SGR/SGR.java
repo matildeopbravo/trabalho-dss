@@ -274,13 +274,15 @@ public class SGR implements SGRInterface {
         //duracaoMediaDasReparacosProgramadas
         double duracaoMedia = supplierProgramadas.get()
                 .map(Reparacao::getDuracaoReal)
-                .map(Duration::toSeconds)
+                .map(Duration::toMinutes)
                 .mapToLong(Long::longValue)
                 .average()
                 .orElse(Double.NaN);
 
         double desvioMedio = supplierProgramadas.get()
-                .map(r -> Math.abs(r.getDuracaoPrevista().getSeconds() - r.getDuracaoReal().getSeconds()))
+                .map(r ->  r.getDuracaoPrevista().minus(r.getDuracaoReal()))
+                .map(Duration::toMinutes)
+                .map(Math::abs)
                 .mapToDouble(Long::doubleValue)
                 .average()
                 .orElse(Double.NaN);

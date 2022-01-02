@@ -21,10 +21,11 @@ public class TabelaIntervencoes extends TableView<LinhaIntervencao> {
         super();
 
         TableColumn<LinhaIntervencao, String> nif = new TableColumn<>("Id Técnico");
-        nif.setCellValueFactory(new PropertyValueFactory<>("idTecnico"));
+        nif.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTecnicoId()));
+        //nif.setCellValueFactory(new PropertyValueFactory<>("getTecnicoId"));
 
         TableColumn<LinhaIntervencao, String> descricao = new TableColumn<>("Descrição");
-        descricao.setCellValueFactory(new PropertyValueFactory<>("descricao"));
+        descricao.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDescricao()));
 
         TableColumn<LinhaIntervencao, String> duracaoReal = new TableColumn<>("Duração Real");
         duracaoReal.setCellValueFactory(cellData -> {
@@ -40,10 +41,10 @@ public class TabelaIntervencoes extends TableView<LinhaIntervencao> {
         duracaoPrevista.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDuracaoPrevista().toSeconds() / 60 + ""));
 
         TableColumn<LinhaIntervencao, String> custoTotalPrevisto = new TableColumn<>("Custo Total Previsto");
-        custoTotalPrevisto.setCellValueFactory(new PropertyValueFactory<>("custoTotalPrevisto"));
+        custoTotalPrevisto.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCustoTotalPrevisto() + ""));
 
         TableColumn<LinhaIntervencao, String> custoTotalReal = new TableColumn<>("Custo Total Real");
-        custoTotalReal.setCellValueFactory(new PropertyValueFactory<>("custoTotalReal"));
+        custoTotalReal.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCustoTotalReal()+""));
 
         this.getColumns().addAll(nif, descricao, duracaoReal, duracaoPrevista, custoTotalPrevisto, custoTotalReal);
         this.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
