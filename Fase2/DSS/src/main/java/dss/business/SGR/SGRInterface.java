@@ -4,7 +4,6 @@ import dss.business.auxiliar.Pair;
 import dss.business.cliente.Cliente;
 import dss.business.equipamento.Componente;
 import dss.business.equipamento.Equipamento;
-import dss.business.equipamento.Fase;
 import dss.business.estatisticas.EstatisticasFuncionario;
 import dss.business.estatisticas.EstatisticasReparacoesTecnico;
 import dss.business.reparacao.*;
@@ -13,7 +12,6 @@ import dss.business.utilizador.Tecnico;
 import dss.business.utilizador.TipoUtilizador;
 import dss.business.utilizador.Utilizador;
 import dss.exceptions.*;
-import javafx.scene.control.TextField;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -29,9 +27,9 @@ public interface SGRInterface {
 
     void writeToFile(String objectFile) throws IOException;
 
-    ReparacaoProgramada criaReparacaoProgramada(String nifCliente, String descricao) throws NaoExisteException;
+    ReparacaoProgramada criaReparacaoProgramada(String nifCliente, String descricao) throws NaoExisteException, JaExisteException;
 
-    ReparacaoExpresso criaReparacaoExpresso(int idServico, String idCliente, String idTecnico, String descricao) throws FichaDesteClienteJaExisteException;
+    ReparacaoExpresso criaReparacaoExpresso(int idServico, String idCliente, String idTecnico, String descricao) throws ReparacaoDesteClienteJaExisteException;
 
     void marcaOrcamentoComoAceite(ReparacaoProgramada r);
 
@@ -57,7 +55,7 @@ public interface SGRInterface {
 
     void iniciaReparacaoExpresso(ReparacaoExpresso r) throws TecnicoNaoAtribuidoException;
 
-    void adicionaEquipamento(Equipamento equipamento) throws FichaDesteClienteJaExisteException;
+    void adicionaEquipamento(Equipamento equipamento) throws ReparacaoDesteClienteJaExisteException;
 
     void concluiReparacao(Reparacao reparacao) throws NaoExisteException;
 
@@ -115,7 +113,7 @@ public interface SGRInterface {
 
     Collection<ReparacaoProgramada> getReparacoesProgramadas();
 
-    void adicionaReparacaoExpressoAtual(ReparacaoExpresso reparacao) throws ReparacaoJaExisteException;
+    void adicionaReparacaoExpressoAtual(ReparacaoExpresso reparacao) throws ReparacaoJaExisteException, ReparacaoDesteClienteJaExisteException;
 
     Collection<ReparacaoProgramada> getReparacoesAguardarOrcamento();
 
@@ -138,4 +136,5 @@ public interface SGRInterface {
     void marcaComoEntregue(String idCliente, int idEquipamento ) throws NaoExisteException ;
 
     void concluiReparacao(ReparacaoExpresso reparacao, Duration d) throws NaoExisteException;
+
     }

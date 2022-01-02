@@ -2,6 +2,7 @@ package dss.gui;
 
 import dss.business.SGR.SGRInterface;
 import dss.business.reparacao.ReparacaoProgramada;
+import dss.exceptions.JaExisteException;
 import dss.exceptions.NaoExisteException;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
@@ -50,6 +51,9 @@ public class NovaReparacaoProgramada extends Form implements Navigatable {
                 return List.of();
             } catch (NaoExisteException e) {
                 return List.of("Cliente não existe");
+            }
+            catch(JaExisteException e)  {
+                return List.of("CLiente já tem reparacao");
             }
         } else {
             // Isto não deve acontecer!

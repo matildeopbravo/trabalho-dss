@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public class Equipamento implements Serializable  {
-    private static int lastId = -1;
+    public static int lastId = -1;
 
     private final int idEquipamento;
     private final String idCliente;

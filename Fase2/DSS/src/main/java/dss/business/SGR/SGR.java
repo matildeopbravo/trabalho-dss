@@ -69,7 +69,9 @@ public class SGR implements SGRInterface {
         this.reparacoes = (ReparacoesDAO) oi.readObject();
         this.equipamentos = (EquipamentosDAO) oi.readObject();
         this.clientes = (ClientesDAO) oi.readObject();
+        updateID(utilizadores,reparacoes,equipamentos,clientes);
     }
+
 
     @Override
     public void writeToFile(String objectFile) throws IOException {
@@ -81,10 +83,14 @@ public class SGR implements SGRInterface {
         os.writeObject(this.clientes);
     }
 
+    private void updateID(IUtilizadores utilizadores, IReparacoes reparacoes, IEquipamentos equipamentos, IClientes clientes) {
+        System.out.println("Last ID: "  + Equipamento.lastId);
+
+    }
     //####MÉTODOS####
 
     @Override
-    public ReparacaoExpresso criaReparacaoExpresso(int idServico, String idCliente, String idTecnico, String descricao) throws FichaDesteClienteJaExisteException {
+    public ReparacaoExpresso criaReparacaoExpresso(int idServico, String idCliente, String idTecnico, String descricao) throws ReparacaoDesteClienteJaExisteException {
         ReparacaoExpresso r = new ReparacaoExpresso(servicoExpresso.get(idServico), idCliente,
                 utilizadorAutenticado.getId(), idTecnico, descricao);
         adicionaEquipamento(new Equipamento(idCliente,LocalDateTime.now()));
@@ -363,18 +369,13 @@ public class SGR implements SGRInterface {
     //#REPARACAO#
     //###########
     @Override
-    public ReparacaoProgramada criaReparacaoProgramada(String nifCliente, String descricao) throws NaoExisteException {
+    public ReparacaoProgramada criaReparacaoProgramada(String nifCliente, String descricao) throws NaoExisteException, JaExisteException {
         if (clientes.get(nifCliente) == null)
             throw new ClienteNaoExisteException();
         ReparacaoProgramada reparacao = new ReparacaoProgramada(nifCliente, utilizadorAutenticado.getId(), descricao);
         reparacoes.adicionaReparacaoProgramadaAtual(reparacao);
         Equipamento e = reparacao.getEquipamentoAReparar();
-        try {
-            equipamentos.add(e);
-        } catch (JaExisteException ex) {
-            //TODO ver o q fazer
-            ex.printStackTrace();
-        }
+        equipamentos.add(e);
         return reparacao;
     }
 
@@ -401,7 +402,7 @@ public class SGR implements SGRInterface {
     }
 
     @Override
-    public void adicionaReparacaoExpressoAtual(ReparacaoExpresso reparacao) throws ReparacaoJaExisteException {
+    public void adicionaReparacaoExpressoAtual(ReparacaoExpresso reparacao) throws ReparacaoDesteClienteJaExisteException {
         reparacoes.adicionaReparacaoExpressoAtual(reparacao);
     }
 
@@ -417,7 +418,7 @@ public class SGR implements SGRInterface {
     //#EQUIPAMENTO#
     //#############
     @Override
-    public void adicionaEquipamento(Equipamento equipamento) throws FichaDesteClienteJaExisteException {
+    public void adicionaEquipamento(Equipamento equipamento) throws ReparacaoDesteClienteJaExisteException {
         equipamentos.adicionaEquipamento(equipamento);
     }
 
@@ -539,5 +540,4 @@ public class SGR implements SGRInterface {
     public void apagaCliente(String idCliente) throws NaoExisteException {
         clientes.remove(idCliente);
     }
-
 }

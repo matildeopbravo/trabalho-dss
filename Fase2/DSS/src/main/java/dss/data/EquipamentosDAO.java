@@ -2,7 +2,7 @@ package dss.data;
 
 import dss.business.equipamento.Componente;
 import dss.business.equipamento.Equipamento;
-import dss.exceptions.FichaDesteClienteJaExisteException;
+import dss.exceptions.ReparacaoDesteClienteJaExisteException;
 import dss.exceptions.EquipamentoNaoExisteException;
 import dss.exceptions.JaExisteException;
 import dss.exceptions.NaoExisteException;
@@ -62,13 +62,14 @@ public class EquipamentosDAO implements IEquipamentos, Serializable{
         }
     }
 
-    public void adicionaEquipamento(Equipamento equipamento) throws FichaDesteClienteJaExisteException {
+    public void adicionaEquipamento(Equipamento equipamento) throws ReparacaoDesteClienteJaExisteException {
+        System.out.println("Tentando adicioanar equipamento com id"+ equipamento.getIdEquipamento());
         if (!equipamentoById.containsKey(equipamento.getIdEquipamento())
             && !equipamentoAbandonado.containsKey(equipamento.getIdEquipamento())) {
             equipamentoById.put(equipamento.getIdEquipamento(), equipamento);
             return;
         }
-        throw new FichaDesteClienteJaExisteException();
+        throw new ReparacaoDesteClienteJaExisteException();
     }
 
     public void adicionaComponente(Componente componente) {
@@ -91,7 +92,6 @@ public class EquipamentosDAO implements IEquipamentos, Serializable{
     }
 
     public Equipamento getEquipamnetoByIdCliente(String id) {
-        equipamentoById.values().forEach(e -> System.out.println(e.toString()));
         return equipamentoById.values().stream().filter(e -> e.getIdCliente().equals(id)).findAny().orElse(null);
     }
 

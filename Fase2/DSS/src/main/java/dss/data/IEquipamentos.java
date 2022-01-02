@@ -2,7 +2,7 @@ package dss.data;
 
 import dss.business.equipamento.Componente;
 import dss.business.equipamento.Equipamento;
-import dss.exceptions.FichaDesteClienteJaExisteException;
+import dss.exceptions.ReparacaoDesteClienteJaExisteException;
 import dss.exceptions.EquipamentoNaoExisteException;
 
 import java.util.Collection;
@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface IEquipamentos extends IDAO<Equipamento,Integer> {
 
-    public void adicionaEquipamento(Equipamento equipamento) throws FichaDesteClienteJaExisteException;
+    public void adicionaEquipamento(Equipamento equipamento) throws ReparacaoDesteClienteJaExisteException;
 
     public Collection<Equipamento> getEquipamentos();
 

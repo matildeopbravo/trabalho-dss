@@ -56,11 +56,10 @@ public class TodosClientes implements Navigatable {
 
                 result.ifPresent(b -> {
                     if (b == ButtonType.OK) {
-                        // TODO: Implementar a funcionalidade de apagar clientes
-                        System.err.println("Por implementar");
                         try {
                             sgr.apagaCliente(selected.getNIF());
                         } catch (NaoExisteException e) {
+                            // TODO
                             e.printStackTrace();
                         }
                         tabelaClientes.getItems().setAll(sgr.getClientes());

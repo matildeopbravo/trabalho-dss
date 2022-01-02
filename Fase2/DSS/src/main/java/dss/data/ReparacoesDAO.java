@@ -1,6 +1,7 @@
 package dss.data;
 
 import dss.business.equipamento.Fase;
+import dss.exceptions.ReparacaoDesteClienteJaExisteException;
 import dss.exceptions.JaExisteException;
 import dss.exceptions.NaoExisteException;
 import dss.exceptions.ReparacaoNaoExisteException;
@@ -50,8 +51,15 @@ public class ReparacoesDAO implements IReparacoes, Serializable {
         }
     }
 
-    public void adicionaReparacaoProgramadaAtual(ReparacaoProgramada reparacao) {
+    public void adicionaReparacaoProgramadaAtual(ReparacaoProgramada reparacao) throws ReparacaoDesteClienteJaExisteException {
+        if(jaExisteReparaoDoCliente(reparacao.getIdCliente()))
+            throw new ReparacaoDesteClienteJaExisteException();
         reparacoesProgramadasAtuais.put(reparacao.getId(), reparacao);
+    }
+
+    private boolean jaExisteReparaoDoCliente(String idCliente) {
+        return(reparacoesProgramadasAtuais.values().stream().anyMatch(r -> r.getIdCliente().equals(idCliente))
+                || reparacoesExpressoAtuais.values().stream().anyMatch(r -> r.getIdCliente().equals(idCliente)));
     }
 
     public void setFase(Integer reparacaoID, Fase fase) throws ReparacaoNaoExisteException {
@@ -85,7 +93,9 @@ public class ReparacoesDAO implements IReparacoes, Serializable {
                     "expresso atual com o id " + id + ".");
     }
 
-    public void adicionaReparacaoExpressoAtual(ReparacaoExpresso reparacaoExpresso) {
+    public void adicionaReparacaoExpressoAtual(ReparacaoExpresso reparacaoExpresso) throws ReparacaoDesteClienteJaExisteException {
+        if(jaExisteReparaoDoCliente(reparacaoExpresso.getIdCliente()))
+            throw new ReparacaoDesteClienteJaExisteException();
         reparacoesExpressoAtuais.put(reparacaoExpresso.getId(), reparacaoExpresso);
     }
 
