@@ -95,7 +95,7 @@ public class ReparacaoProgramada extends Reparacao implements Serializable {
     }
 
     public boolean podeSerReparadaAgora() {
-        return fase.equals(Fase.EmReparacao) && pausado;
+        return fase.equals(Fase.EmReparacao) ;
     }
 
     public Fase getFase() {

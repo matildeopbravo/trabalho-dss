@@ -167,6 +167,7 @@ public class SGR implements SGRInterface {
         Cliente c = null;
         try {
             c = getCliente(reparacaoProgramada.getIdCliente());
+            if (excede) reparacaoProgramada.setFase(Fase.AEsperaResposta);
             if (excede && c.getEmail() != null && !c.getEmail().isBlank()) {
                 enviaMailOrcamentoUltrapassado(reparacaoProgramada, c);
                 reparacaoProgramada.setFase(Fase.AEsperaResposta);

@@ -33,7 +33,9 @@ public class TabelaReparacoes extends TableView<Reparacao> {
         ultimoTecnicoAReparar.setCellValueFactory(cellData -> {
             try {
                 List<String> l = cellData.getValue().getTecnicosQueRepararam();
-                return new SimpleStringProperty(sgr.getUtilizador(l.get(l.size()-1)).toString());
+                int index = l.size() - 1;
+                String u = index >= 0 ? sgr.getUtilizador(l.get(index)).toString() : null;
+                return new SimpleStringProperty(u);
             } catch (NaoExisteException e) {
                 e.printStackTrace();
                 return null;

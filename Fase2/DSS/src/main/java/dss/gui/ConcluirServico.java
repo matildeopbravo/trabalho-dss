@@ -44,6 +44,7 @@ public class ConcluirServico extends  Form implements Navigatable {
             try {
                 sgr.marcaComoEntregue(idCliente.getText(), Integer.parseInt(idEquipamento.getText()));
             } catch (NaoExisteException e) {
+                // TODO
                 e.printStackTrace();
             }
             navigator.navigateBack("Serviço Concluída!");

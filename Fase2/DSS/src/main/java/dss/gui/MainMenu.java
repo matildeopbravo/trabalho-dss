@@ -41,7 +41,7 @@ public class MainMenu implements Navigatable {
             Button aguardaAprovacaoButton = new Button("Reparações a aguardar aprovação");
             aguardaAprovacaoButton.setOnAction(s -> navigator.navigateTo(new AprovarRejeitarOrcamento(sgr, navigator)));
 
-            Button listaReparacoesButton = new Button("Todas as Reparaçõe Em Curso");
+            Button listaReparacoesButton = new Button("Todas as Reparações Em Curso");
             listaReparacoesButton.setOnAction(s -> navigator.navigateTo(new TodasReparacoes(sgr, navigator)));
 
             Button listaReparacoesTabeladasButton = new Button("Serviços Expresso Tabelados");
@@ -82,13 +82,15 @@ public class MainMenu implements Navigatable {
         } else if (sgr.getUtilizadorAutenticado() instanceof Gestor) {
             Button allUsersButton = new Button("Utilizadores");
             allUsersButton.setOnAction(e -> navigator.navigateTo(new TodosUtilizadores(sgr, navigator)));
+            Button allClientsButton = new Button("Clientes");
+            allClientsButton.setOnAction(e -> navigator.navigateTo(new TodosClientesGestor(sgr, navigator)));
             Button intervencoesTecnicos = new Button("Intervenções Dos Técnicos");
             intervencoesTecnicos.setOnAction(e -> navigator.navigateTo(new EstatisticasIntervencoesTecnicos(sgr)));
             Button estatisticasFuncionarios = new Button("Estatísticas sobre os Funcionários");
             estatisticasFuncionarios.setOnAction(e -> navigator.navigateTo(new EstatisticasFuncionarios(sgr)));
             Button estatisticasDasReparacoesDosTecnicos = new Button("Estatísticas sobre as reparações dos Técnicos");
             estatisticasDasReparacoesDosTecnicos.setOnAction(e -> navigator.navigateTo(new EstatisticasTecnico(sgr)));
-            vbox.getChildren().addAll(allUsersButton, intervencoesTecnicos, estatisticasFuncionarios,
+            vbox.getChildren().addAll(allUsersButton, allClientsButton, intervencoesTecnicos, estatisticasFuncionarios,
                     estatisticasDasReparacoesDosTecnicos);
         }
 

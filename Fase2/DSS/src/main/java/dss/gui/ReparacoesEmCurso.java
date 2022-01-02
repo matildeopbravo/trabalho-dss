@@ -36,6 +36,7 @@ public class ReparacoesEmCurso implements Navigatable {
         this.sgr = sgr;
         this.navigator = navigator;
         this.tabela = new TableView<>();
+        this.isProgramada = isProgramada;
 
         TableColumn<Reparacao, String> idReparacao = new TableColumn<>("ID");
         idReparacao.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -64,35 +65,54 @@ public class ReparacoesEmCurso implements Navigatable {
         TableColumn<Reparacao, String> idEquipamento = new TableColumn<>("Id Equipamento");
         idEquipamento.setCellValueFactory(cellData -> new SimpleStringProperty(sgr.getEquipamentoByIdCliente(cellData.getValue().getIdCliente()).toString()));
 
-        this.tabela.getColumns().setAll(idReparacao,nifCliente, idEquipamento, fase, ultimoTecnicoAReparar, descricao);
+        TableColumn<Reparacao, String> pausada = new TableColumn<>("pausada");
+        pausada.setCellValueFactory(cellData ->
+                new SimpleStringProperty( ((ReparacaoProgramada) cellData.getValue()).estaPausado() ? "Sim" : "Não"));
+
+        TableColumn<Reparacao, String> tipoReparacao = new TableColumn<>("Tipo");
+        tipoReparacao.setCellValueFactory(cellData ->
+                new SimpleStringProperty( isProgramada ? "Programada" : "Expresso"));
 
         this.reparar.setDisable(true);
         this.concluir.setDisable(true);
         this.pausar.setDisable(true);
-        this.tabela.getSelectionModel().selectedItemProperty().addListener((observableValue, old, reparacao) -> {
-            selected = reparacao;
-            boolean isNull = selected == null;
-
-            this.reparar.setDisable(isNull || selected.getFase().equals(Fase.EmReparacao));
-            this.concluir.setDisable(isNull);
-            this.pausar.setDisable(isNull);
-
-        });
         this.tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         if (isProgramada) {
+            this.tabela.getColumns().setAll(idReparacao,nifCliente, idEquipamento, tipoReparacao, pausada, fase, ultimoTecnicoAReparar, descricao);
+            this.tabela.getSelectionModel().selectedItemProperty().addListener((observableValue, old, reparacao) -> {
+                selected = reparacao;
+                boolean isNull = selected == null;
+
+                this.reparar.setDisable(isNull || !selected.getFase().equals(Fase.EmReparacao));
+                this.concluir.setDisable(isNull);
+                this.pausar.setDisable(isNull);
+
+            });
             this.reparar.setOnAction(ev -> {
                 if (selected != null) {
                     navigator.navigateTo(new Reparar(sgr, navigator, (ReparacaoProgramada) selected));
                 }
             });
-            TableColumn<Reparacao, String> pausada = new TableColumn<>("pausada");
-            pausada.setCellValueFactory(cellData ->
-                    new SimpleStringProperty( Boolean.toString(((ReparacaoProgramada) cellData.getValue()).estaPausado())));
+            this.pausar.setOnAction(ev -> {
+                if (selected != null) {
+                    sgr.togglePausaReparacao((ReparacaoProgramada) selected);
+                }
+                this.tabela.getColumns().setAll(idReparacao,nifCliente, idEquipamento, tipoReparacao, pausada, fase, ultimoTecnicoAReparar, descricao);
+            });
 
         }
         else {
-            this.tabela.getColumns().setAll(idReparacao,nifCliente, idEquipamento, fase, ultimoTecnicoAReparar, descricao);
+            this.tabela.getColumns().setAll(idReparacao,nifCliente, idEquipamento, tipoReparacao, fase, ultimoTecnicoAReparar, descricao);
+            this.tabela.getSelectionModel().selectedItemProperty().addListener((observableValue, old, reparacao) -> {
+                selected = reparacao;
+                boolean isNull = selected == null;
+
+                this.reparar.setDisable(isNull || selected.getFase().equals(Fase.EmReparacao));
+                this.concluir.setDisable(isNull);
+                this.pausar.setDisable(isNull);
+
+            });
             this.reparar.setOnAction(ev -> {
                 if (selected != null) {
                     try {
