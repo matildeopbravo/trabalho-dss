@@ -11,9 +11,6 @@ import dss.business.utilizador.Funcionario;
 import dss.business.utilizador.Tecnico;
 import dss.business.utilizador.TipoUtilizador;
 import dss.business.utilizador.Utilizador;
-import dss.data.IEquipamentos;
-import dss.data.IReparacoes;
-import dss.data.IUtilizadores;
 import dss.exceptions.*;
 
 import java.io.IOException;
@@ -40,7 +37,7 @@ public interface SGRInterface {
 
     void marcarOrcamentoComoArquivado(ReparacaoProgramada r);
 
-    boolean marcaComoImpossivelReparar(ReparacaoProgramada reparacao) throws NaoExisteException;
+    boolean marcaComoImpossivelReparar(ReparacaoProgramada reparacao);
 
     void marcaComoNotificado(Reparacao e);
 
@@ -136,8 +133,8 @@ public interface SGRInterface {
 
     Equipamento getEquipamentoByIdCliente(String idCliente);
 
-    void marcaComoEntregue(String idCliente, int idEquipamento ) throws NaoExisteException ;
+    void marcaComoEntregue(String idCliente, int idEquipamento) throws NaoExisteException;
 
     void concluiReparacao(ReparacaoExpresso reparacao, Duration d) throws NaoExisteException;
 
-    }
+}

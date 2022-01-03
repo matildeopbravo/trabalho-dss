@@ -1,6 +1,7 @@
 package dss.gui;
 
 import dss.business.SGR.SGRInterface;
+import dss.business.cliente.Cliente;
 import dss.business.equipamento.Fase;
 import dss.business.reparacao.Reparacao;
 import dss.business.reparacao.ReparacaoExpresso;
@@ -9,6 +10,7 @@ import dss.exceptions.NaoExisteException;
 import dss.exceptions.TecnicoNaoAtribuidoException;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -17,7 +19,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -26,11 +27,11 @@ public class ReparacoesEmCurso implements Navigatable {
     private Navigator navigator;
     private TableView<Reparacao> tabela;
     private Button reparar = new Button("Reparar");
-    private Button pausar =  new Button("Pausar/Retomar");
-    private Button concluir =new Button("Concluir");
+    private Button pausar = new Button("Pausar/Retomar");
+    private Button concluir = new Button("Concluir");
     private Reparacao selected;
     private Supplier<List<Reparacao>> fun;
-    private boolean isProgramada ;
+    private boolean isProgramada;
 
     public ReparacoesEmCurso(SGRInterface sgr, Navigator navigator, Supplier<List<Reparacao>> fun, boolean isProgramada) {
         this.sgr = sgr;
@@ -54,8 +55,8 @@ public class ReparacoesEmCurso implements Navigatable {
         TableColumn<Reparacao, String> ultimoTecnicoAReparar = new TableColumn<>("Tecnico");
         ultimoTecnicoAReparar.setCellValueFactory(cellData -> {
             try {
-                List <String> l = cellData.getValue().getTecnicosQueRepararam();
-                return new SimpleStringProperty(sgr.getUtilizador(l.get(l.size()-1)).toString());
+                List<String> l = cellData.getValue().getTecnicosQueRepararam();
+                return new SimpleStringProperty(sgr.getUtilizador(l.get(l.size() - 1)).toString());
             } catch (NaoExisteException e) {
                 e.printStackTrace();
                 return null;
@@ -67,11 +68,11 @@ public class ReparacoesEmCurso implements Navigatable {
 
         TableColumn<Reparacao, String> pausada = new TableColumn<>("pausada");
         pausada.setCellValueFactory(cellData ->
-                new SimpleStringProperty( ((ReparacaoProgramada) cellData.getValue()).estaPausado() ? "Sim" : "Não"));
+                new SimpleStringProperty(((ReparacaoProgramada) cellData.getValue()).estaPausado() ? "Sim" : "Não"));
 
         TableColumn<Reparacao, String> tipoReparacao = new TableColumn<>("Tipo");
         tipoReparacao.setCellValueFactory(cellData ->
-                new SimpleStringProperty( isProgramada ? "Programada" : "Expresso"));
+                new SimpleStringProperty(isProgramada ? "Programada" : "Expresso"));
 
         this.reparar.setDisable(true);
         this.concluir.setDisable(true);
@@ -79,7 +80,7 @@ public class ReparacoesEmCurso implements Navigatable {
         this.tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         if (isProgramada) {
-            this.tabela.getColumns().setAll(idReparacao,nifCliente, idEquipamento, tipoReparacao, pausada, fase, ultimoTecnicoAReparar, descricao);
+            this.tabela.getColumns().setAll(idReparacao, nifCliente, idEquipamento, tipoReparacao, pausada, fase, ultimoTecnicoAReparar, descricao);
             this.tabela.getSelectionModel().selectedItemProperty().addListener((observableValue, old, reparacao) -> {
                 selected = reparacao;
                 boolean isNull = selected == null;
@@ -98,12 +99,11 @@ public class ReparacoesEmCurso implements Navigatable {
                 if (selected != null) {
                     sgr.togglePausaReparacao((ReparacaoProgramada) selected);
                 }
-                this.tabela.getColumns().setAll(idReparacao,nifCliente, idEquipamento, tipoReparacao, pausada, fase, ultimoTecnicoAReparar, descricao);
+                this.tabela.getColumns().setAll(idReparacao, nifCliente, idEquipamento, tipoReparacao, pausada, fase, ultimoTecnicoAReparar, descricao);
             });
 
-        }
-        else {
-            this.tabela.getColumns().setAll(idReparacao,nifCliente, idEquipamento, tipoReparacao, fase, ultimoTecnicoAReparar, descricao);
+        } else {
+            this.tabela.getColumns().setAll(idReparacao, nifCliente, idEquipamento, tipoReparacao, fase, ultimoTecnicoAReparar, descricao);
             this.tabela.getSelectionModel().selectedItemProperty().addListener((observableValue, old, reparacao) -> {
                 selected = reparacao;
                 boolean isNull = selected == null;
@@ -125,15 +125,22 @@ public class ReparacoesEmCurso implements Navigatable {
             });
             this.concluir.setOnAction(ev -> {
                 if (selected != null) {
-                        DuracaoPopUp pop = new DuracaoPopUp(navigator);
-                        pop.setOnDone((dur,des) -> {
-                            try {
-                                sgr.concluiReparacao((ReparacaoExpresso) selected, dur);
-                            } catch (NaoExisteException e) {
-                                e.printStackTrace();
+                    DuracaoPopUp pop = new DuracaoPopUp(navigator);
+                    pop.setOnDone((dur, des) -> {
+                        try {
+                            sgr.concluiReparacao((ReparacaoExpresso) selected, dur);
+                            Cliente c = sgr.getCliente(selected.getIdCliente());
+                            if (c.getEmail() == null || c.getEmail().isBlank()) {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setTitle("Informar cliente");
+                                alert.setHeaderText("Por favor, informe o cliente através do Nº " + c.getNumeroTelemovel());
+                                alert.showAndWait();
                             }
-                        });
-                        navigator.openPopup(pop);
+                        } catch (NaoExisteException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                    navigator.openPopup(pop);
                 }
             });
 
@@ -158,13 +165,12 @@ public class ReparacoesEmCurso implements Navigatable {
 
 
         vbox.setSpacing(5);
-        if(isProgramada) {
-            buttons.getChildren().addAll(reparar,pausar);
+        if (isProgramada) {
+            buttons.getChildren().addAll(reparar, pausar);
+        } else {
+            buttons.getChildren().addAll(reparar, concluir);
         }
-        else {
-            buttons.getChildren().addAll(reparar,concluir);
-        }
-        vbox.getChildren().addAll(tabela, buttons );
+        vbox.getChildren().addAll(tabela, buttons);
 
         return vbox;
     }

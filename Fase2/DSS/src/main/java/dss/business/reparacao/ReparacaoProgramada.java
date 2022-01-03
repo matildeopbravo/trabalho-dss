@@ -19,6 +19,7 @@ public class ReparacaoProgramada extends Reparacao implements Serializable {
     private LocalDateTime dataEnvioOrcamento;
     // pausado indica se esta a ser reparado neste preciso momento ou nao
     private boolean pausado;
+    private boolean excedido;
 
     public ReparacaoProgramada(String idCliente, String utilizadorCriador, String descricao) {
         super(idCliente, utilizadorCriador, descricao);
@@ -124,5 +125,13 @@ public class ReparacaoProgramada extends Reparacao implements Serializable {
 
     public boolean reparado() {
         return planoReparacao.reparado();
+    }
+
+    public void setExcedido() {
+        this.excedido = true;
+    }
+
+    public boolean getExcedido() {
+        return this.excedido;
     }
 }

@@ -44,11 +44,10 @@ public class ConcluirServico extends  Form implements Navigatable {
             try {
                 sgr.marcaComoEntregue(idCliente.getText(), Integer.parseInt(idEquipamento.getText()));
             } catch (NaoExisteException e) {
-                // TODO
-                e.printStackTrace();
+                return List.of("Cliente não existe");
             }
-            navigator.navigateBack("Serviço Concluída!");
-                return List.of();
+            navigator.navigateBack("Serviço Concluído!");
+            return List.of();
         } else {
             // Isto não deve acontecer!
             return null;

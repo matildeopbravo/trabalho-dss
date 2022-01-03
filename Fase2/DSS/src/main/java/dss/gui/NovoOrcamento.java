@@ -1,6 +1,7 @@
 package dss.gui;
 
 import dss.business.SGR.SGRInterface;
+import dss.business.cliente.Cliente;
 import dss.business.reparacao.PassoReparacao;
 import dss.business.reparacao.PlanoReparacao;
 import dss.business.reparacao.Reparacao;
@@ -113,8 +114,27 @@ public class NovoOrcamento implements Navigatable {
         idEquipamento.setStyle("-fx-font-weight: bold");
         idEquipamento.setFont(new Font(18));
 
+        Button recusarOrcamento = new Button("Marcar como impossível");
+        recusarOrcamento.setOnAction(ev -> {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Orçamento recusado");
+            alert.setHeaderText("Esta reparação foi marcada como sendo impossível.");
+
+            if (!sgr.marcaComoImpossivelReparar(reparacao)) {
+                try {
+                    Cliente c = sgr.getCliente(reparacao.getIdCliente());
+                    alert.setContentText("Por favor, notifique o cliente no Nº " + c.getNumeroTelemovel());
+                } catch (NaoExisteException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            alert.showAndWait();
+            navigator.navigateBack("Reparação marcada como impossível");
+        });
+
         HBox botoes = new HBox();
-        botoes.getChildren().add(guardar);
+        botoes.getChildren().addAll(guardar, recusarOrcamento);
         botoes.setSpacing(5);
 
         mainVBox.getChildren().addAll(descricaoNome, descricao, idEquipamento, labelBox, tabela, botoes);

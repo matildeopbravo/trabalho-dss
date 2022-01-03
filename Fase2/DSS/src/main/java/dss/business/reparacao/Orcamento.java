@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Orcamento implements Serializable {
     // vai ser dado pela soma dos custos
-    private final float custoTotal;
+    private float custoTotal;
     private final List<Componente> componentesNecessarios;
     private final LocalDateTime prazoMaximo;
     private PlanoReparacao planoReparacao;

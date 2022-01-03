@@ -69,7 +69,7 @@ public class SGR implements SGRInterface {
         this.reparacoes = (ReparacoesDAO) oi.readObject();
         this.equipamentos = (EquipamentosDAO) oi.readObject();
         this.clientes = (ClientesDAO) oi.readObject();
-        updateLastID(reparacoes,equipamentos);
+        updateLastID(reparacoes, equipamentos);
     }
 
     private void updateLastID(IReparacoes reparacoes, IEquipamentos equipamentos) {
@@ -94,7 +94,7 @@ public class SGR implements SGRInterface {
     public ReparacaoExpresso criaReparacaoExpresso(int idServico, String idCliente, String idTecnico, String descricao) throws ReparacaoDesteClienteJaExisteException {
         ReparacaoExpresso r = new ReparacaoExpresso(servicoExpresso.get(idServico), idCliente,
                 utilizadorAutenticado.getId(), idTecnico, descricao);
-        adicionaEquipamento(new Equipamento(idCliente,LocalDateTime.now()));
+        adicionaEquipamento(new Equipamento(idCliente, LocalDateTime.now()));
         reparacoes.adicionaReparacaoExpressoAtual(r);
         return r;
     }
@@ -126,16 +126,22 @@ public class SGR implements SGRInterface {
     }
 
     @Override
-    public boolean marcaComoImpossivelReparar(ReparacaoProgramada reparacao) throws NaoExisteException {
+    public boolean marcaComoImpossivelReparar(ReparacaoProgramada reparacao) {
         reparacao.setFase(Fase.NaoPodeSerReparado);
-        Cliente c = clientes.get(reparacao.getIdCliente());
-        if (c.getEmail() == null || c.getEmail().isBlank())
+        Cliente c = null;
+        try {
+            c = clientes.get(reparacao.getIdCliente());
+            if (c.getEmail() == null || c.getEmail().isBlank())
+                return false;
+            email.enviaMail(c.getEmail(), "Equipamento Não Pode ser Reparado",
+                    "Após uma análise do estado do equipamento, concluímos que a sua" +
+                            "reparação não será possível. Por favor levante o seu equipamento na loja.\n");
+            reparacao.marcaComoNotificado();
+            return true;
+        } catch (NaoExisteException e) {
+            e.printStackTrace();
             return false;
-        email.enviaMail(c.getEmail(), "Equipamento Não Pode ser Reparado",
-                "Após uma análise do estado do equipamento, concluímos que a sua" +
-                        "reparação não será possível. Por favor levante o seu equipamento na loja.\n");
-        reparacao.marcaComoNotificado();
-        return true;
+        }
     }
 
     @Override
@@ -170,6 +176,9 @@ public class SGR implements SGRInterface {
 
     @Override
     public Pair<Boolean, Boolean> verificaExcedeOrcamento(float custoNovo, ReparacaoProgramada reparacaoProgramada) {
+        if (reparacaoProgramada.getExcedido())
+            return new Pair<>(false, false);
+
         boolean excede = reparacaoProgramada.ultrapassouOrcamento(custoNovo);
         Cliente c = null;
         try {
@@ -177,6 +186,7 @@ public class SGR implements SGRInterface {
             if (excede) reparacaoProgramada.setFase(Fase.AEsperaResposta);
             if (excede && c.getEmail() != null && !c.getEmail().isBlank()) {
                 enviaMailOrcamentoUltrapassado(reparacaoProgramada, c);
+                reparacaoProgramada.setExcedido();
                 reparacaoProgramada.setFase(Fase.AEsperaResposta);
                 return new Pair<>(true, true);
             } else
@@ -281,7 +291,7 @@ public class SGR implements SGRInterface {
                 .orElse(Double.NaN);
 
         double desvioMedio = supplierProgramadas.get()
-                .map(r ->  r.getDuracaoPrevista().minus(r.getDuracaoReal()))
+                .map(r -> r.getDuracaoPrevista().minus(r.getDuracaoReal()))
                 .map(Duration::toMinutes)
                 .map(Math::abs)
                 .mapToDouble(Long::doubleValue)
@@ -427,11 +437,11 @@ public class SGR implements SGRInterface {
 
     @Override
     public void concluiReparacao(Reparacao reparacao) throws NaoExisteException {
-                List<String> l = reparacao.getTecnicosQueRepararam();
-                // tecnico a conlcuir
-                ((Tecnico) getUtilizador(l.get(l.size() - 1))).libertaTecnico();
-                enviaMailReparacaoConcluida(reparacao,clientes.getCliente(reparacao.getIdCliente()));
-                reparacao.setFase(Fase.Reparado);
+        List<String> l = reparacao.getTecnicosQueRepararam();
+        // tecnico a conlcuir
+        ((Tecnico) getUtilizador(l.get(l.size() - 1))).libertaTecnico();
+        enviaMailReparacaoConcluida(reparacao, clientes.getCliente(reparacao.getIdCliente()));
+        reparacao.setFase(Fase.Reparado);
     }
 
     @Override
@@ -467,7 +477,7 @@ public class SGR implements SGRInterface {
     @Override
     public Equipamento getEquipamento(int id) throws EquipamentoNaoExisteException {
         Equipamento e = equipamentos.getEquipamento(id);
-        if( e == null)
+        if (e == null)
             throw new EquipamentoNaoExisteException();
         return e;
     }
@@ -492,6 +502,7 @@ public class SGR implements SGRInterface {
         return reparacoes.getReparacoesProgramadasAtuais().stream().filter(r -> r.getFase() == Fase.AEsperaResposta)
                 .toList();
     }
+
     public List<Tecnico> getTecnicosDisponveis() {
         return getTecnicos().stream().filter(t -> !t.estaOcupado()).collect(Collectors.toList());
     }
@@ -501,16 +512,15 @@ public class SGR implements SGRInterface {
         return servicoExpresso.values();
     }
 
-    public void marcaComoEntregue(String idCliente, int idEquipamento ) throws NaoExisteException {
-        Reparacao r =  getReparacoesAtuais()
+    public void marcaComoEntregue(String idCliente, int idEquipamento) throws NaoExisteException {
+        Reparacao r = getReparacoesAtuais()
                 .stream()
                 .filter(re -> re.getIdCliente().equals(idCliente))
                 .findFirst()
                 .orElseThrow(ReparacaoNaoExisteException::new);
-        if(r.getFase().equals(Fase.Recusada)) {
+        if (r.getFase().equals(Fase.Recusada)) {
             r.marcaComoEntregueRecusada(utilizadorAutenticado.getId());
-        }
-        else {
+        } else {
             r.marcaComoEntregueConcluida(utilizadorAutenticado.getId());
         }
         // remove da lista das atuais e move para as concluiads

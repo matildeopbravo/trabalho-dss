@@ -35,6 +35,7 @@ public class MainMenu implements Navigatable {
         vbox.setSpacing(5);
 
         if (sgr.getUtilizadorAutenticado() instanceof Funcionario) {
+            System.out.println("Funcionário");
             Button allClientsButton = new Button("Clientes");
             allClientsButton.setOnAction(e -> navigator.navigateTo(new TodosClientes(sgr, navigator)));
 
